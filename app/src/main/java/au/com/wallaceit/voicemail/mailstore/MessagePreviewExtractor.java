@@ -7,7 +7,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.fsck.k9.R;
-import com.fsck.k9.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.Viewable;

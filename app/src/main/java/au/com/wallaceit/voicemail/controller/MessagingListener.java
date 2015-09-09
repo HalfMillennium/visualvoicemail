@@ -5,14 +5,14 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.AccountStats;
-import com.fsck.k9.BaseAccount;
-import com.fsck.k9.controller.MessagingController;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.AccountStats;
+import au.com.wallaceit.voicemail.BaseAccount;
+import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.Part;
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 /**
  * Defines the interface that {@link MessagingController} will use to callback to requesters.

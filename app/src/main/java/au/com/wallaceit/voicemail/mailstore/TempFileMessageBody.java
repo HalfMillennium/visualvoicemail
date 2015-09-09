@@ -7,9 +7,9 @@ import org.apache.james.mime4j.util.MimeUtil;
 
 import com.fsck.k9.mail.CompositeBody;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.AttachmentMessageBodyUtil;
-import com.fsck.k9.mailstore.TempFileBody;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.AttachmentMessageBodyUtil;
+import au.com.wallaceit.voicemail.mailstore.TempFileBody;
 
 /**
  * An attachment containing a body of type message/rfc822 whose contents are contained in a file.
@@ -22,7 +22,7 @@ public class TempFileMessageBody extends TempFileBody implements CompositeBody {
 
     @Override
     public void writeTo(OutputStream out) throws IOException, MessagingException {
-        com.fsck.k9.mailstore.AttachmentMessageBodyUtil.writeTo(this, out);
+        au.com.wallaceit.voicemail.mailstore.AttachmentMessageBodyUtil.writeTo(this, out);
     }
 
     @Override

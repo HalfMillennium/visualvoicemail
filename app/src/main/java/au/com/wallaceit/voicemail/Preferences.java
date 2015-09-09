@@ -13,20 +13,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.fsck.k9.Account;
+import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.preferences.Editor;
-import com.fsck.k9.preferences.Storage;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.preferences.Editor;
+import au.com.wallaceit.voicemail.preferences.Storage;
 
 public class Preferences {
 
-    private static com.fsck.k9.Preferences preferences;
+    private static au.com.wallaceit.voicemail.Preferences preferences;
 
-    public static synchronized com.fsck.k9.Preferences getPreferences(Context context) {
+    public static synchronized au.com.wallaceit.voicemail.Preferences getPreferences(Context context) {
         Context appContext = context.getApplicationContext();
         if (preferences == null) {
-            preferences = new com.fsck.k9.Preferences(appContext);
+            preferences = new au.com.wallaceit.voicemail.Preferences(appContext);
         }
         return preferences;
     }

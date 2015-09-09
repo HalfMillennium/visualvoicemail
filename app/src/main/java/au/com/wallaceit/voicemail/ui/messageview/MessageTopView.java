@@ -11,32 +11,32 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.Account.ShowPictures;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Account.ShowPictures;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.MessageViewInfo;
-import com.fsck.k9.mailstore.MessageViewInfo.MessageViewContainer;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.AttachmentViewCallback;
-import com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback;
-import com.fsck.k9.ui.messageview.ShowPicturesController;
-import com.fsck.k9.view.MessageHeader;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo.MessageViewContainer;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback;
+import au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback;
+import au.com.wallaceit.voicemail.ui.messageview.ShowPicturesController;
+import au.com.wallaceit.voicemail.view.MessageHeader;
 
 
-public class MessageTopView extends LinearLayout implements com.fsck.k9.ui.messageview.ShowPicturesController {
+public class MessageTopView extends LinearLayout implements au.com.wallaceit.voicemail.ui.messageview.ShowPicturesController {
 
     private MessageHeader mHeaderContainer;
     private LayoutInflater mInflater;
     private LinearLayout containerViews;
     private Button mDownloadRemainder;
-    private com.fsck.k9.ui.messageview.AttachmentViewCallback attachmentCallback;
-    private com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback openPgpHeaderViewCallback;
+    private au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback attachmentCallback;
+    private au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback openPgpHeaderViewCallback;
     private Button showPicturesButton;
     private List<MessageContainerView> messageContainerViewsWithPictures = new ArrayList<MessageContainerView>();
 
@@ -143,11 +143,11 @@ public class MessageTopView extends LinearLayout implements com.fsck.k9.ui.messa
         mDownloadRemainder.setOnClickListener(listener);
     }
 
-    public void setAttachmentCallback(com.fsck.k9.ui.messageview.AttachmentViewCallback callback) {
+    public void setAttachmentCallback(au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback callback) {
         attachmentCallback = callback;
     }
 
-    public void setOpenPgpHeaderViewCallback(com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback callback) {
+    public void setOpenPgpHeaderViewCallback(au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback callback) {
         openPgpHeaderViewCallback = callback;
     }
 

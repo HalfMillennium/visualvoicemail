@@ -7,10 +7,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 
-import com.fsck.k9.BaseAccount;
+import au.com.wallaceit.voicemail.BaseAccount;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.AccountList;
-import com.fsck.k9.provider.UnreadWidgetProvider;
+import au.com.wallaceit.voicemail.activity.AccountList;
+import au.com.wallaceit.voicemail.provider.UnreadWidgetProvider;
 
 
 /**

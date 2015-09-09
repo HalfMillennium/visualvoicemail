@@ -8,13 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.AccountSetupIncoming;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,7 +32,7 @@ public class AccountSetupAccountType extends K9Activity implements OnClickListen
     private boolean mMakeDefault;
 
     public static void actionSelectAccountType(Context context, Account account, boolean makeDefault) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupAccountType.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupAccountType.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MAKE_DEFAULT, makeDefault);
         context.startActivity(i);

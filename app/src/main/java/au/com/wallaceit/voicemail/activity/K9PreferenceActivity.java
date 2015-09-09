@@ -5,8 +5,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.K9ActivityCommon;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.K9ActivityCommon;
 
 
 public class K9PreferenceActivity extends PreferenceActivity {

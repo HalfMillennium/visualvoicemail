@@ -15,7 +15,7 @@ import com.larswerkman.colorpicker.ColorPicker;
 public class ColorPickerDialog extends AlertDialog {
 
     /**
-     * The interface users of {@link com.fsck.k9.activity.ColorPickerDialog} have to implement to learn the selected
+     * The interface users of {@link au.com.wallaceit.voicemail.activity.ColorPickerDialog} have to implement to learn the selected
      * color.
      */
     public interface OnColorChangedListener {

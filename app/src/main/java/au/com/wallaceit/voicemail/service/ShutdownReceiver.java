@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.BootReceiver;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.BootReceiver;
 
 /**
  * Capture the system shutdown event in order to properly free resources.

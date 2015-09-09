@@ -7,7 +7,7 @@ import android.os.Parcelable;
 /**
  * Container class for information about an attachment.
  *
- * This is used by {@link com.fsck.k9.activity.MessageCompose} to fetch and manage attachments.
+ * This is used by {@link au.com.wallaceit.voicemail.activity.MessageCompose} to fetch and manage attachments.
  */
 public class Attachment implements Parcelable {
     /**
@@ -104,16 +104,16 @@ public class Attachment implements Parcelable {
         dest.writeString(filename);
     }
 
-    public static final Creator<com.fsck.k9.activity.misc.Attachment> CREATOR =
-            new Creator<com.fsck.k9.activity.misc.Attachment>() {
+    public static final Creator<au.com.wallaceit.voicemail.activity.misc.Attachment> CREATOR =
+            new Creator<au.com.wallaceit.voicemail.activity.misc.Attachment>() {
         @Override
-        public com.fsck.k9.activity.misc.Attachment createFromParcel(Parcel in) {
-            return new com.fsck.k9.activity.misc.Attachment(in);
+        public au.com.wallaceit.voicemail.activity.misc.Attachment createFromParcel(Parcel in) {
+            return new au.com.wallaceit.voicemail.activity.misc.Attachment(in);
         }
 
         @Override
-        public com.fsck.k9.activity.misc.Attachment[] newArray(int size) {
-            return new com.fsck.k9.activity.misc.Attachment[size];
+        public au.com.wallaceit.voicemail.activity.misc.Attachment[] newArray(int size) {
+            return new au.com.wallaceit.voicemail.activity.misc.Attachment[size];
         }
     };
 

@@ -5,36 +5,36 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import com.fsck.k9.*;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.CoreService;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.CoreService;
+import au.com.wallaceit.voicemail.service.MailService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PollService extends CoreService {
-    private static String START_SERVICE = "com.fsck.k9.service.PollService.startService";
-    private static String STOP_SERVICE = "com.fsck.k9.service.PollService.stopService";
+    private static String START_SERVICE = "au.com.wallaceit.voicemail.service.PollService.startService";
+    private static String STOP_SERVICE = "au.com.wallaceit.voicemail.service.PollService.stopService";
 
     private Listener mListener = new Listener();
 
     public static void startService(Context context) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.PollService.class);
-        i.setAction(com.fsck.k9.service.PollService.START_SERVICE);
+        i.setClass(context, au.com.wallaceit.voicemail.service.PollService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.PollService.START_SERVICE);
         addWakeLock(context, i);
         context.startService(i);
     }
 
     public static void stopService(Context context) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.PollService.class);
-        i.setAction(com.fsck.k9.service.PollService.STOP_SERVICE);
+        i.setClass(context, au.com.wallaceit.voicemail.service.PollService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.PollService.STOP_SERVICE);
         addWakeLock(context, i);
         context.startService(i);
     }
@@ -90,7 +90,7 @@ public class PollService extends CoreService {
         public synchronized void wakeLockAcquire() {
             TracingWakeLock oldWakeLock = wakeLock;
 
-            TracingPowerManager pm = TracingPowerManager.getPowerManager(com.fsck.k9.service.PollService.this);
+            TracingPowerManager pm = TracingPowerManager.getPowerManager(au.com.wallaceit.voicemail.service.PollService.this);
             wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PollService wakeLockAcquire");
             wakeLock.setReferenceCounted(false);
             wakeLock.acquire(VisualVoicemail.WAKE_LOCK_TIMEOUT);
@@ -137,7 +137,7 @@ public class PollService extends CoreService {
             controller.setCheckMailListener(null);
             MailService.saveLastCheckEnd(getApplication());
 
-            MailService.actionReschedulePoll(com.fsck.k9.service.PollService.this, null);
+            MailService.actionReschedulePoll(au.com.wallaceit.voicemail.service.PollService.this, null);
             wakeLockRelease();
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "PollService stopping with startId = " + startId);

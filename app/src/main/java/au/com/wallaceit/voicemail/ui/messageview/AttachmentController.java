@@ -19,23 +19,23 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.cache.TemporaryAttachmentStore;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.helper.FileHelper;
-import com.fsck.k9.helper.MediaScannerNotifier;
+import au.com.wallaceit.voicemail.cache.TemporaryAttachmentStore;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.helper.FileHelper;
+import au.com.wallaceit.voicemail.helper.MediaScannerNotifier;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.LocalPart;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.MessageViewFragment;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalPart;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment;
 
 import org.apache.commons.io.IOUtils;
 
@@ -43,7 +43,7 @@ import org.apache.commons.io.IOUtils;
 public class AttachmentController {
     private final Context context;
     private final MessagingController controller;
-    private final com.fsck.k9.ui.messageview.MessageViewFragment messageViewFragment;
+    private final au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment messageViewFragment;
     private final AttachmentViewInfo attachment;
 
     AttachmentController(MessagingController controller, MessageViewFragment messageViewFragment,

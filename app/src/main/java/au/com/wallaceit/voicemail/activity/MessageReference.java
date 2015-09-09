@@ -5,13 +5,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import com.fsck.k9.mail.filter.Base64;
 
 import java.util.StringTokenizer;
@@ -109,10 +109,10 @@ public class MessageReference implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof com.fsck.k9.activity.MessageReference == false) {
+        if (o instanceof au.com.wallaceit.voicemail.activity.MessageReference == false) {
             return false;
         }
-        com.fsck.k9.activity.MessageReference other = (com.fsck.k9.activity.MessageReference) o;
+        au.com.wallaceit.voicemail.activity.MessageReference other = (au.com.wallaceit.voicemail.activity.MessageReference) o;
         if ((accountUuid == other.accountUuid || (accountUuid != null && accountUuid.equals(other.accountUuid)))
                 && (folderName == other.folderName || (folderName != null && folderName.equals(other.folderName)))
                 && (uid == other.uid || (uid != null && uid.equals(other.uid)))) {
@@ -167,25 +167,25 @@ public class MessageReference implements Parcelable {
         return null;
     }
 
-    public static final Creator<com.fsck.k9.activity.MessageReference> CREATOR = new Creator<com.fsck.k9.activity.MessageReference>() {
+    public static final Creator<au.com.wallaceit.voicemail.activity.MessageReference> CREATOR = new Creator<au.com.wallaceit.voicemail.activity.MessageReference>() {
         @Override
-        public com.fsck.k9.activity.MessageReference createFromParcel(Parcel source) {
-            com.fsck.k9.activity.MessageReference ref;
+        public au.com.wallaceit.voicemail.activity.MessageReference createFromParcel(Parcel source) {
+            au.com.wallaceit.voicemail.activity.MessageReference ref;
             String uid = source.readString();
             String accountUuid = source.readString();
             String folderName = source.readString();
             String flag = source.readString();
             if (flag != null) {
-                ref = new com.fsck.k9.activity.MessageReference(accountUuid, folderName, uid, Flag.valueOf(flag));
+                ref = new au.com.wallaceit.voicemail.activity.MessageReference(accountUuid, folderName, uid, Flag.valueOf(flag));
             } else {
-                ref = new com.fsck.k9.activity.MessageReference(accountUuid, folderName, uid, null);
+                ref = new au.com.wallaceit.voicemail.activity.MessageReference(accountUuid, folderName, uid, null);
             }
             return ref;
         }
 
         @Override
-        public com.fsck.k9.activity.MessageReference[] newArray(int size) {
-            return new com.fsck.k9.activity.MessageReference[size];
+        public au.com.wallaceit.voicemail.activity.MessageReference[] newArray(int size) {
+            return new au.com.wallaceit.voicemail.activity.MessageReference[size];
         }
     };
 
@@ -218,11 +218,11 @@ public class MessageReference implements Parcelable {
         return flag;
     }
 
-    public com.fsck.k9.activity.MessageReference withModifiedUid(String newUid) {
-        return new com.fsck.k9.activity.MessageReference(accountUuid, folderName, newUid, flag);
+    public au.com.wallaceit.voicemail.activity.MessageReference withModifiedUid(String newUid) {
+        return new au.com.wallaceit.voicemail.activity.MessageReference(accountUuid, folderName, newUid, flag);
     }
 
-    public com.fsck.k9.activity.MessageReference withModifiedFlag(Flag newFlag) {
-        return new com.fsck.k9.activity.MessageReference(accountUuid, folderName, uid, newFlag);
+    public au.com.wallaceit.voicemail.activity.MessageReference withModifiedFlag(Flag newFlag) {
+        return new au.com.wallaceit.voicemail.activity.MessageReference(accountUuid, folderName, uid, newFlag);
     }
 }

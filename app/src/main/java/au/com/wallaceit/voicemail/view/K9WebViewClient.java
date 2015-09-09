@@ -20,12 +20,12 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.LocalMessageExtractor;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
 
 
 /**
@@ -135,7 +135,7 @@ public abstract class K9WebViewClient extends WebViewClient {
 
 
     @SuppressWarnings("deprecation")
-    private static class PreLollipopWebViewClient extends com.fsck.k9.view.K9WebViewClient {
+    private static class PreLollipopWebViewClient extends au.com.wallaceit.voicemail.view.K9WebViewClient {
         protected PreLollipopWebViewClient(Part part) {
             super(part);
         }
@@ -152,7 +152,7 @@ public abstract class K9WebViewClient extends WebViewClient {
     }
 
     @TargetApi(VERSION_CODES.LOLLIPOP)
-    private static class LollipopWebViewClient extends com.fsck.k9.view.K9WebViewClient {
+    private static class LollipopWebViewClient extends au.com.wallaceit.voicemail.view.K9WebViewClient {
         protected LollipopWebViewClient(Part part) {
             super(part);
         }

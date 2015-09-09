@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -25,19 +25,19 @@ import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.preferences.*;
-import com.fsck.k9.preferences.FolderSettings;
-import com.fsck.k9.preferences.GlobalSettings;
-import com.fsck.k9.preferences.IdentitySettings;
-import com.fsck.k9.preferences.Settings;
-import com.fsck.k9.preferences.Settings.InvalidSettingValueException;
+import au.com.wallaceit.voicemail.preferences.*;
+import au.com.wallaceit.voicemail.preferences.FolderSettings;
+import au.com.wallaceit.voicemail.preferences.GlobalSettings;
+import au.com.wallaceit.voicemail.preferences.IdentitySettings;
+import au.com.wallaceit.voicemail.preferences.Settings;
+import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
 
 public class SettingsImporter {
 
     /**
      * Class to list the contents of an import file/stream.
      *
-     * @see com.fsck.k9.preferences.SettingsImporter#getImportStreamContents(InputStream)
+     * @see au.com.wallaceit.voicemail.preferences.SettingsImporter#getImportStreamContents(InputStream)
      */
     public static class ImportContents {
         /**
@@ -310,16 +310,16 @@ public class SettingsImporter {
             SharedPreferences.Editor editor, int contentVersion, ImportedSettings settings) {
 
         // Validate global settings
-        Map<String, Object> validatedSettings = com.fsck.k9.preferences.GlobalSettings.validate(contentVersion,
+        Map<String, Object> validatedSettings = au.com.wallaceit.voicemail.preferences.GlobalSettings.validate(contentVersion,
                 settings.settings);
 
         // Upgrade global settings to current content version
         if (contentVersion != Settings.VERSION) {
-            com.fsck.k9.preferences.GlobalSettings.upgrade(contentVersion, validatedSettings);
+            au.com.wallaceit.voicemail.preferences.GlobalSettings.upgrade(contentVersion, validatedSettings);
         }
 
         // Convert global settings to the string representation used in preference storage
-        Map<String, String> stringSettings = com.fsck.k9.preferences.GlobalSettings.convert(validatedSettings);
+        Map<String, String> stringSettings = au.com.wallaceit.voicemail.preferences.GlobalSettings.convert(validatedSettings);
 
         // Use current global settings as base and overwrite with validated settings read from the
         // import file.

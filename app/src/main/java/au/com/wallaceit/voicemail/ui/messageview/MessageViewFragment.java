@@ -27,38 +27,38 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.ChooseFolder;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.crypto.PgpData;
-import com.fsck.k9.fragment.ConfirmationDialogFragment;
-import com.fsck.k9.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
-import com.fsck.k9.fragment.ProgressDialogFragment;
-import com.fsck.k9.helper.FileBrowserHelper;
-import com.fsck.k9.helper.FileBrowserHelper.FileBrowserFailOverCallback;
+import au.com.wallaceit.voicemail.activity.ChooseFolder;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.crypto.PgpData;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
+import au.com.wallaceit.voicemail.fragment.ProgressDialogFragment;
+import au.com.wallaceit.voicemail.helper.FileBrowserHelper;
+import au.com.wallaceit.voicemail.helper.FileBrowserHelper.FileBrowserFailOverCallback;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.MessageViewInfo;
-import com.fsck.k9.ui.crypto.MessageCryptoCallback;
-import com.fsck.k9.ui.crypto.MessageCryptoHelper;
-import com.fsck.k9.ui.message.DecodeMessageLoader;
-import com.fsck.k9.ui.message.LocalMessageLoader;
-import com.fsck.k9.ui.crypto.MessageCryptoAnnotations;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.AttachmentViewCallback;
-import com.fsck.k9.ui.messageview.MessageTopView;
-import com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback;
-import com.fsck.k9.view.MessageHeader;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoCallback;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoHelper;
+import au.com.wallaceit.voicemail.ui.message.DecodeMessageLoader;
+import au.com.wallaceit.voicemail.ui.message.LocalMessageLoader;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoAnnotations;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback;
+import au.com.wallaceit.voicemail.ui.messageview.MessageTopView;
+import au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback;
+import au.com.wallaceit.voicemail.view.MessageHeader;
 
 public class MessageViewFragment extends Fragment implements ConfirmationDialogFragmentListener,
-        com.fsck.k9.ui.messageview.AttachmentViewCallback, com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback, MessageCryptoCallback {
+        au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback, au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback, MessageCryptoCallback {
 
     private static final String ARG_REFERENCE = "reference";
 
@@ -71,8 +71,8 @@ public class MessageViewFragment extends Fragment implements ConfirmationDialogF
     private static final int LOCAL_MESSAGE_LOADER_ID = 1;
     private static final int DECODE_MESSAGE_LOADER_ID = 2;
 
-    public static com.fsck.k9.ui.messageview.MessageViewFragment newInstance(MessageReference reference) {
-        com.fsck.k9.ui.messageview.MessageViewFragment fragment = new com.fsck.k9.ui.messageview.MessageViewFragment();
+    public static au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment newInstance(MessageReference reference) {
+        au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment fragment = new au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(ARG_REFERENCE, reference);
@@ -780,7 +780,7 @@ public class MessageViewFragment extends Fragment implements ConfirmationDialogF
         //TODO: check if we have to download the attachment first
 
         currentAttachmentViewInfo = attachment;
-        FileBrowserHelper.getInstance().showFileBrowserActivity(com.fsck.k9.ui.messageview.MessageViewFragment.this, null,
+        FileBrowserHelper.getInstance().showFileBrowserActivity(au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment.this, null,
                 ACTIVITY_CHOOSE_DIRECTORY, new FileBrowserFailOverCallback() {
                     @Override
                     public void onPathEntered(String path) {

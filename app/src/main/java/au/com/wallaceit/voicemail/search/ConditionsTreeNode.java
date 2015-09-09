@@ -10,9 +10,9 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchCondition;
-import com.fsck.k9.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 
 
 /**
@@ -28,9 +28,9 @@ public class ConditionsTreeNode implements Parcelable {
         AND, OR, CONDITION;
     }
 
-    public com.fsck.k9.search.ConditionsTreeNode mLeft;
-    public com.fsck.k9.search.ConditionsTreeNode mRight;
-    public com.fsck.k9.search.ConditionsTreeNode mParent;
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode mLeft;
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode mRight;
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode mParent;
 
     /*
      * If mValue isn't CONDITION then mCondition contains a real
@@ -58,9 +58,9 @@ public class ConditionsTreeNode implements Parcelable {
      *  should contains 1 tree node.
      * @return A condition tree.
      */
-    public static com.fsck.k9.search.ConditionsTreeNode buildTreeFromDB(Cursor cursor) {
-        Stack<com.fsck.k9.search.ConditionsTreeNode> stack = new Stack<com.fsck.k9.search.ConditionsTreeNode>();
-        com.fsck.k9.search.ConditionsTreeNode tmp = null;
+    public static au.com.wallaceit.voicemail.search.ConditionsTreeNode buildTreeFromDB(Cursor cursor) {
+        Stack<au.com.wallaceit.voicemail.search.ConditionsTreeNode> stack = new Stack<au.com.wallaceit.voicemail.search.ConditionsTreeNode>();
+        au.com.wallaceit.voicemail.search.ConditionsTreeNode tmp = null;
 
         // root node
         if (cursor.moveToFirst()) {
@@ -90,18 +90,18 @@ public class ConditionsTreeNode implements Parcelable {
      * @param cursor Cursor pointing to the row we want to convert.
      * @return A single ConditionsTreeNode
      */
-    private static com.fsck.k9.search.ConditionsTreeNode buildNodeFromRow(Cursor cursor) {
-        com.fsck.k9.search.ConditionsTreeNode result = null;
+    private static au.com.wallaceit.voicemail.search.ConditionsTreeNode buildNodeFromRow(Cursor cursor) {
+        au.com.wallaceit.voicemail.search.ConditionsTreeNode result = null;
         SearchCondition condition = null;
 
-        Operator tmpValue = com.fsck.k9.search.ConditionsTreeNode.Operator.valueOf(cursor.getString(5));
+        Operator tmpValue = au.com.wallaceit.voicemail.search.ConditionsTreeNode.Operator.valueOf(cursor.getString(5));
 
         if (tmpValue == Operator.CONDITION) {
             condition = new SearchCondition(SearchField.valueOf(cursor.getString(0)),
                     Attribute.valueOf(cursor.getString(2)), cursor.getString(1));
         }
 
-        result = new com.fsck.k9.search.ConditionsTreeNode(condition);
+        result = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(condition);
         result.mValue = tmpValue;
         result.mLeftMPTTMarker = cursor.getInt(3);
         result.mRightMPTTMarker = cursor.getInt(4);
@@ -119,19 +119,19 @@ public class ConditionsTreeNode implements Parcelable {
         mValue = Operator.CONDITION;
     }
 
-    public ConditionsTreeNode(com.fsck.k9.search.ConditionsTreeNode parent, Operator op) {
+    public ConditionsTreeNode(au.com.wallaceit.voicemail.search.ConditionsTreeNode parent, Operator op) {
         mParent = parent;
         mValue = op;
         mCondition = null;
     }
 
 
-    /* package */ com.fsck.k9.search.ConditionsTreeNode cloneTree() {
+    /* package */ au.com.wallaceit.voicemail.search.ConditionsTreeNode cloneTree() {
         if (mParent != null) {
             throw new IllegalStateException("Can't call cloneTree() for a non-root node");
         }
 
-        com.fsck.k9.search.ConditionsTreeNode copy = new com.fsck.k9.search.ConditionsTreeNode(mCondition.clone());
+        au.com.wallaceit.voicemail.search.ConditionsTreeNode copy = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(mCondition.clone());
 
         copy.mLeftMPTTMarker = mLeftMPTTMarker;
         copy.mRightMPTTMarker = mRightMPTTMarker;
@@ -142,8 +142,8 @@ public class ConditionsTreeNode implements Parcelable {
         return copy;
     }
 
-    private com.fsck.k9.search.ConditionsTreeNode cloneNode(com.fsck.k9.search.ConditionsTreeNode parent) {
-        com.fsck.k9.search.ConditionsTreeNode copy = new com.fsck.k9.search.ConditionsTreeNode(parent, mValue);
+    private au.com.wallaceit.voicemail.search.ConditionsTreeNode cloneNode(au.com.wallaceit.voicemail.search.ConditionsTreeNode parent) {
+        au.com.wallaceit.voicemail.search.ConditionsTreeNode copy = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(parent, mValue);
 
         copy.mCondition = mCondition.clone();
         copy.mLeftMPTTMarker = mLeftMPTTMarker;
@@ -166,7 +166,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New top AND node.
      * @throws Exception
      */
-    public com.fsck.k9.search.ConditionsTreeNode and(com.fsck.k9.search.ConditionsTreeNode expr) throws Exception {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode and(au.com.wallaceit.voicemail.search.ConditionsTreeNode expr) throws Exception {
         return add(expr, Operator.AND);
     }
 
@@ -178,9 +178,9 @@ public class ConditionsTreeNode implements Parcelable {
      * @param condition Condition to 'AND' with.
      * @return New top AND node, new root.
      */
-    public com.fsck.k9.search.ConditionsTreeNode and(SearchCondition condition) {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode and(SearchCondition condition) {
         try {
-            com.fsck.k9.search.ConditionsTreeNode tmp = new com.fsck.k9.search.ConditionsTreeNode(condition);
+            au.com.wallaceit.voicemail.search.ConditionsTreeNode tmp = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(condition);
             return and(tmp);
         } catch (Exception e) {
             // impossible
@@ -196,7 +196,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New top OR node.
      * @throws Exception
      */
-    public com.fsck.k9.search.ConditionsTreeNode or(com.fsck.k9.search.ConditionsTreeNode expr) throws Exception {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode or(au.com.wallaceit.voicemail.search.ConditionsTreeNode expr) throws Exception {
         return add(expr, Operator.OR);
     }
 
@@ -208,9 +208,9 @@ public class ConditionsTreeNode implements Parcelable {
      * @param condition Condition to 'OR' with.
      * @return New top OR node, new root.
      */
-    public com.fsck.k9.search.ConditionsTreeNode or(SearchCondition condition) {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode or(SearchCondition condition) {
         try {
-            com.fsck.k9.search.ConditionsTreeNode tmp = new com.fsck.k9.search.ConditionsTreeNode(condition);
+            au.com.wallaceit.voicemail.search.ConditionsTreeNode tmp = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(condition);
             return or(tmp);
         } catch (Exception e) {
             // impossible
@@ -245,8 +245,8 @@ public class ConditionsTreeNode implements Parcelable {
      * Get a set of all the leaves in the tree.
      * @return Set of all the leaves.
      */
-    public Set<com.fsck.k9.search.ConditionsTreeNode> getLeafSet() {
-        Set<com.fsck.k9.search.ConditionsTreeNode> leafSet = new HashSet<com.fsck.k9.search.ConditionsTreeNode>();
+    public Set<au.com.wallaceit.voicemail.search.ConditionsTreeNode> getLeafSet() {
+        Set<au.com.wallaceit.voicemail.search.ConditionsTreeNode> leafSet = new HashSet<au.com.wallaceit.voicemail.search.ConditionsTreeNode>();
         return getLeafSet(leafSet);
     }
 
@@ -256,13 +256,13 @@ public class ConditionsTreeNode implements Parcelable {
      *
      * @return List of all nodes in subtree in preorder.
      */
-    public List<com.fsck.k9.search.ConditionsTreeNode> preorder() {
-        List<com.fsck.k9.search.ConditionsTreeNode> result = new ArrayList<com.fsck.k9.search.ConditionsTreeNode>();
-        Stack<com.fsck.k9.search.ConditionsTreeNode> stack = new Stack<com.fsck.k9.search.ConditionsTreeNode>();
+    public List<au.com.wallaceit.voicemail.search.ConditionsTreeNode> preorder() {
+        List<au.com.wallaceit.voicemail.search.ConditionsTreeNode> result = new ArrayList<au.com.wallaceit.voicemail.search.ConditionsTreeNode>();
+        Stack<au.com.wallaceit.voicemail.search.ConditionsTreeNode> stack = new Stack<au.com.wallaceit.voicemail.search.ConditionsTreeNode>();
         stack.push(this);
 
         while (!stack.isEmpty()) {
-            com.fsck.k9.search.ConditionsTreeNode current = stack.pop();
+            au.com.wallaceit.voicemail.search.ConditionsTreeNode current = stack.pop();
 
             if (current.mLeft != null) {
                 stack.push(current.mLeft);
@@ -297,12 +297,12 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New parent node, containing the operator.
      * @throws Exception Throws when the provided new node does not have a null parent.
      */
-    private com.fsck.k9.search.ConditionsTreeNode add(com.fsck.k9.search.ConditionsTreeNode node, Operator op) throws Exception {
+    private au.com.wallaceit.voicemail.search.ConditionsTreeNode add(au.com.wallaceit.voicemail.search.ConditionsTreeNode node, Operator op) throws Exception {
         if (node.mParent != null) {
             throw new Exception("Can only add new expressions from root node down.");
         }
 
-        com.fsck.k9.search.ConditionsTreeNode tmpNode = new com.fsck.k9.search.ConditionsTreeNode(mParent, op);
+        au.com.wallaceit.voicemail.search.ConditionsTreeNode tmpNode = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(mParent, op);
         tmpNode.mLeft = this;
         tmpNode.mRight = node;
 
@@ -324,7 +324,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @param oldChild Old child node to be replaced.
      * @param newChild New child node.
      */
-    private void updateChild(com.fsck.k9.search.ConditionsTreeNode oldChild, com.fsck.k9.search.ConditionsTreeNode newChild) {
+    private void updateChild(au.com.wallaceit.voicemail.search.ConditionsTreeNode oldChild, au.com.wallaceit.voicemail.search.ConditionsTreeNode newChild) {
         // we can compare objects id's because this is the desired behaviour in this case
         if (mLeft == oldChild) {
             mLeft = newChild;
@@ -340,7 +340,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @param leafSet Leafset that's being built.
      * @return Set of leaves being completed.
      */
-    private Set<com.fsck.k9.search.ConditionsTreeNode> getLeafSet(Set<com.fsck.k9.search.ConditionsTreeNode> leafSet) {
+    private Set<au.com.wallaceit.voicemail.search.ConditionsTreeNode> getLeafSet(Set<au.com.wallaceit.voicemail.search.ConditionsTreeNode> leafSet) {
         if (mLeft == null && mRight == null) {
             // if we ended up in a leaf, add ourself and return
             leafSet.add(this);
@@ -401,25 +401,25 @@ public class ConditionsTreeNode implements Parcelable {
         dest.writeParcelable(mRight, flags);
     }
 
-    public static final Creator<com.fsck.k9.search.ConditionsTreeNode> CREATOR =
-            new Creator<com.fsck.k9.search.ConditionsTreeNode>() {
+    public static final Creator<au.com.wallaceit.voicemail.search.ConditionsTreeNode> CREATOR =
+            new Creator<au.com.wallaceit.voicemail.search.ConditionsTreeNode>() {
 
         @Override
-        public com.fsck.k9.search.ConditionsTreeNode createFromParcel(Parcel in) {
-            return new com.fsck.k9.search.ConditionsTreeNode(in);
+        public au.com.wallaceit.voicemail.search.ConditionsTreeNode createFromParcel(Parcel in) {
+            return new au.com.wallaceit.voicemail.search.ConditionsTreeNode(in);
         }
 
         @Override
-        public com.fsck.k9.search.ConditionsTreeNode[] newArray(int size) {
-            return new com.fsck.k9.search.ConditionsTreeNode[size];
+        public au.com.wallaceit.voicemail.search.ConditionsTreeNode[] newArray(int size) {
+            return new au.com.wallaceit.voicemail.search.ConditionsTreeNode[size];
         }
     };
 
     private ConditionsTreeNode(Parcel in) {
         mValue = Operator.values()[in.readInt()];
-        mCondition = in.readParcelable(com.fsck.k9.search.ConditionsTreeNode.class.getClassLoader());
-        mLeft = in.readParcelable(com.fsck.k9.search.ConditionsTreeNode.class.getClassLoader());
-        mRight = in.readParcelable(com.fsck.k9.search.ConditionsTreeNode.class.getClassLoader());
+        mCondition = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
+        mLeft = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
+        mRight = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
         mParent = null;
 
         if (mLeft != null) {

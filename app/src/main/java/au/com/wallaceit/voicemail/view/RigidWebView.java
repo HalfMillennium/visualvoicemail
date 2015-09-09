@@ -23,10 +23,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.WebView;
 
-import com.fsck.k9.Clock;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Throttle;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.Clock;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Throttle;
+import au.com.wallaceit.voicemail.helper.Utility;
 
 /**
  * A custom WebView that is robust to rapid resize events in sequence.

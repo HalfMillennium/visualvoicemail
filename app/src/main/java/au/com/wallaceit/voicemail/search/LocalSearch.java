@@ -8,8 +8,8 @@ import java.util.Set;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fsck.k9.search.ConditionsTreeNode;
-import com.fsck.k9.search.SearchSpecification;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.SearchSpecification;
 
 /**
  * This class represents a local search.
@@ -83,10 +83,10 @@ public class LocalSearch implements SearchSpecification {
     }
 
     @Override
-    public com.fsck.k9.search.LocalSearch clone() {
+    public au.com.wallaceit.voicemail.search.LocalSearch clone() {
         ConditionsTreeNode conditions = (mConditions == null) ? null : mConditions.cloneTree();
 
-        com.fsck.k9.search.LocalSearch copy = new com.fsck.k9.search.LocalSearch(mName, conditions, null, mPredefined);
+        au.com.wallaceit.voicemail.search.LocalSearch copy = new au.com.wallaceit.voicemail.search.LocalSearch(mName, conditions, null, mPredefined);
         copy.mManualSearch = mManualSearch;
         copy.mAccountUuids = new HashSet<String>(mAccountUuids);
 
@@ -376,17 +376,17 @@ public class LocalSearch implements SearchSpecification {
         dest.writeParcelable(mConditions, flags);
     }
 
-    public static final Creator<com.fsck.k9.search.LocalSearch> CREATOR =
-            new Creator<com.fsck.k9.search.LocalSearch>() {
+    public static final Creator<au.com.wallaceit.voicemail.search.LocalSearch> CREATOR =
+            new Creator<au.com.wallaceit.voicemail.search.LocalSearch>() {
 
         @Override
-        public com.fsck.k9.search.LocalSearch createFromParcel(Parcel in) {
-            return new com.fsck.k9.search.LocalSearch(in);
+        public au.com.wallaceit.voicemail.search.LocalSearch createFromParcel(Parcel in) {
+            return new au.com.wallaceit.voicemail.search.LocalSearch(in);
         }
 
         @Override
-        public com.fsck.k9.search.LocalSearch[] newArray(int size) {
-            return new com.fsck.k9.search.LocalSearch[size];
+        public au.com.wallaceit.voicemail.search.LocalSearch[] newArray(int size) {
+            return new au.com.wallaceit.voicemail.search.LocalSearch[size];
         }
     };
 
@@ -395,7 +395,7 @@ public class LocalSearch implements SearchSpecification {
         mPredefined = (in.readByte() == 1);
         mManualSearch = (in.readByte() == 1);
         mAccountUuids.addAll(in.createStringArrayList());
-        mConditions = in.readParcelable(com.fsck.k9.search.LocalSearch.class.getClassLoader());
+        mConditions = in.readParcelable(au.com.wallaceit.voicemail.search.LocalSearch.class.getClassLoader());
         mLeafSet = (mConditions == null) ? null : mConditions.getLeafSet();
     }
 }

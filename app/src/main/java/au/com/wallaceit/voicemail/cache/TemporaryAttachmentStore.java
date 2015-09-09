@@ -7,8 +7,8 @@ import java.io.IOException;
 import android.content.Context;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.helper.FileHelper;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.FileHelper;
 
 
 public class TemporaryAttachmentStore {

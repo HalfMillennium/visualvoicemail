@@ -9,11 +9,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.fsck.k9.fragment.MessageListFragment;
+import au.com.wallaceit.voicemail.fragment.MessageListFragment;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.provider.EmailProvider;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.provider.EmailProvider;
 
 /**
  * Cache to bridge the time needed to write (user-initiated) changes to the database.
@@ -22,18 +22,18 @@ public class EmailProviderCache {
     public static final String ACTION_CACHE_UPDATED = "EmailProviderCache.ACTION_CACHE_UPDATED";
 
     private static Context sContext;
-    private static Map<String, com.fsck.k9.cache.EmailProviderCache> sInstances =
-            new HashMap<String, com.fsck.k9.cache.EmailProviderCache>();
+    private static Map<String, au.com.wallaceit.voicemail.cache.EmailProviderCache> sInstances =
+            new HashMap<String, au.com.wallaceit.voicemail.cache.EmailProviderCache>();
 
-    public static synchronized com.fsck.k9.cache.EmailProviderCache getCache(String accountUuid, Context context) {
+    public static synchronized au.com.wallaceit.voicemail.cache.EmailProviderCache getCache(String accountUuid, Context context) {
 
         if (sContext == null) {
             sContext = context.getApplicationContext();
         }
 
-        com.fsck.k9.cache.EmailProviderCache instance = sInstances.get(accountUuid);
+        au.com.wallaceit.voicemail.cache.EmailProviderCache instance = sInstances.get(accountUuid);
         if (instance == null) {
-            instance = new com.fsck.k9.cache.EmailProviderCache(accountUuid);
+            instance = new au.com.wallaceit.voicemail.cache.EmailProviderCache(accountUuid);
             sInstances.put(accountUuid, instance);
         }
 

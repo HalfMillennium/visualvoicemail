@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.text.format.DateUtils;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.AccountStats;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.AccountStats;
 import com.fsck.k9.R;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.service.MailService;
 
 public class ActivityListener extends MessagingListener {
     private Account mAccount = null;

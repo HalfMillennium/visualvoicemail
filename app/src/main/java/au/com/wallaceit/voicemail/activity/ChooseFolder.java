@@ -20,16 +20,16 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.Account.FolderMode;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.FolderListFilter;
-import com.fsck.k9.activity.K9ListActivity;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
+import au.com.wallaceit.voicemail.activity.FolderListFilter;
+import au.com.wallaceit.voicemail.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
 import com.fsck.k9.mail.Folder;
 
 

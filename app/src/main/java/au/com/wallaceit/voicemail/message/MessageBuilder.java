@@ -7,13 +7,13 @@ import java.util.Locale;
 
 import android.content.Context;
 
-import com.fsck.k9.Account.QuoteStyle;
-import com.fsck.k9.Identity;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account.QuoteStyle;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.activity.misc.Attachment;
-import com.fsck.k9.crypto.PgpData;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.activity.misc.Attachment;
+import au.com.wallaceit.voicemail.crypto.PgpData;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.Message.RecipientType;
@@ -25,11 +25,11 @@ import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.mailstore.TempFileBody;
-import com.fsck.k9.mailstore.TempFileMessageBody;
-import com.fsck.k9.message.*;
-import com.fsck.k9.message.InsertableHtmlContent;
-import com.fsck.k9.message.SimpleMessageFormat;
+import au.com.wallaceit.voicemail.mailstore.TempFileBody;
+import au.com.wallaceit.voicemail.mailstore.TempFileMessageBody;
+import au.com.wallaceit.voicemail.message.*;
+import au.com.wallaceit.voicemail.message.InsertableHtmlContent;
+import au.com.wallaceit.voicemail.message.SimpleMessageFormat;
 
 import org.apache.james.mime4j.codec.EncoderUtil;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -46,7 +46,7 @@ public class MessageBuilder {
     private String references;
     private boolean requestReadReceipt;
     private Identity identity;
-    private com.fsck.k9.message.SimpleMessageFormat messageFormat;
+    private au.com.wallaceit.voicemail.message.SimpleMessageFormat messageFormat;
     private String text;
     private PgpData pgpData;
     private List<Attachment> attachments;
@@ -135,14 +135,14 @@ public class MessageBuilder {
 
         final boolean hasAttachments = !attachments.isEmpty();
 
-        if (messageFormat == com.fsck.k9.message.SimpleMessageFormat.HTML) {
+        if (messageFormat == au.com.wallaceit.voicemail.message.SimpleMessageFormat.HTML) {
             // HTML message (with alternative text part)
 
             // This is the compiled MIME part for an HTML message.
             MimeMultipart composedMimeMessage = new MimeMultipart();
             composedMimeMessage.setSubType("alternative");   // Let the receiver select either the text or the HTML part.
             composedMimeMessage.addBodyPart(new MimeBodyPart(body, "text/html"));
-            bodyPlain = buildText(isDraft, com.fsck.k9.message.SimpleMessageFormat.TEXT);
+            bodyPlain = buildText(isDraft, au.com.wallaceit.voicemail.message.SimpleMessageFormat.TEXT);
             composedMimeMessage.addBodyPart(new MimeBodyPart(bodyPlain, "text/plain"));
 
             if (hasAttachments) {
@@ -158,7 +158,7 @@ public class MessageBuilder {
                 // If no attachments, our multipart/alternative part is the only one we need.
                 MimeMessageHelper.setBody(message, composedMimeMessage);
             }
-        } else if (messageFormat == com.fsck.k9.message.SimpleMessageFormat.TEXT) {
+        } else if (messageFormat == au.com.wallaceit.voicemail.message.SimpleMessageFormat.TEXT) {
             // Text-only message.
             if (hasAttachments) {
                 MimeMultipart mp = new MimeMultipart();
@@ -281,7 +281,7 @@ public class MessageBuilder {
      * @return {@link TextBody} instance that contains the entered text and possibly the quoted
      *         original message.
      */
-    private TextBody buildText(boolean isDraft, com.fsck.k9.message.SimpleMessageFormat simpleMessageFormat) {
+    private TextBody buildText(boolean isDraft, au.com.wallaceit.voicemail.message.SimpleMessageFormat simpleMessageFormat) {
         String messageText = text;
 
         TextBodyBuilder textBodyBuilder = new TextBodyBuilder(messageText);
@@ -299,13 +299,13 @@ public class MessageBuilder {
 
         textBodyBuilder.setIncludeQuotedText(false);
         if (includeQuotedText) {
-            if (simpleMessageFormat == com.fsck.k9.message.SimpleMessageFormat.HTML && quotedHtmlContent != null) {
+            if (simpleMessageFormat == au.com.wallaceit.voicemail.message.SimpleMessageFormat.HTML && quotedHtmlContent != null) {
                 textBodyBuilder.setIncludeQuotedText(true);
                 textBodyBuilder.setQuotedTextHtml(quotedHtmlContent);
                 textBodyBuilder.setReplyAfterQuote(isReplyAfterQuote);
             }
 
-            if (simpleMessageFormat == com.fsck.k9.message.SimpleMessageFormat.TEXT && quotedText.length() > 0) {
+            if (simpleMessageFormat == au.com.wallaceit.voicemail.message.SimpleMessageFormat.TEXT && quotedText.length() > 0) {
                 textBodyBuilder.setIncludeQuotedText(true);
                 textBodyBuilder.setQuotedText(quotedText);
                 textBodyBuilder.setReplyAfterQuote(isReplyAfterQuote);
@@ -324,7 +324,7 @@ public class MessageBuilder {
         }
 
         TextBody body;
-        if (simpleMessageFormat == com.fsck.k9.message.SimpleMessageFormat.HTML) {
+        if (simpleMessageFormat == au.com.wallaceit.voicemail.message.SimpleMessageFormat.HTML) {
             body = textBodyBuilder.buildTextHtml();
         } else {
             body = textBodyBuilder.buildTextPlain();
@@ -332,122 +332,122 @@ public class MessageBuilder {
         return body;
     }
 
-    public com.fsck.k9.message.MessageBuilder setSubject(String subject) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setSubject(String subject) {
         this.subject = subject;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setTo(Address[] to) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setTo(Address[] to) {
         this.to = to;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setCc(Address[] cc) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setCc(Address[] cc) {
         this.cc = cc;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setBcc(Address[] bcc) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setBcc(Address[] bcc) {
         this.bcc = bcc;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setInReplyTo(String inReplyTo) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setInReplyTo(String inReplyTo) {
         this.inReplyTo = inReplyTo;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setReferences(String references) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setReferences(String references) {
         this.references = references;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setRequestReadReceipt(boolean requestReadReceipt) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setRequestReadReceipt(boolean requestReadReceipt) {
         this.requestReadReceipt = requestReadReceipt;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setIdentity(Identity identity) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setIdentity(Identity identity) {
         this.identity = identity;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setMessageFormat(SimpleMessageFormat messageFormat) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setMessageFormat(SimpleMessageFormat messageFormat) {
         this.messageFormat = messageFormat;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setText(String text) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setText(String text) {
         this.text = text;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setPgpData(PgpData pgpData) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setPgpData(PgpData pgpData) {
         this.pgpData = pgpData;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setAttachments(List<Attachment> attachments) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setSignature(String signature) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setSignature(String signature) {
         this.signature = signature;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setQuoteStyle(QuoteStyle quoteStyle) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setQuoteStyle(QuoteStyle quoteStyle) {
         this.quoteStyle = quoteStyle;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setQuotedTextMode(QuotedTextMode quotedTextMode) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setQuotedTextMode(QuotedTextMode quotedTextMode) {
         this.quotedTextMode = quotedTextMode;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setQuotedText(String quotedText) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setQuotedText(String quotedText) {
         this.quotedText = quotedText;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setQuotedHtmlContent(InsertableHtmlContent quotedHtmlContent) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setQuotedHtmlContent(InsertableHtmlContent quotedHtmlContent) {
         this.quotedHtmlContent = quotedHtmlContent;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setReplyAfterQuote(boolean isReplyAfterQuote) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setReplyAfterQuote(boolean isReplyAfterQuote) {
         this.isReplyAfterQuote = isReplyAfterQuote;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setSignatureBeforeQuotedText(boolean isSignatureBeforeQuotedText) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setSignatureBeforeQuotedText(boolean isSignatureBeforeQuotedText) {
         this.isSignatureBeforeQuotedText = isSignatureBeforeQuotedText;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setIdentityChanged(boolean identityChanged) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setIdentityChanged(boolean identityChanged) {
         this.identityChanged = identityChanged;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setSignatureChanged(boolean signatureChanged) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setSignatureChanged(boolean signatureChanged) {
         this.signatureChanged = signatureChanged;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setCursorPosition(int cursorPosition) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setCursorPosition(int cursorPosition) {
         this.cursorPosition = cursorPosition;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setMessageReference(MessageReference messageReference) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setMessageReference(MessageReference messageReference) {
         this.messageReference = messageReference;
         return this;
     }
 
-    public com.fsck.k9.message.MessageBuilder setDraft(boolean isDraft) {
+    public au.com.wallaceit.voicemail.message.MessageBuilder setDraft(boolean isDraft) {
         this.isDraft = isDraft;
         return this;
     }

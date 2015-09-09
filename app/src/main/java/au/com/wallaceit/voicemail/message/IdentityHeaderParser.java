@@ -8,9 +8,9 @@ import java.util.StringTokenizer;
 import android.net.Uri;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.filter.Base64;
-import com.fsck.k9.message.IdentityField;
+import au.com.wallaceit.voicemail.message.IdentityField;
 
 
 public class IdentityHeaderParser {

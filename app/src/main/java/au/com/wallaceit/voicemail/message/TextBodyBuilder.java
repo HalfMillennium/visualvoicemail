@@ -3,12 +3,12 @@ package au.com.wallaceit.voicemail.message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.Body;
-import com.fsck.k9.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.message.*;
-import com.fsck.k9.message.InsertableHtmlContent;
+import au.com.wallaceit.voicemail.message.*;
+import au.com.wallaceit.voicemail.message.InsertableHtmlContent;
 
 class TextBodyBuilder {
     private boolean mIncludeQuotedText = true;
@@ -20,7 +20,7 @@ class TextBodyBuilder {
     private String mMessageContent;
     private String mSignature;
     private String mQuotedText;
-    private com.fsck.k9.message.InsertableHtmlContent mQuotedTextHtml;
+    private au.com.wallaceit.voicemail.message.InsertableHtmlContent mQuotedTextHtml;
 
     public TextBodyBuilder(String messageContent) {
         mMessageContent = messageContent;
@@ -44,7 +44,7 @@ class TextBodyBuilder {
 
         // Do we have to modify an existing message to include our reply?
         if (mIncludeQuotedText) {
-            com.fsck.k9.message.InsertableHtmlContent quotedHtmlContent = getQuotedTextHtml();
+            au.com.wallaceit.voicemail.message.InsertableHtmlContent quotedHtmlContent = getQuotedTextHtml();
 
             if (VisualVoicemail.DEBUG) {
                 Log.d(VisualVoicemail.LOG_TAG, "insertable: " + quotedHtmlContent.toDebugString());
@@ -70,13 +70,13 @@ class TextBodyBuilder {
              */
             if (mReplyAfterQuote) {
                 quotedHtmlContent.setInsertionLocation(
-                        com.fsck.k9.message.InsertableHtmlContent.InsertionLocation.AFTER_QUOTE);
+                        au.com.wallaceit.voicemail.message.InsertableHtmlContent.InsertionLocation.AFTER_QUOTE);
                 if (mInsertSeparator) {
                     text = "<br clear=\"all\">" + text;
                 }
             } else {
                 quotedHtmlContent.setInsertionLocation(
-                        com.fsck.k9.message.InsertableHtmlContent.InsertionLocation.BEFORE_QUOTE);
+                        au.com.wallaceit.voicemail.message.InsertableHtmlContent.InsertionLocation.BEFORE_QUOTE);
                 if (mInsertSeparator) {
                     text += "<br><br>";
                 }
@@ -202,7 +202,7 @@ class TextBodyBuilder {
         return quotedText;
     }
 
-    private com.fsck.k9.message.InsertableHtmlContent getQuotedTextHtml() {
+    private au.com.wallaceit.voicemail.message.InsertableHtmlContent getQuotedTextHtml() {
         return mQuotedTextHtml;
     }
 

@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.BaseAccount;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.BaseAccount;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.AccountList;
-import com.fsck.k9.activity.FolderList;
-import com.fsck.k9.activity.MessageList;
-import com.fsck.k9.search.SearchAccount;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.AccountList;
+import au.com.wallaceit.voicemail.activity.FolderList;
+import au.com.wallaceit.voicemail.activity.MessageList;
+import au.com.wallaceit.voicemail.search.SearchAccount;
 
 public class LauncherShortcuts extends AccountList {
     @Override

@@ -10,8 +10,8 @@ import java.util.TreeMap;
 import android.content.SharedPreferences;
 
 import com.fsck.k9.mail.Folder.FolderClass;
-import com.fsck.k9.preferences.Settings;
-import com.fsck.k9.preferences.Settings.*;
+import au.com.wallaceit.voicemail.preferences.Settings;
+import au.com.wallaceit.voicemail.preferences.Settings.*;
 
 public class FolderSettings {
     public static final Map<String, TreeMap<Integer, SettingsDescription>> SETTINGS;

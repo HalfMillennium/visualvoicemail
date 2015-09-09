@@ -21,23 +21,23 @@ import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.VisualVoicemail.NotificationHideSubject;
-import com.fsck.k9.VisualVoicemail.NotificationQuickDelete;
-import com.fsck.k9.VisualVoicemail.SplitViewMode;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
+import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
+import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.ColorPickerDialog;
-import com.fsck.k9.activity.K9PreferenceActivity;
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.FontSizeSettings;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.helper.FileBrowserHelper;
-import com.fsck.k9.helper.FileBrowserHelper.FileBrowserFailOverCallback;
-import com.fsck.k9.preferences.CheckBoxListPreference;
-import com.fsck.k9.preferences.TimePickerPreference;
+import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
+import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.FontSizeSettings;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.helper.FileBrowserHelper;
+import au.com.wallaceit.voicemail.helper.FileBrowserHelper.FileBrowserFailOverCallback;
+import au.com.wallaceit.voicemail.preferences.CheckBoxListPreference;
+import au.com.wallaceit.voicemail.preferences.TimePickerPreference;
 
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.service.MailService;
 
 
 public class Prefs extends K9PreferenceActivity {
@@ -159,7 +159,7 @@ public class Prefs extends K9PreferenceActivity {
 
 
     public static void actionPrefs(Context context) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.Prefs.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.Prefs.class);
         context.startActivity(i);
     }
 
@@ -377,7 +377,7 @@ public class Prefs extends K9PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 FileBrowserHelper
                 .getInstance()
-                .showFileBrowserActivity(com.fsck.k9.activity.setup.Prefs.this,
+                .showFileBrowserActivity(au.com.wallaceit.voicemail.activity.setup.Prefs.this,
                                          new File(VisualVoicemail.getAttachmentDefaultPath()),
                                          ACTIVITY_CHOOSE_FOLDER, callback);
 

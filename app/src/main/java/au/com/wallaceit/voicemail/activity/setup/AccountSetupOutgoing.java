@@ -15,20 +15,20 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.fsck.k9.*;
-import com.fsck.k9.account.AccountCreator;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.AccountSetupCheckSettings.CheckDirection;
-import com.fsck.k9.activity.setup.AuthTypeHolder;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.account.AccountCreator;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
+import au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ServerSettings.Type;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
-import com.fsck.k9.view.ClientCertificateSpinner;
-import com.fsck.k9.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
+import au.com.wallaceit.voicemail.view.ClientCertificateSpinner;
+import au.com.wallaceit.voicemail.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -61,7 +61,7 @@ public class AccountSetupOutgoing extends K9Activity implements OnClickListener,
     private boolean mMakeDefault;
 
     public static void actionOutgoingSettings(Context context, Account account, boolean makeDefault) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupOutgoing.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MAKE_DEFAULT, makeDefault);
         context.startActivity(i);
@@ -72,7 +72,7 @@ public class AccountSetupOutgoing extends K9Activity implements OnClickListener,
     }
 
     public static Intent intentActionEditOutgoingSettings(Context context, Account account) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupOutgoing.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing.class);
         i.setAction(Intent.ACTION_EDIT);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         return i;
@@ -520,7 +520,7 @@ public class AccountSetupOutgoing extends K9Activity implements OnClickListener,
     };
 
     private AuthType getSelectedAuthType() {
-        com.fsck.k9.activity.setup.AuthTypeHolder holder = (com.fsck.k9.activity.setup.AuthTypeHolder) mAuthTypeView.getSelectedItem();
+        au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder holder = (au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder) mAuthTypeView.getSelectedItem();
         return holder.authType;
     }
 

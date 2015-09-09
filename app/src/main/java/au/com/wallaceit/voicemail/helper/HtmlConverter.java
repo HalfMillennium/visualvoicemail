@@ -2,7 +2,7 @@ package au.com.wallaceit.voicemail.helper;
 
 import android.text.*;
 import android.text.Html.TagHandler;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 import org.xml.sax.XMLReader;
 
@@ -197,7 +197,7 @@ public class HtmlConverter {
      * <p>
      * No HTML headers or footers are added to the result.  Headers and footers
      * are added at display time in
-     * {@link com.fsck.k9.view#MessageWebView.setText(String) MessageWebView.setText()}
+     * {@link au.com.wallaceit.voicemail.view#MessageWebView.setText(String) MessageWebView.setText()}
      * </p>
      *
      * @param text
@@ -247,7 +247,7 @@ public class HtmlConverter {
      * <p>
      * No HTML headers or footers are added to the result.  Headers and footers
      * are added at display time in
-     * {@link com.fsck.k9.view#MessageWebView.setText(String) MessageWebView.setText()}
+     * {@link au.com.wallaceit.voicemail.view#MessageWebView.setText(String) MessageWebView.setText()}
      * </p>
      * <p>
      * To convert to a fragment, use {@link #textToHtmlFragment(String)} .
@@ -1379,7 +1379,7 @@ public class HtmlConverter {
     /**
      * {@link TagHandler} that supports unordered lists.
      *
-     * @see com.fsck.k9.helper.HtmlConverter#htmlToSpanned(String)
+     * @see au.com.wallaceit.voicemail.helper.HtmlConverter#htmlToSpanned(String)
      */
     public static class ListTagHandler implements TagHandler {
         @Override

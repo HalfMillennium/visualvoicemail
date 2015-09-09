@@ -8,21 +8,21 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import android.content.SharedPreferences;
-import com.fsck.k9.Account;
-import com.fsck.k9.Account.DeletePolicy;
-import com.fsck.k9.Account.Expunge;
-import com.fsck.k9.Account.FolderMode;
-import com.fsck.k9.Account.MessageFormat;
-import com.fsck.k9.Account.QuoteStyle;
-import com.fsck.k9.Account.Searchable;
-import com.fsck.k9.Account.ShowPictures;
-import com.fsck.k9.Account.SortType;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Account.DeletePolicy;
+import au.com.wallaceit.voicemail.Account.Expunge;
+import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.Account.MessageFormat;
+import au.com.wallaceit.voicemail.Account.QuoteStyle;
+import au.com.wallaceit.voicemail.Account.Searchable;
+import au.com.wallaceit.voicemail.Account.ShowPictures;
+import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.preferences.*;
-import com.fsck.k9.preferences.Settings;
-import com.fsck.k9.preferences.Settings.*;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.preferences.*;
+import au.com.wallaceit.voicemail.preferences.Settings;
+import au.com.wallaceit.voicemail.preferences.Settings.*;
 
 public class AccountSettings {
     public static final Map<String, TreeMap<Integer, SettingsDescription>> SETTINGS;
@@ -33,198 +33,198 @@ public class AccountSettings {
             new LinkedHashMap<String, TreeMap<Integer, SettingsDescription>>();
 
         /**
-         * When adding new settings here, be sure to increment {@link com.fsck.k9.preferences.Settings.VERSION}
+         * When adding new settings here, be sure to increment {@link au.com.wallaceit.voicemail.preferences.Settings.VERSION}
          * and use that for whatever you add here.
          */
 
-        s.put("alwaysBcc", com.fsck.k9.preferences.Settings.versions(
+        s.put("alwaysBcc", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(11, new StringSetting(""))
         ));
-        s.put("alwaysShowCcBcc", com.fsck.k9.preferences.Settings.versions(
+        s.put("alwaysShowCcBcc", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(13, new BooleanSetting(false))
         ));
-        s.put("archiveFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("archiveFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Archive"))
         ));
-        s.put("autoExpandFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("autoExpandFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("INBOX"))
         ));
-        s.put("automaticCheckIntervalMinutes", com.fsck.k9.preferences.Settings.versions(
+        s.put("automaticCheckIntervalMinutes", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(-1,
                         R.array.account_settings_check_frequency_values))
         ));
-        s.put("chipColor", com.fsck.k9.preferences.Settings.versions(
+        s.put("chipColor", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new ColorSetting(0xFF0000FF))
         ));
-        s.put("cryptoApp", com.fsck.k9.preferences.Settings.versions(
+        s.put("cryptoApp", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("apg")),
                 new V(36, new StringSetting(Account.NO_OPENPGP_PROVIDER))
         ));
-        s.put("defaultQuotedTextShown", com.fsck.k9.preferences.Settings.versions(
+        s.put("defaultQuotedTextShown", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_QUOTED_TEXT_SHOWN))
         ));
-        s.put("deletePolicy", com.fsck.k9.preferences.Settings.versions(
+        s.put("deletePolicy", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new DeletePolicySetting(DeletePolicy.NEVER))
         ));
-        s.put("displayCount", com.fsck.k9.preferences.Settings.versions(
+        s.put("displayCount", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(VisualVoicemail.DEFAULT_VISIBLE_LIMIT,
                         R.array.account_settings_display_count_values))
         ));
-        s.put("draftsFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("draftsFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Drafts"))
         ));
-        s.put("expungePolicy", com.fsck.k9.preferences.Settings.versions(
+        s.put("expungePolicy", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringResourceSetting(Expunge.EXPUNGE_IMMEDIATELY.name(),
                         R.array.account_setup_expunge_policy_values))
         ));
-        s.put("folderDisplayMode", com.fsck.k9.preferences.Settings.versions(
+        s.put("folderDisplayMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.NOT_SECOND_CLASS))
         ));
-        s.put("folderPushMode", com.fsck.k9.preferences.Settings.versions(
+        s.put("folderPushMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.FIRST_CLASS))
         ));
-        s.put("folderSyncMode", com.fsck.k9.preferences.Settings.versions(
+        s.put("folderSyncMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.FIRST_CLASS))
         ));
-        s.put("folderTargetMode", com.fsck.k9.preferences.Settings.versions(
+        s.put("folderTargetMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.NOT_SECOND_CLASS))
         ));
-        s.put("goToUnreadMessageSearch", com.fsck.k9.preferences.Settings.versions(
+        s.put("goToUnreadMessageSearch", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("idleRefreshMinutes", com.fsck.k9.preferences.Settings.versions(
+        s.put("idleRefreshMinutes", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(24, R.array.idle_refresh_period_values))
         ));
-        s.put("inboxFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("inboxFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("INBOX"))
         ));
-        s.put("led", com.fsck.k9.preferences.Settings.versions(
+        s.put("led", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("ledColor", com.fsck.k9.preferences.Settings.versions(
+        s.put("ledColor", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new ColorSetting(0xFF0000FF))
         ));
-        s.put("localStorageProvider", com.fsck.k9.preferences.Settings.versions(
+        s.put("localStorageProvider", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StorageProviderSetting())
         ));
-        s.put("markMessageAsReadOnView", com.fsck.k9.preferences.Settings.versions(
+        s.put("markMessageAsReadOnView", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(7, new BooleanSetting(true))
         ));
-        s.put("maxPushFolders", com.fsck.k9.preferences.Settings.versions(
+        s.put("maxPushFolders", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerRangeSetting(0, 100, 10))
         ));
-        s.put("maximumAutoDownloadMessageSize", com.fsck.k9.preferences.Settings.versions(
+        s.put("maximumAutoDownloadMessageSize", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(32768,
                         R.array.account_settings_autodownload_message_size_values))
         ));
-        s.put("maximumPolledMessageAge", com.fsck.k9.preferences.Settings.versions(
+        s.put("maximumPolledMessageAge", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(-1,
                         R.array.account_settings_message_age_values))
         ));
-        s.put("messageFormat", com.fsck.k9.preferences.Settings.versions(
+        s.put("messageFormat", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<MessageFormat>(
                         MessageFormat.class, Account.DEFAULT_MESSAGE_FORMAT))
         ));
-        s.put("messageFormatAuto", com.fsck.k9.preferences.Settings.versions(
+        s.put("messageFormatAuto", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(2, new BooleanSetting(Account.DEFAULT_MESSAGE_FORMAT_AUTO))
         ));
-        s.put("messageReadReceipt", com.fsck.k9.preferences.Settings.versions(
+        s.put("messageReadReceipt", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_MESSAGE_READ_RECEIPT))
         ));
-        s.put("notifyMailCheck", com.fsck.k9.preferences.Settings.versions(
+        s.put("notifyMailCheck", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("notifyNewMail", com.fsck.k9.preferences.Settings.versions(
+        s.put("notifyNewMail", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("folderNotifyNewMailMode", com.fsck.k9.preferences.Settings.versions(
+        s.put("folderNotifyNewMailMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(34, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.ALL))
         ));
-        s.put("notifySelfNewMail", com.fsck.k9.preferences.Settings.versions(
+        s.put("notifySelfNewMail", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("pushPollOnConnect", com.fsck.k9.preferences.Settings.versions(
+        s.put("pushPollOnConnect", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("quotePrefix", com.fsck.k9.preferences.Settings.versions(
+        s.put("quotePrefix", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting(Account.DEFAULT_QUOTE_PREFIX))
         ));
-        s.put("quoteStyle", com.fsck.k9.preferences.Settings.versions(
+        s.put("quoteStyle", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<QuoteStyle>(
                         QuoteStyle.class, Account.DEFAULT_QUOTE_STYLE))
         ));
-        s.put("replyAfterQuote", com.fsck.k9.preferences.Settings.versions(
+        s.put("replyAfterQuote", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_REPLY_AFTER_QUOTE))
         ));
-        s.put("ring", com.fsck.k9.preferences.Settings.versions(
+        s.put("ring", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("ringtone", com.fsck.k9.preferences.Settings.versions(
+        s.put("ringtone", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new RingtoneSetting("content://settings/system/notification_sound"))
         ));
-        s.put("searchableFolders", com.fsck.k9.preferences.Settings.versions(
+        s.put("searchableFolders", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<Searchable>(
                         Searchable.class, Searchable.ALL))
         ));
-        s.put("sentFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("sentFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Sent"))
         ));
-        s.put("sortTypeEnum", com.fsck.k9.preferences.Settings.versions(
+        s.put("sortTypeEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(9, new EnumSetting<SortType>(SortType.class, Account.DEFAULT_SORT_TYPE))
         ));
-        s.put("sortAscending", com.fsck.k9.preferences.Settings.versions(
+        s.put("sortAscending", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(9, new BooleanSetting(Account.DEFAULT_SORT_ASCENDING))
         ));
-        s.put("showPicturesEnum", com.fsck.k9.preferences.Settings.versions(
+        s.put("showPicturesEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<ShowPictures>(
                         ShowPictures.class, ShowPictures.NEVER))
         ));
-        s.put("signatureBeforeQuotedText", com.fsck.k9.preferences.Settings.versions(
+        s.put("signatureBeforeQuotedText", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("spamFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("spamFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Spam"))
         ));
-        s.put("stripSignature", com.fsck.k9.preferences.Settings.versions(
+        s.put("stripSignature", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(2, new BooleanSetting(Account.DEFAULT_STRIP_SIGNATURE))
         ));
-        s.put("subscribedFoldersOnly", com.fsck.k9.preferences.Settings.versions(
+        s.put("subscribedFoldersOnly", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("syncRemoteDeletions", com.fsck.k9.preferences.Settings.versions(
+        s.put("syncRemoteDeletions", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("trashFolderName", com.fsck.k9.preferences.Settings.versions(
+        s.put("trashFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Trash"))
         ));
-        s.put("useCompression.MOBILE", com.fsck.k9.preferences.Settings.versions(
+        s.put("useCompression.MOBILE", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("useCompression.OTHER", com.fsck.k9.preferences.Settings.versions(
+        s.put("useCompression.OTHER", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("useCompression.WIFI", com.fsck.k9.preferences.Settings.versions(
+        s.put("useCompression.WIFI", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("vibrate", com.fsck.k9.preferences.Settings.versions(
+        s.put("vibrate", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
-        s.put("vibratePattern", com.fsck.k9.preferences.Settings.versions(
+        s.put("vibratePattern", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(0,
                         R.array.account_settings_vibrate_pattern_values))
         ));
-        s.put("vibrateTimes", com.fsck.k9.preferences.Settings.versions(
+        s.put("vibrateTimes", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerResourceSetting(5,
                         R.array.account_settings_vibrate_times_label))
         ));
-        s.put("allowRemoteSearch", com.fsck.k9.preferences.Settings.versions(
+        s.put("allowRemoteSearch", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(true))
         ));
-        s.put("remoteSearchNumResults", com.fsck.k9.preferences.Settings.versions(
+        s.put("remoteSearchNumResults", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new IntegerResourceSetting(Account.DEFAULT_REMOTE_SEARCH_NUM_RESULTS,
                         R.array.account_settings_remote_search_num_results_values))
         ));
-        s.put("remoteSearchFullText", com.fsck.k9.preferences.Settings.versions(
+        s.put("remoteSearchFullText", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(false))
         ));
 
@@ -236,11 +236,11 @@ public class AccountSettings {
 
     public static Map<String, Object> validate(int version, Map<String, String> importedSettings,
             boolean useDefaultValues) {
-        return com.fsck.k9.preferences.Settings.validate(version, SETTINGS, importedSettings, useDefaultValues);
+        return au.com.wallaceit.voicemail.preferences.Settings.validate(version, SETTINGS, importedSettings, useDefaultValues);
     }
 
     public static Set<String> upgrade(int version, Map<String, Object> validatedSettings) {
-        return com.fsck.k9.preferences.Settings.upgrade(version, UPGRADERS, SETTINGS, validatedSettings);
+        return au.com.wallaceit.voicemail.preferences.Settings.upgrade(version, UPGRADERS, SETTINGS, validatedSettings);
     }
 
     public static Map<String, String> convert(Map<String, Object> settings) {

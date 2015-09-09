@@ -10,23 +10,23 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.MessageReference;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.MessageReference;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeMessage;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.mailstore.LockableDatabase.DbCallback;
-import com.fsck.k9.mailstore.LockableDatabase.WrappedException;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 public class LocalMessage extends MimeMessage {
     protected MessageReference mReference;
-    private final com.fsck.k9.mailstore.LocalStore localStore;
+    private final au.com.wallaceit.voicemail.mailstore.LocalStore localStore;
 
     private long mId;
     private int mAttachmentCount;
@@ -41,7 +41,7 @@ public class LocalMessage extends MimeMessage {
     private long messagePartId;
     private String mimeType;
 
-    private LocalMessage(com.fsck.k9.mailstore.LocalStore localStore) {
+    private LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore localStore) {
         this.localStore = localStore;
     }
 
@@ -240,7 +240,7 @@ public class LocalMessage extends MimeMessage {
                             delete();
                         }
 
-                        com.fsck.k9.mailstore.LocalMessage.super.setFlag(flag, set);
+                        au.com.wallaceit.voicemail.mailstore.LocalMessage.super.setFlag(flag, set);
                     } catch (MessagingException e) {
                         throw new WrappedException(e);
                     }
@@ -248,7 +248,7 @@ public class LocalMessage extends MimeMessage {
                      * Set the flags on the message.
                      */
                     ContentValues cv = new ContentValues();
-                    cv.put("flags", com.fsck.k9.mailstore.LocalMessage.this.localStore.serializeFlags(getFlags()));
+                    cv.put("flags", au.com.wallaceit.voicemail.mailstore.LocalMessage.this.localStore.serializeFlags(getFlags()));
                     cv.put("read", isSet(Flag.SEEN) ? 1 : 0);
                     cv.put("flagged", isSet(Flag.FLAGGED) ? 1 : 0);
                     cv.put("answered", isSet(Flag.ANSWERED) ? 1 : 0);
@@ -482,8 +482,8 @@ public class LocalMessage extends MimeMessage {
     }
 
     @Override
-    public com.fsck.k9.mailstore.LocalMessage clone() {
-        com.fsck.k9.mailstore.LocalMessage message = new com.fsck.k9.mailstore.LocalMessage(this.localStore);
+    public au.com.wallaceit.voicemail.mailstore.LocalMessage clone() {
+        au.com.wallaceit.voicemail.mailstore.LocalMessage message = new au.com.wallaceit.voicemail.mailstore.LocalMessage(this.localStore);
         super.copy(message);
 
         message.mId = mId;
@@ -517,8 +517,8 @@ public class LocalMessage extends MimeMessage {
     @Override
     protected void copy(MimeMessage destination) {
         super.copy(destination);
-        if (destination instanceof com.fsck.k9.mailstore.LocalMessage) {
-            ((com.fsck.k9.mailstore.LocalMessage)destination).mReference = mReference;
+        if (destination instanceof au.com.wallaceit.voicemail.mailstore.LocalMessage) {
+            ((au.com.wallaceit.voicemail.mailstore.LocalMessage)destination).mReference = mReference;
         }
     }
 
@@ -537,7 +537,7 @@ public class LocalMessage extends MimeMessage {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        final com.fsck.k9.mailstore.LocalMessage that = (com.fsck.k9.mailstore.LocalMessage) o;
+        final au.com.wallaceit.voicemail.mailstore.LocalMessage that = (au.com.wallaceit.voicemail.mailstore.LocalMessage) o;
         return !(getAccountUuid() != null ? !getAccountUuid().equals(that.getAccountUuid()) : that.getAccountUuid() != null);
     }
 

@@ -14,14 +14,14 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.fsck.k9.Account;
+import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.BuildConfig;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.mailstore.LocalStore.AttachmentInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.LocalStore.AttachmentInfo;
 import org.openintents.openpgp.util.ParcelFileDescriptorUtil;
 
 

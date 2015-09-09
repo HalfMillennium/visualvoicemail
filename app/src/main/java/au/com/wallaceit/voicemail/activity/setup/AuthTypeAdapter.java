@@ -3,23 +3,23 @@ package au.com.wallaceit.voicemail.activity.setup;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.AuthTypeHolder;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder;
 import com.fsck.k9.mail.AuthType;
 
 
-class AuthTypeAdapter extends ArrayAdapter<com.fsck.k9.activity.setup.AuthTypeHolder> {
-    public AuthTypeAdapter(Context context, int resource, com.fsck.k9.activity.setup.AuthTypeHolder[] holders) {
+class AuthTypeAdapter extends ArrayAdapter<au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder> {
+    public AuthTypeAdapter(Context context, int resource, au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder[] holders) {
         super(context, resource, holders);
     }
 
-    public static com.fsck.k9.activity.setup.AuthTypeAdapter get(Context context) {
+    public static au.com.wallaceit.voicemail.activity.setup.AuthTypeAdapter get(Context context) {
         AuthType[] authTypes = new AuthType[]{AuthType.PLAIN, AuthType.CRAM_MD5, AuthType.EXTERNAL};
-        com.fsck.k9.activity.setup.AuthTypeHolder[] holders = new com.fsck.k9.activity.setup.AuthTypeHolder[authTypes.length];
+        au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder[] holders = new au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder[authTypes.length];
         for (int i = 0; i < authTypes.length; i++) {
-            holders[i] = new com.fsck.k9.activity.setup.AuthTypeHolder(authTypes[i], context.getResources());
+            holders[i] = new au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder(authTypes[i], context.getResources());
         }
-        com.fsck.k9.activity.setup.AuthTypeAdapter authTypesAdapter = new com.fsck.k9.activity.setup.AuthTypeAdapter(context,
+        au.com.wallaceit.voicemail.activity.setup.AuthTypeAdapter authTypesAdapter = new au.com.wallaceit.voicemail.activity.setup.AuthTypeAdapter(context,
                 android.R.layout.simple_spinner_item, holders);
         authTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return authTypesAdapter;

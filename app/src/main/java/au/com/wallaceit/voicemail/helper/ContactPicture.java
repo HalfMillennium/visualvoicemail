@@ -3,9 +3,9 @@ package au.com.wallaceit.voicemail.helper;
 import android.content.Context;
 import android.util.TypedValue;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.misc.ContactPictureLoader;
+import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
 
 public class ContactPicture {
 

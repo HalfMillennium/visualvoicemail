@@ -9,11 +9,11 @@ import org.apache.james.mime4j.util.MimeUtil;
 
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeMessage;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.BinaryAttachmentBody;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.BinaryAttachmentBody;
 
 class AttachmentMessageBodyUtil {
-    public static void writeTo(com.fsck.k9.mailstore.BinaryAttachmentBody body, OutputStream out) throws IOException,
+    public static void writeTo(au.com.wallaceit.voicemail.mailstore.BinaryAttachmentBody body, OutputStream out) throws IOException,
             MessagingException {
         InputStream in = body.getInputStream();
         try {

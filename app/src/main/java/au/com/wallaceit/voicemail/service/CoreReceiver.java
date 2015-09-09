@@ -10,15 +10,15 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 
 public class CoreReceiver extends BroadcastReceiver {
 
-    public static final String WAKE_LOCK_RELEASE = "com.fsck.k9.service.CoreReceiver.wakeLockRelease";
+    public static final String WAKE_LOCK_RELEASE = "au.com.wallaceit.voicemail.service.CoreReceiver.wakeLockRelease";
 
-    public static final String WAKE_LOCK_ID = "com.fsck.k9.service.CoreReceiver.wakeLockId";
+    public static final String WAKE_LOCK_ID = "au.com.wallaceit.voicemail.service.CoreReceiver.wakeLockId";
 
     private static ConcurrentHashMap<Integer, TracingWakeLock> wakeLocks = new ConcurrentHashMap<Integer, TracingWakeLock>();
     private static AtomicInteger wakeLockSeq = new AtomicInteger(0);
@@ -50,22 +50,22 @@ public class CoreReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Integer tmpWakeLockId = com.fsck.k9.service.CoreReceiver.getWakeLock(context);
+        Integer tmpWakeLockId = au.com.wallaceit.voicemail.service.CoreReceiver.getWakeLock(context);
         try {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "CoreReceiver.onReceive" + intent);
-            if (com.fsck.k9.service.CoreReceiver.WAKE_LOCK_RELEASE.equals(intent.getAction())) {
+            if (au.com.wallaceit.voicemail.service.CoreReceiver.WAKE_LOCK_RELEASE.equals(intent.getAction())) {
                 Integer wakeLockId = intent.getIntExtra(WAKE_LOCK_ID, -1);
                 if (wakeLockId != -1) {
                     if (VisualVoicemail.DEBUG)
                         Log.v(VisualVoicemail.LOG_TAG, "CoreReceiver Release wakeLock " + wakeLockId);
-                    com.fsck.k9.service.CoreReceiver.releaseWakeLock(wakeLockId);
+                    au.com.wallaceit.voicemail.service.CoreReceiver.releaseWakeLock(wakeLockId);
                 }
             } else {
                 tmpWakeLockId = receive(context, intent, tmpWakeLockId);
             }
         } finally {
-            com.fsck.k9.service.CoreReceiver.releaseWakeLock(tmpWakeLockId);
+            au.com.wallaceit.voicemail.service.CoreReceiver.releaseWakeLock(tmpWakeLockId);
         }
     }
 
@@ -77,7 +77,7 @@ public class CoreReceiver extends BroadcastReceiver {
         if (VisualVoicemail.DEBUG)
             Log.v(VisualVoicemail.LOG_TAG, "CoreReceiver Got request to release wakeLock " + wakeLockId);
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.CoreReceiver.class);
+        i.setClass(context, au.com.wallaceit.voicemail.service.CoreReceiver.class);
         i.setAction(WAKE_LOCK_RELEASE);
         i.putExtra(WAKE_LOCK_ID, wakeLockId);
         context.sendBroadcast(i);

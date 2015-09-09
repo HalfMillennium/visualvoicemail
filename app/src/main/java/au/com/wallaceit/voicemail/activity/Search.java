@@ -1,7 +1,7 @@
 package au.com.wallaceit.voicemail.activity;
 
 
-import com.fsck.k9.activity.MessageList;
+import au.com.wallaceit.voicemail.activity.MessageList;
 
 public class Search extends MessageList {
     protected static boolean isActive = false;

@@ -18,10 +18,10 @@ import android.content.IntentSender.SendIntentException;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.crypto.MessageDecryptVerifier;
+import au.com.wallaceit.voicemail.crypto.MessageDecryptVerifier;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.BodyPart;
 import com.fsck.k9.mail.MessagingException;
@@ -30,13 +30,13 @@ import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeBodyPart;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.mailstore.DecryptStreamParser;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.MessageHelper;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation.CryptoError;
-import com.fsck.k9.ui.crypto.*;
-import com.fsck.k9.ui.crypto.MessageCryptoCallback;
+import au.com.wallaceit.voicemail.mailstore.DecryptStreamParser;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.MessageHelper;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation.CryptoError;
+import au.com.wallaceit.voicemail.ui.crypto.*;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoCallback;
 
 import org.openintents.openpgp.IOpenPgpService;
 import org.openintents.openpgp.OpenPgpDecryptionResult;
@@ -56,7 +56,7 @@ public class MessageCryptoHelper {
 
     private final Context context;
     private final Activity activity;
-    private final com.fsck.k9.ui.crypto.MessageCryptoCallback callback;
+    private final au.com.wallaceit.voicemail.ui.crypto.MessageCryptoCallback callback;
     private final Account account;
     private LocalMessage message;
 

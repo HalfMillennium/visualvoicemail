@@ -13,10 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.K9ListActivity;
-import com.fsck.k9.search.SearchAccount;
+import au.com.wallaceit.voicemail.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.search.SearchAccount;
 
 
 /**
@@ -99,7 +99,7 @@ public abstract class AccountList extends K9ListActivity implements OnItemClickL
 
     class AccountsAdapter extends ArrayAdapter<BaseAccount> {
         public AccountsAdapter(List<BaseAccount> accounts) {
-            super(com.fsck.k9.activity.AccountList.this, 0, accounts);
+            super(au.com.wallaceit.voicemail.activity.AccountList.this, 0, accounts);
         }
 
         @Override

@@ -1,7 +1,7 @@
 package au.com.wallaceit.voicemail.account;
 
 
-import com.fsck.k9.Account.DeletePolicy;
+import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings.Type;
 
@@ -9,7 +9,7 @@ import com.fsck.k9.mail.ServerSettings.Type;
 /**
  * Deals with logic surrounding account creation.
  * <p/>
- * TODO Move much of the code from com.fsck.k9.activity.setup.* into here
+ * TODO Move much of the code from au.com.wallaceit.voicemail.activity.setup.* into here
  */
 public class AccountCreator {
 

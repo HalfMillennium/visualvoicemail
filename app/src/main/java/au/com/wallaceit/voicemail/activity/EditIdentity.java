@@ -6,12 +6,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import com.fsck.k9.Account;
-import com.fsck.k9.Identity;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.K9Activity;
 
 import java.util.List;
 

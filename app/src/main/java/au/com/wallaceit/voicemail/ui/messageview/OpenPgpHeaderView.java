@@ -18,9 +18,9 @@ import android.widget.TextView;
 
 import com.fsck.k9.R;
 
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback;
 
 import org.openintents.openpgp.OpenPgpDecryptionResult;
 import org.openintents.openpgp.OpenPgpError;
@@ -30,7 +30,7 @@ import org.openintents.openpgp.util.OpenPgpUtils;
 
 public class OpenPgpHeaderView extends LinearLayout {
     private Context context;
-    private com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback callback;
+    private au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback callback;
 
     private OpenPgpResultAnnotation cryptoAnnotation;
 
@@ -61,7 +61,7 @@ public class OpenPgpHeaderView extends LinearLayout {
         resultSignatureButton = (Button) findViewById(R.id.result_signature_button);
     }
 
-    public void setCallback(com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback callback) {
+    public void setCallback(au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback callback) {
         this.callback = callback;
     }
 

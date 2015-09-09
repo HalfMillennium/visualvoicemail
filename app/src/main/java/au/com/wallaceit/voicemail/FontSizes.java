@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.fsck.k9.preferences.GlobalSettings;
+import au.com.wallaceit.voicemail.preferences.GlobalSettings;
 
 /**
  * Manage font size of the information displayed in the account list, folder

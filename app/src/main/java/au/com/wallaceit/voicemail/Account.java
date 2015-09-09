@@ -22,13 +22,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 
-import com.fsck.k9.*;
-import com.fsck.k9.AccountStats;
-import com.fsck.k9.BaseAccount;
-import com.fsck.k9.Identity;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.activity.setup.AccountSetupCheckSettings.CheckDirection;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.*;
+
+import com.fsck.k9.R;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.NetworkType;
@@ -37,22 +33,25 @@ import com.fsck.k9.mail.Folder.FolderClass;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.mailstore.StorageManager.StorageProvider;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.provider.EmailProvider;
-import com.fsck.k9.provider.EmailProvider.StatsColumns;
-import com.fsck.k9.search.ConditionsTreeNode;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SqlQueryBuilder;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchCondition;
-import com.fsck.k9.search.SearchSpecification.SearchField;
+
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings;
+import au.com.wallaceit.voicemail.helper.Utility;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.provider.EmailProvider;
+import au.com.wallaceit.voicemail.provider.EmailProvider.StatsColumns;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
-import com.fsck.k9.view.ColorChip;
+import au.com.wallaceit.voicemail.view.ColorChip;
 import com.larswerkman.colorpicker.ColorPicker;
 
-import static com.fsck.k9.Preferences.getEnumStringPref;
+import static au.com.wallaceit.voicemail.Preferences.getEnumStringPref;
 
 /**
  * Account stores all of the settings for a single account defined by the user. It is able to save
@@ -353,12 +352,12 @@ public class Account implements BaseAccount, StoreConfig {
      * Pick a nice Android guidelines color if we haven't used them all yet.
      */
     private int pickColor(Context context) {
-        List<com.fsck.k9.Account> accounts = Preferences.getPreferences(context).getAccounts();
+        List<au.com.wallaceit.voicemail.Account> accounts = Preferences.getPreferences(context).getAccounts();
 
         List<Integer> availableColors = new ArrayList<Integer>(PREDEFINED_COLORS.length);
         Collections.addAll(availableColors, PREDEFINED_COLORS);
 
-        for (com.fsck.k9.Account account : accounts) {
+        for (au.com.wallaceit.voicemail.Account account : accounts) {
             Integer color = account.getChipColor();
             if (availableColors.contains(color)) {
                 availableColors.remove(color);
@@ -596,9 +595,9 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public static List<Integer> getExistingAccountNumbers(Preferences preferences) {
-        List<com.fsck.k9.Account> accounts = preferences.getAccounts();
+        List<au.com.wallaceit.voicemail.Account> accounts = preferences.getAccounts();
         List<Integer> accountNumbers = new ArrayList<Integer>(accounts.size());
-        for (com.fsck.k9.Account a : accounts) {
+        for (au.com.wallaceit.voicemail.Account a : accounts) {
             accountNumbers.add(a.getAccountNumber());
         }
         return accountNumbers;
@@ -655,7 +654,7 @@ public class Account implements BaseAccount, StoreConfig {
              *
              * I bet there is a much smarter way to do this. Anyone like to suggest it?
              */
-            List<com.fsck.k9.Account> accounts = preferences.getAccounts();
+            List<au.com.wallaceit.voicemail.Account> accounts = preferences.getAccounts();
             int[] accountNumbers = new int[accounts.size()];
             for (int i = 0; i < accounts.size(); i++) {
                 accountNumbers[i] = accounts.get(i).getAccountNumber();
@@ -718,7 +717,7 @@ public class Account implements BaseAccount, StoreConfig {
         if (MessageFormat.AUTO.equals(mMessageFormat)) {
             // saving MessageFormat.AUTO as is to the database will cause downgrades to crash on
             // startup, so we save as MessageFormat.TEXT instead with a separate flag for auto.
-            editor.putString(mUuid + ".messageFormat", com.fsck.k9.Account.MessageFormat.TEXT.name());
+            editor.putString(mUuid + ".messageFormat", au.com.wallaceit.voicemail.Account.MessageFormat.TEXT.name());
             mMessageFormatAuto = true;
         } else {
             editor.putString(mUuid + ".messageFormat", mMessageFormat.name());
@@ -1310,8 +1309,8 @@ public class Account implements BaseAccount, StoreConfig {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof com.fsck.k9.Account) {
-            return ((com.fsck.k9.Account)o).mUuid.equals(mUuid);
+        if (o instanceof au.com.wallaceit.voicemail.Account) {
+            return ((au.com.wallaceit.voicemail.Account)o).mUuid.equals(mUuid);
         }
         return super.equals(o);
     }
@@ -1734,7 +1733,7 @@ public class Account implements BaseAccount, StoreConfig {
      * @see #getFolderDisplayMode()
      */
     public void limitToDisplayableFolders(LocalSearch search) {
-        final com.fsck.k9.Account.FolderMode displayMode = getFolderDisplayMode();
+        final au.com.wallaceit.voicemail.Account.FolderMode displayMode = getFolderDisplayMode();
 
         switch (displayMode) {
             case FIRST_CLASS: {
@@ -1835,10 +1834,10 @@ public class Account implements BaseAccount, StoreConfig {
     /**
      * Add a new certificate for the incoming or outgoing server to the local key store.
      */
-    public void addCertificate(CheckDirection direction,
+    public void addCertificate(AccountSetupCheckSettings.CheckDirection direction,
             X509Certificate certificate) throws CertificateException {
         Uri uri;
-        if (direction == CheckDirection.INCOMING) {
+        if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
             uri = Uri.parse(getStoreUri());
         } else {
             uri = Uri.parse(getTransportUri());
@@ -1853,9 +1852,9 @@ public class Account implements BaseAccount, StoreConfig {
      * old host/port.
      */
     public void deleteCertificate(String newHost, int newPort,
-            CheckDirection direction) {
+            AccountSetupCheckSettings.CheckDirection direction) {
         Uri uri;
-        if (direction == CheckDirection.INCOMING) {
+        if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
             uri = Uri.parse(getStoreUri());
         } else {
             uri = Uri.parse(getTransportUri());

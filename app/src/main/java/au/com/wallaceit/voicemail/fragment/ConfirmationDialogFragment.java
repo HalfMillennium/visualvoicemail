@@ -10,7 +10,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 public class ConfirmationDialogFragment extends DialogFragment implements OnClickListener,
         OnCancelListener {
@@ -23,9 +23,9 @@ public class ConfirmationDialogFragment extends DialogFragment implements OnClic
     private static final String ARG_CANCEL_TEXT = "cancel";
 
 
-    public static com.fsck.k9.fragment.ConfirmationDialogFragment newInstance(int dialogId, String title, String message,
+    public static au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment newInstance(int dialogId, String title, String message,
             String confirmText, String cancelText) {
-        com.fsck.k9.fragment.ConfirmationDialogFragment fragment = new com.fsck.k9.fragment.ConfirmationDialogFragment();
+        au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment fragment = new au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment();
 
         Bundle args = new Bundle();
         args.putInt(ARG_DIALOG_ID, dialogId);
@@ -38,7 +38,7 @@ public class ConfirmationDialogFragment extends DialogFragment implements OnClic
         return fragment;
     }
 
-    public static com.fsck.k9.fragment.ConfirmationDialogFragment newInstance(int dialogId, String title, String message,
+    public static au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment newInstance(int dialogId, String title, String message,
             String cancelText) {
         return newInstance(dialogId, title, message, null, cancelText);
     }

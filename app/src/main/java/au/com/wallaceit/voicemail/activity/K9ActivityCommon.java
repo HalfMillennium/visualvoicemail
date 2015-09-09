@@ -11,12 +11,12 @@ import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.K9ListActivity;
-import com.fsck.k9.activity.misc.SwipeGestureDetector;
-import com.fsck.k9.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector;
+import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 
 
 /**
@@ -27,16 +27,16 @@ import com.fsck.k9.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
  */
 public class K9ActivityCommon {
     /**
-     * Creates a new instance of {@link com.fsck.k9.activity.K9ActivityCommon} bound to the specified activity.
+     * Creates a new instance of {@link au.com.wallaceit.voicemail.activity.K9ActivityCommon} bound to the specified activity.
      *
      * @param activity
      *         The {@link Activity} the returned {@code K9ActivityCommon} instance will be bound to.
      *
-     * @return The {@link com.fsck.k9.activity.K9ActivityCommon} instance that will provide the base functionality of the
+     * @return The {@link au.com.wallaceit.voicemail.activity.K9ActivityCommon} instance that will provide the base functionality of the
      *         "VisualVoicemail" activities.
      */
-    public static com.fsck.k9.activity.K9ActivityCommon newInstance(Activity activity) {
-        return new com.fsck.k9.activity.K9ActivityCommon(activity);
+    public static au.com.wallaceit.voicemail.activity.K9ActivityCommon newInstance(Activity activity) {
+        return new au.com.wallaceit.voicemail.activity.K9ActivityCommon(activity);
     }
 
     public static void setLanguage(Context context, String language) {
@@ -61,7 +61,7 @@ public class K9ActivityCommon {
      * Base activities need to implement this interface.
      *
      * <p>The implementing class simply has to call through to the implementation of these methods
-     * in {@link com.fsck.k9.activity.K9ActivityCommon}.</p>
+     * in {@link au.com.wallaceit.voicemail.activity.K9ActivityCommon}.</p>
      */
     public interface K9ActivityMagic {
         void setupGestureDetector(OnSwipeGestureListener listener);

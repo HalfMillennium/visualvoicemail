@@ -5,11 +5,11 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mailstore.LocalMessageExtractor;
-import com.fsck.k9.mailstore.MessageViewInfo;
-import com.fsck.k9.ui.crypto.MessageCryptoAnnotations;
+import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoAnnotations;
 
 
 public class DecodeMessageLoader extends AsyncTaskLoader<MessageViewInfo> {

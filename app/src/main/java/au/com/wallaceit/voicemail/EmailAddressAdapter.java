@@ -17,7 +17,7 @@
 package au.com.wallaceit.voicemail;
 
 import com.fsck.k9.R;
-import com.fsck.k9.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import android.content.Context;
 import android.database.Cursor;

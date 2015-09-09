@@ -10,11 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fsck.k9.R;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.AccountSetupBasics;
-import com.fsck.k9.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupBasics;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
 
 /**
  * Displays a welcome message when no accounts have been created yet.
@@ -22,7 +22,7 @@ import com.fsck.k9.helper.HtmlConverter;
 public class WelcomeMessage extends K9Activity implements OnClickListener{
 
     public static void showWelcomeMessage(Context context) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.setup.WelcomeMessage.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.setup.WelcomeMessage.class);
         context.startActivity(intent);
     }
 

@@ -13,8 +13,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.helper.FileHelper;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.FileHelper;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
@@ -23,20 +23,20 @@ import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.preferences.*;
-import com.fsck.k9.preferences.AccountSettings;
-import com.fsck.k9.preferences.FolderSettings;
-import com.fsck.k9.preferences.GlobalSettings;
-import com.fsck.k9.preferences.IdentitySettings;
-import com.fsck.k9.preferences.Settings;
-import com.fsck.k9.preferences.Settings.InvalidSettingValueException;
-import com.fsck.k9.preferences.Settings.SettingsDescription;
-import com.fsck.k9.preferences.SettingsImporter;
+import au.com.wallaceit.voicemail.preferences.*;
+import au.com.wallaceit.voicemail.preferences.AccountSettings;
+import au.com.wallaceit.voicemail.preferences.FolderSettings;
+import au.com.wallaceit.voicemail.preferences.GlobalSettings;
+import au.com.wallaceit.voicemail.preferences.IdentitySettings;
+import au.com.wallaceit.voicemail.preferences.Settings;
+import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
+import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter;
 
 
 public class SettingsExporter {

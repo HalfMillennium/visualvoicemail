@@ -21,7 +21,7 @@ package au.com.wallaceit.voicemail;
  * It's intended to be mocked out for unit tests.
  */
 public class Clock {
-    public static final com.fsck.k9.Clock INSTANCE = new com.fsck.k9.Clock();
+    public static final au.com.wallaceit.voicemail.Clock INSTANCE = new au.com.wallaceit.voicemail.Clock();
 
     protected Clock() {
     }

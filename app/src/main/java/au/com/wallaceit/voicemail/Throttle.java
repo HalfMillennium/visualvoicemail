@@ -19,8 +19,8 @@ package au.com.wallaceit.voicemail;
 import android.os.Handler;
 import android.util.Log;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Clock;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Clock;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,7 +43,7 @@ public class Throttle {
 
     private static Timer TIMER = new Timer();
 
-    private final com.fsck.k9.Clock mClock;
+    private final au.com.wallaceit.voicemail.Clock mClock;
     private final Timer mTimer;
 
     /** Name of the instance.  Only for logging. */
@@ -77,7 +77,7 @@ public class Throttle {
     /** Constructor that takes custom timeout */
     public Throttle(String name, Runnable callback, Handler handler,int minTimeout,
             int maxTimeout) {
-        this(name, callback, handler, minTimeout, maxTimeout, com.fsck.k9.Clock.INSTANCE, TIMER);
+        this(name, callback, handler, minTimeout, maxTimeout, au.com.wallaceit.voicemail.Clock.INSTANCE, TIMER);
     }
 
     /** Constructor for tests */

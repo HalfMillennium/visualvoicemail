@@ -1,7 +1,7 @@
 package au.com.wallaceit.voicemail.ui.messageview;
 
 
-import com.fsck.k9.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
 
 
 interface AttachmentViewCallback {

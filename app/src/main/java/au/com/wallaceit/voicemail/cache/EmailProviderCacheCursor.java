@@ -3,20 +3,20 @@ package au.com.wallaceit.voicemail.cache;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fsck.k9.cache.*;
-import com.fsck.k9.cache.EmailProviderCache;
-import com.fsck.k9.provider.EmailProvider.MessageColumns;
-import com.fsck.k9.provider.EmailProvider.ThreadColumns;
+import au.com.wallaceit.voicemail.cache.*;
+import au.com.wallaceit.voicemail.cache.EmailProviderCache;
+import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
+import au.com.wallaceit.voicemail.provider.EmailProvider.ThreadColumns;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
 /**
- * A {@link CursorWrapper} that utilizes {@link com.fsck.k9.cache.EmailProviderCache}.
+ * A {@link CursorWrapper} that utilizes {@link au.com.wallaceit.voicemail.cache.EmailProviderCache}.
  */
 public class EmailProviderCacheCursor extends CursorWrapper {
-    private com.fsck.k9.cache.EmailProviderCache mCache;
+    private au.com.wallaceit.voicemail.cache.EmailProviderCache mCache;
     private List<Integer> mHiddenRows = new ArrayList<Integer>();
     private int mMessageIdColumn;
     private int mFolderIdColumn;

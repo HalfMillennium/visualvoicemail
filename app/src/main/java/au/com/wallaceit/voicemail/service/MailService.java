@@ -11,15 +11,15 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.Account.FolderMode;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Pusher;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.BootReceiver;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.BootReceiver;
 
 public class MailService extends CoreService {
     private static final String ACTION_CHECK_MAIL = "com.fsck.k9.intent.action.MAIL_SERVICE_WAKEUP";
@@ -38,40 +38,40 @@ public class MailService extends CoreService {
 
     public static void actionReset(Context context, Integer wakeLockId) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.MailService.class);
-        i.setAction(com.fsck.k9.service.MailService.ACTION_RESET);
+        i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESET);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
 
     public static void actionRestartPushers(Context context, Integer wakeLockId) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.MailService.class);
-        i.setAction(com.fsck.k9.service.MailService.ACTION_RESTART_PUSHERS);
+        i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESTART_PUSHERS);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
 
     public static void actionReschedulePoll(Context context, Integer wakeLockId) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.MailService.class);
-        i.setAction(com.fsck.k9.service.MailService.ACTION_RESCHEDULE_POLL);
+        i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESCHEDULE_POLL);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
 
     public static void actionCancel(Context context, Integer wakeLockId) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.MailService.class);
-        i.setAction(com.fsck.k9.service.MailService.ACTION_CANCEL);
+        i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_CANCEL);
         addWakeLockId(context, i, wakeLockId, false); // CK:Q: why should we not create a wake lock if one is not already existing like for example in actionReschedulePoll?
         context.startService(i);
     }
 
     public static void connectivityChange(Context context, Integer wakeLockId) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.MailService.class);
-        i.setAction(com.fsck.k9.service.MailService.CONNECTIVITY_CHANGE);
+        i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.MailService.CONNECTIVITY_CHANGE);
         addWakeLockId(context, i, wakeLockId, false); // CK:Q: why should we not create a wake lock if one is not already existing like for example in actionReschedulePoll?
         context.startService(i);
     }
@@ -165,9 +165,9 @@ public class MailService extends CoreService {
     }
 
     private void cancel() {
-        Intent i = new Intent(this, com.fsck.k9.service.MailService.class);
+        Intent i = new Intent(this, au.com.wallaceit.voicemail.service.MailService.class);
         i.setAction(ACTION_CHECK_MAIL);
-        com.fsck.k9.service.BootReceiver.cancelIntent(this, i);
+        au.com.wallaceit.voicemail.service.BootReceiver.cancelIntent(this, i);
     }
 
     private final static String PREVIOUS_INTERVAL = "MailService.previousInterval";
@@ -244,7 +244,7 @@ public class MailService extends CoreService {
             return;
         }
 
-        Preferences prefs = Preferences.getPreferences(com.fsck.k9.service.MailService.this);
+        Preferences prefs = Preferences.getPreferences(au.com.wallaceit.voicemail.service.MailService.this);
         SharedPreferences sPrefs = prefs.getPreferences();
         int previousInterval = sPrefs.getInt(PREVIOUS_INTERVAL, -1);
         long lastCheckEnd = sPrefs.getLong(LAST_CHECK_END, -1);
@@ -305,9 +305,9 @@ public class MailService extends CoreService {
                 Log.e(VisualVoicemail.LOG_TAG, "Exception while logging", e);
             }
 
-            Intent i = new Intent(this, com.fsck.k9.service.MailService.class);
+            Intent i = new Intent(this, au.com.wallaceit.voicemail.service.MailService.class);
             i.setAction(ACTION_CHECK_MAIL);
-            com.fsck.k9.service.BootReceiver.scheduleIntent(com.fsck.k9.service.MailService.this, nextTime, i);
+            au.com.wallaceit.voicemail.service.BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.MailService.this, nextTime, i);
         }
     }
 
@@ -317,7 +317,7 @@ public class MailService extends CoreService {
 
     private void stopPushers() {
         MessagingController.getInstance(getApplication()).stopAllPushing();
-        PushService.stopService(com.fsck.k9.service.MailService.this);
+        PushService.stopService(au.com.wallaceit.voicemail.service.MailService.this);
     }
 
     private void reschedulePushers(boolean hasConnectivity, boolean doBackground) {
@@ -342,7 +342,7 @@ public class MailService extends CoreService {
 
     private void setupPushers() {
         boolean pushing = false;
-        for (Account account : Preferences.getPreferences(com.fsck.k9.service.MailService.this).getAccounts()) {
+        for (Account account : Preferences.getPreferences(au.com.wallaceit.voicemail.service.MailService.this).getAccounts()) {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "Setting up pushers for account " + account.getDescription());
             if (account.isEnabled() && account.isAvailable(getApplicationContext())) {
@@ -352,7 +352,7 @@ public class MailService extends CoreService {
             }
         }
         if (pushing) {
-            PushService.startService(com.fsck.k9.service.MailService.this);
+            PushService.startService(au.com.wallaceit.voicemail.service.MailService.this);
         }
         pushingRequested = pushing;
     }
@@ -410,9 +410,9 @@ public class MailService extends CoreService {
             long nextTime = System.currentTimeMillis() + minInterval;
             if (VisualVoicemail.DEBUG)
                 Log.d(VisualVoicemail.LOG_TAG, "Next pusher refresh scheduled for " + new Date(nextTime));
-            Intent i = new Intent(this, com.fsck.k9.service.MailService.class);
+            Intent i = new Intent(this, au.com.wallaceit.voicemail.service.MailService.class);
             i.setAction(ACTION_REFRESH_PUSHERS);
-            BootReceiver.scheduleIntent(com.fsck.k9.service.MailService.this, nextTime, i);
+            BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.MailService.this, nextTime, i);
         }
     }
 

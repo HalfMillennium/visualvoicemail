@@ -8,18 +8,18 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.FolderInfoHolder;
-import com.fsck.k9.activity.MessageInfoHolder;
-import com.fsck.k9.helper.*;
-import com.fsck.k9.helper.Contacts;
+import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
+import au.com.wallaceit.voicemail.activity.MessageInfoHolder;
+import au.com.wallaceit.voicemail.helper.*;
+import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Message.RecipientType;
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 public class MessageHelper {
     /**
@@ -31,15 +31,15 @@ public class MessageHelper {
      * performance tests.
      * </p>
      *
-     * @see #toFriendly(Address[], com.fsck.k9.helper.Contacts)
+     * @see #toFriendly(Address[], au.com.wallaceit.voicemail.helper.Contacts)
      */
     private static final int TOO_MANY_ADDRESSES = 50;
 
-    private static com.fsck.k9.helper.MessageHelper sInstance;
+    private static au.com.wallaceit.voicemail.helper.MessageHelper sInstance;
 
-    public synchronized static com.fsck.k9.helper.MessageHelper getInstance(final Context context) {
+    public synchronized static au.com.wallaceit.voicemail.helper.MessageHelper getInstance(final Context context) {
         if (sInstance == null) {
-            sInstance = new com.fsck.k9.helper.MessageHelper(context);
+            sInstance = new au.com.wallaceit.voicemail.helper.MessageHelper(context);
         }
         return sInstance;
     }
@@ -54,7 +54,7 @@ public class MessageHelper {
                          final LocalMessage message,
                          final FolderInfoHolder folder,
                          Account account) {
-        final com.fsck.k9.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? com.fsck.k9.helper.Contacts.getInstance(mContext) : null;
+        final au.com.wallaceit.voicemail.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? au.com.wallaceit.voicemail.helper.Contacts.getInstance(mContext) : null;
         try {
             target.message = message;
             target.compareArrival = message.getInternalDate();
@@ -97,7 +97,7 @@ public class MessageHelper {
     }
 
     public CharSequence getDisplayName(Account account, Address[] fromAddrs, Address[] toAddrs) {
-        final com.fsck.k9.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? com.fsck.k9.helper.Contacts.getInstance(mContext) : null;
+        final au.com.wallaceit.voicemail.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? au.com.wallaceit.voicemail.helper.Contacts.getInstance(mContext) : null;
 
         CharSequence displayName;
         if (fromAddrs.length > 0 && account.isAnIdentity(fromAddrs[0])) {
@@ -122,23 +122,23 @@ public class MessageHelper {
 
     /**
      * Returns the name of the contact this email address belongs to if
-     * the {@link com.fsck.k9.helper.Contacts contacts} parameter is not {@code null} and a
+     * the {@link au.com.wallaceit.voicemail.helper.Contacts contacts} parameter is not {@code null} and a
      * contact is found. Otherwise the personal portion of the {@link Address}
      * is returned. If that isn't available either, the email address is
      * returned.
      *
      * @param address An {@link Address}
-     * @param contacts A {@link com.fsck.k9.helper.Contacts} instance or {@code null}.
+     * @param contacts A {@link au.com.wallaceit.voicemail.helper.Contacts} instance or {@code null}.
      * @return A "friendly" name for this {@link Address}.
      */
-    public static CharSequence toFriendly(Address address, com.fsck.k9.helper.Contacts contacts) {
+    public static CharSequence toFriendly(Address address, au.com.wallaceit.voicemail.helper.Contacts contacts) {
         return toFriendly(address,contacts,
                 VisualVoicemail.showCorrespondentNames(),
                 VisualVoicemail.changeContactNameColor(),
                 VisualVoicemail.getContactNameColor());
     }
 
-    public static CharSequence toFriendly(Address[] addresses, com.fsck.k9.helper.Contacts contacts) {
+    public static CharSequence toFriendly(Address[] addresses, au.com.wallaceit.voicemail.helper.Contacts contacts) {
         if (addresses == null) {
             return null;
         }

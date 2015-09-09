@@ -1,18 +1,18 @@
 package au.com.wallaceit.voicemail.service;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.remotecontrol.K9RemoteControl;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.Account.FolderMode;
-import com.fsck.k9.VisualVoicemail.BACKGROUND_OPS;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.BootReceiver;
-import com.fsck.k9.service.CoreService;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.VisualVoicemail.BACKGROUND_OPS;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.BootReceiver;
+import au.com.wallaceit.voicemail.service.CoreService;
+import au.com.wallaceit.voicemail.service.MailService;
 
-import static com.fsck.k9.remotecontrol.K9RemoteControl.*;
+import static au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.*;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,15 +24,15 @@ import android.widget.Toast;
 import java.util.List;
 
 public class RemoteControlService extends CoreService {
-    private final static String RESCHEDULE_ACTION = "com.fsck.k9.service.RemoteControlService.RESCHEDULE_ACTION";
-    private final static String PUSH_RESTART_ACTION = "com.fsck.k9.service.RemoteControlService.PUSH_RESTART_ACTION";
+    private final static String RESCHEDULE_ACTION = "au.com.wallaceit.voicemail.service.RemoteControlService.RESCHEDULE_ACTION";
+    private final static String PUSH_RESTART_ACTION = "au.com.wallaceit.voicemail.service.RemoteControlService.PUSH_RESTART_ACTION";
 
-    private final static String SET_ACTION = "com.fsck.k9.service.RemoteControlService.SET_ACTION";
+    private final static String SET_ACTION = "au.com.wallaceit.voicemail.service.RemoteControlService.SET_ACTION";
 
     public static void set(Context context, Intent i, Integer wakeLockId) {
         //  Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.RemoteControlService.class);
-        i.setAction(com.fsck.k9.service.RemoteControlService.SET_ACTION);
+        i.setClass(context, au.com.wallaceit.voicemail.service.RemoteControlService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.RemoteControlService.SET_ACTION);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
@@ -54,7 +54,7 @@ public class RemoteControlService extends CoreService {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "RemoteControlService requesting MailService push restart");
             MailService.actionRestartPushers(this, null);
-        } else if (com.fsck.k9.service.RemoteControlService.SET_ACTION.equals(intent.getAction())) {
+        } else if (au.com.wallaceit.voicemail.service.RemoteControlService.SET_ACTION.equals(intent.getAction())) {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "RemoteControlService got request to change settings");
             execute(getApplication(), new Runnable() {
@@ -110,7 +110,7 @@ public class RemoteControlService extends CoreService {
                                         }
                                     }
                                 }
-                                account.save(Preferences.getPreferences(com.fsck.k9.service.RemoteControlService.this));
+                                account.save(Preferences.getPreferences(au.com.wallaceit.voicemail.service.RemoteControlService.this));
                             }
                         }
                         if (VisualVoicemail.DEBUG)
@@ -138,25 +138,25 @@ public class RemoteControlService extends CoreService {
                         editor.commit();
 
                         if (needsReschedule) {
-                            Intent i = new Intent(com.fsck.k9.service.RemoteControlService.this, com.fsck.k9.service.RemoteControlService.class);
+                            Intent i = new Intent(au.com.wallaceit.voicemail.service.RemoteControlService.this, au.com.wallaceit.voicemail.service.RemoteControlService.class);
                             i.setAction(RESCHEDULE_ACTION);
                             long nextTime = System.currentTimeMillis() + 10000;
-                            BootReceiver.scheduleIntent(com.fsck.k9.service.RemoteControlService.this, nextTime, i);
+                            BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.RemoteControlService.this, nextTime, i);
                         }
                         if (needsPushRestart) {
-                            Intent i = new Intent(com.fsck.k9.service.RemoteControlService.this, com.fsck.k9.service.RemoteControlService.class);
+                            Intent i = new Intent(au.com.wallaceit.voicemail.service.RemoteControlService.this, au.com.wallaceit.voicemail.service.RemoteControlService.class);
                             i.setAction(PUSH_RESTART_ACTION);
                             long nextTime = System.currentTimeMillis() + 10000;
-                            BootReceiver.scheduleIntent(com.fsck.k9.service.RemoteControlService.this, nextTime, i);
+                            BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.RemoteControlService.this, nextTime, i);
                         }
                     } catch (Exception e) {
                         Log.e(VisualVoicemail.LOG_TAG, "Could not handle K9_SET", e);
-                        Toast toast = Toast.makeText(com.fsck.k9.service.RemoteControlService.this, e.getMessage(), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(au.com.wallaceit.voicemail.service.RemoteControlService.this, e.getMessage(), Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
             }
-            , com.fsck.k9.service.RemoteControlService.REMOTE_CONTROL_SERVICE_WAKE_LOCK_TIMEOUT, startId);
+            , au.com.wallaceit.voicemail.service.RemoteControlService.REMOTE_CONTROL_SERVICE_WAKE_LOCK_TIMEOUT, startId);
         }
 
         return START_NOT_STICKY;

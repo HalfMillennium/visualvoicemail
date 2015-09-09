@@ -32,7 +32,7 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 
 
 /**
@@ -153,8 +153,8 @@ public class SliderPreference extends DialogPreference {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    com.fsck.k9.activity.setup.SliderPreference.this.mSeekBarValue = progress;
-                    callChangeListener((float) com.fsck.k9.activity.setup.SliderPreference.this.mSeekBarValue / SEEKBAR_RESOLUTION);
+                    au.com.wallaceit.voicemail.activity.setup.SliderPreference.this.mSeekBarValue = progress;
+                    callChangeListener((float) au.com.wallaceit.voicemail.activity.setup.SliderPreference.this.mSeekBarValue / SEEKBAR_RESOLUTION);
                 }
             }
         });

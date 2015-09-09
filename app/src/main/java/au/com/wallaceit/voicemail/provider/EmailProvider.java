@@ -5,18 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fsck.k9.Account;
+import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.BuildConfig;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.cache.EmailProviderCacheCursor;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.cache.EmailProviderCacheCursor;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.LockableDatabase;
-import com.fsck.k9.mailstore.LockableDatabase.DbCallback;
-import com.fsck.k9.mailstore.LockableDatabase.WrappedException;
-import com.fsck.k9.mailstore.UnavailableStorageException;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.search.SqlQueryBuilder;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;

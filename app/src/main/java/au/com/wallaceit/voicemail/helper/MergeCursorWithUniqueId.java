@@ -4,8 +4,8 @@ import java.util.Comparator;
 
 import android.database.Cursor;
 
-import com.fsck.k9.helper.*;
-import com.fsck.k9.helper.MergeCursor;
+import au.com.wallaceit.voicemail.helper.*;
+import au.com.wallaceit.voicemail.helper.MergeCursor;
 
 
 public class MergeCursorWithUniqueId extends MergeCursor {

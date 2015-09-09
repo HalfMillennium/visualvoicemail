@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
 
 /**
  * That BroadcastReceiver is only interested in MOUNT events.

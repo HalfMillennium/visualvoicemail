@@ -11,18 +11,18 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.CoreReceiver;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.CoreReceiver;
 
 public class BootReceiver extends CoreReceiver {
 
-    public static final String FIRE_INTENT = "com.fsck.k9.service.BroadcastReceiver.fireIntent";
-    public static final String SCHEDULE_INTENT = "com.fsck.k9.service.BroadcastReceiver.scheduleIntent";
-    public static final String CANCEL_INTENT = "com.fsck.k9.service.BroadcastReceiver.cancelIntent";
+    public static final String FIRE_INTENT = "au.com.wallaceit.voicemail.service.BroadcastReceiver.fireIntent";
+    public static final String SCHEDULE_INTENT = "au.com.wallaceit.voicemail.service.BroadcastReceiver.scheduleIntent";
+    public static final String CANCEL_INTENT = "au.com.wallaceit.voicemail.service.BroadcastReceiver.cancelIntent";
 
-    public static final String ALARMED_INTENT = "com.fsck.k9.service.BroadcastReceiver.pendingIntent";
-    public static final String AT_TIME = "com.fsck.k9.service.BroadcastReceiver.atTime";
+    public static final String ALARMED_INTENT = "au.com.wallaceit.voicemail.service.BroadcastReceiver.pendingIntent";
+    public static final String AT_TIME = "au.com.wallaceit.voicemail.service.BroadcastReceiver.atTime";
 
     @Override
     public Integer receive(Context context, Intent intent, Integer tmpWakeLockId) {
@@ -85,7 +85,7 @@ public class BootReceiver extends CoreReceiver {
         Intent alarmedIntent = intent.getParcelableExtra(ALARMED_INTENT);
         String alarmedAction = alarmedIntent.getAction();
 
-        Intent i = new Intent(context, com.fsck.k9.service.BootReceiver.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.BootReceiver.class);
         i.setAction(FIRE_INTENT);
         i.putExtra(ALARMED_INTENT, alarmedIntent);
         Uri uri = Uri.parse("action://" + alarmedAction);
@@ -98,7 +98,7 @@ public class BootReceiver extends CoreReceiver {
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "BootReceiver Got request to schedule alarmedIntent " + alarmedIntent.getAction());
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.BootReceiver.class);
+        i.setClass(context, au.com.wallaceit.voicemail.service.BootReceiver.class);
         i.setAction(SCHEDULE_INTENT);
         i.putExtra(ALARMED_INTENT, alarmedIntent);
         i.putExtra(AT_TIME, atTime);
@@ -109,7 +109,7 @@ public class BootReceiver extends CoreReceiver {
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "BootReceiver Got request to cancel alarmedIntent " + alarmedIntent.getAction());
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.BootReceiver.class);
+        i.setClass(context, au.com.wallaceit.voicemail.service.BootReceiver.class);
         i.setAction(CANCEL_INTENT);
         i.putExtra(ALARMED_INTENT, alarmedIntent);
         context.sendBroadcast(i);

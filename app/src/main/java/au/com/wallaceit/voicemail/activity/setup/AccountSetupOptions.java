@@ -10,10 +10,10 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import com.fsck.k9.*;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.setup.AccountSetupNames;
-import com.fsck.k9.activity.setup.SpinnerOption;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupNames;
+import au.com.wallaceit.voicemail.activity.setup.SpinnerOption;
 import com.fsck.k9.mail.Store;
 
 public class AccountSetupOptions extends K9Activity implements OnClickListener {
@@ -33,7 +33,7 @@ public class AccountSetupOptions extends K9Activity implements OnClickListener {
     private Account mAccount;
 
     public static void actionOptions(Context context, Account account, boolean makeDefault) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupOptions.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupOptions.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MAKE_DEFAULT, makeDefault);
         context.startActivity(i);

@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fsck.k9.BuildConfig;
-import com.fsck.k9.remotecontrol.*;
-import com.fsck.k9.remotecontrol.AccountReceiver;
+import au.com.wallaceit.voicemail.remotecontrol.*;
+import au.com.wallaceit.voicemail.remotecontrol.AccountReceiver;
 
 /**
  * Utillity definitions for Android applications to control the behavior of K-9 Mail.  All such applications must declare the following permission:
@@ -122,15 +122,15 @@ public class K9RemoteControl {
     protected static final String LOG_TAG = "K9RemoteControl";
 
     public static void set(Context context, Intent broadcastIntent) {
-        broadcastIntent.setAction(com.fsck.k9.remotecontrol.K9RemoteControl.K9_SET);
-        context.sendBroadcast(broadcastIntent, com.fsck.k9.remotecontrol.K9RemoteControl.K9_REMOTE_CONTROL_PERMISSION);
+        broadcastIntent.setAction(au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.K9_SET);
+        context.sendBroadcast(broadcastIntent, au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.K9_REMOTE_CONTROL_PERMISSION);
     }
 
     public static void fetchAccounts(Context context, K9AccountReceptor receptor) {
         Intent accountFetchIntent = new Intent();
-        accountFetchIntent.setAction(com.fsck.k9.remotecontrol.K9RemoteControl.K9_REQUEST_ACCOUNTS);
-        com.fsck.k9.remotecontrol.AccountReceiver receiver = new com.fsck.k9.remotecontrol.AccountReceiver(receptor);
-        context.sendOrderedBroadcast(accountFetchIntent, com.fsck.k9.remotecontrol.K9RemoteControl.K9_REMOTE_CONTROL_PERMISSION, receiver, null, Activity.RESULT_OK, null, null);
+        accountFetchIntent.setAction(au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.K9_REQUEST_ACCOUNTS);
+        au.com.wallaceit.voicemail.remotecontrol.AccountReceiver receiver = new au.com.wallaceit.voicemail.remotecontrol.AccountReceiver(receptor);
+        context.sendOrderedBroadcast(accountFetchIntent, au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.K9_REMOTE_CONTROL_PERMISSION, receiver, null, Activity.RESULT_OK, null, null);
     }
 
 }

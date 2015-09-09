@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.activity.MessageCompose;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.controller.MessagingController;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.activity.MessageCompose;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.Flag;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.CoreService;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.CoreService;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,19 +26,19 @@ import android.util.Log;
  * Provides a number of default actions to trigger.
  */
 public class NotificationActionService extends CoreService {
-    private final static String REPLY_ACTION = "com.fsck.k9.service.NotificationActionService.REPLY_ACTION";
-    private final static String READ_ALL_ACTION = "com.fsck.k9.service.NotificationActionService.READ_ALL_ACTION";
-    private final static String DELETE_ALL_ACTION = "com.fsck.k9.service.NotificationActionService.DELETE_ALL_ACTION";
-    private final static String ARCHIVE_ALL_ACTION = "com.fsck.k9.service.NotificationActionService.ARCHIVE_ALL_ACTION";
-    private final static String SPAM_ALL_ACTION = "com.fsck.k9.service.NotificationActionService.SPAM_ALL_ACTION";
-    private final static String ACKNOWLEDGE_ACTION = "com.fsck.k9.service.NotificationActionService.ACKNOWLEDGE_ACTION";
+    private final static String REPLY_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.REPLY_ACTION";
+    private final static String READ_ALL_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.READ_ALL_ACTION";
+    private final static String DELETE_ALL_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.DELETE_ALL_ACTION";
+    private final static String ARCHIVE_ALL_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.ARCHIVE_ALL_ACTION";
+    private final static String SPAM_ALL_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.SPAM_ALL_ACTION";
+    private final static String ACKNOWLEDGE_ACTION = "au.com.wallaceit.voicemail.service.NotificationActionService.ACKNOWLEDGE_ACTION";
 
     private final static String EXTRA_ACCOUNT = "account";
     private final static String EXTRA_MESSAGE = "message";
     private final static String EXTRA_MESSAGE_LIST = "messages";
 
     public static PendingIntent getReplyIntent(Context context, final Account account, final MessageReference ref) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE, ref);
         i.setAction(REPLY_ACTION);
@@ -47,7 +47,7 @@ public class NotificationActionService extends CoreService {
     }
 
     public static PendingIntent getReadAllMessagesIntent(Context context, final Account account, final Serializable refs) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE_LIST, refs);
         i.setAction(READ_ALL_ACTION);
@@ -56,7 +56,7 @@ public class NotificationActionService extends CoreService {
     }
 
     public static PendingIntent getAcknowledgeIntent(Context context, final Account account) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.setAction(ACKNOWLEDGE_ACTION);
 
@@ -64,7 +64,7 @@ public class NotificationActionService extends CoreService {
     }
 
     public static Intent getDeleteAllMessagesIntent(Context context, final Account account, final Serializable refs) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE_LIST, refs);
         i.setAction(DELETE_ALL_ACTION);
@@ -88,7 +88,7 @@ public class NotificationActionService extends CoreService {
     }
 
     public static PendingIntent getArchiveAllMessagesIntent(Context context, final Account account, final Serializable refs) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE_LIST, refs);
         i.setAction(ARCHIVE_ALL_ACTION);
@@ -113,7 +113,7 @@ public class NotificationActionService extends CoreService {
     }
 
     public static PendingIntent getSpamAllMessagesIntent(Context context, final Account account, final Serializable refs) {
-        Intent i = new Intent(context, com.fsck.k9.service.NotificationActionService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.NotificationActionService.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE_LIST, refs);
         i.setAction(SPAM_ALL_ACTION);

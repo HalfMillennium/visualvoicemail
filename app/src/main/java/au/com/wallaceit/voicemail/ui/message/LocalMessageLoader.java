@@ -5,12 +5,12 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.controller.MessagingController;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 
 public class LocalMessageLoader extends AsyncTaskLoader<LocalMessage> {

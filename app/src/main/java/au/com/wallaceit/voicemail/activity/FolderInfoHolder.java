@@ -2,11 +2,11 @@ package au.com.wallaceit.voicemail.activity;
 
 import android.content.Context;
 
-import com.fsck.k9.Account;
+import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.R;
 import com.fsck.k9.mail.Folder;
 
-public class FolderInfoHolder implements Comparable<com.fsck.k9.activity.FolderInfoHolder> {
+public class FolderInfoHolder implements Comparable<au.com.wallaceit.voicemail.activity.FolderInfoHolder> {
     public String name;
     public String displayName;
     public long lastChecked;
@@ -20,7 +20,7 @@ public class FolderInfoHolder implements Comparable<com.fsck.k9.activity.FolderI
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof com.fsck.k9.activity.FolderInfoHolder && name.equals(((com.fsck.k9.activity.FolderInfoHolder) o).name);
+        return o instanceof au.com.wallaceit.voicemail.activity.FolderInfoHolder && name.equals(((au.com.wallaceit.voicemail.activity.FolderInfoHolder) o).name);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FolderInfoHolder implements Comparable<com.fsck.k9.activity.FolderI
         return name.hashCode();
     }
 
-    public int compareTo(com.fsck.k9.activity.FolderInfoHolder o) {
+    public int compareTo(au.com.wallaceit.voicemail.activity.FolderInfoHolder o) {
         String s1 = this.name;
         String s2 = o.name;
 

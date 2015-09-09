@@ -13,7 +13,7 @@ public class SpinnerOption {
 
     public static void setSpinnerOptionValue(Spinner spinner, Object value) {
         for (int i = 0, count = spinner.getCount(); i < count; i++) {
-            com.fsck.k9.activity.setup.SpinnerOption so = (com.fsck.k9.activity.setup.SpinnerOption)spinner.getItemAtPosition(i);
+            au.com.wallaceit.voicemail.activity.setup.SpinnerOption so = (au.com.wallaceit.voicemail.activity.setup.SpinnerOption)spinner.getItemAtPosition(i);
             if (so.value.equals(value)) {
                 spinner.setSelection(i, true);
                 return;

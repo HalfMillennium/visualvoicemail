@@ -1,8 +1,8 @@
 package au.com.wallaceit.voicemail.controller;
 
 /**
- * An {@link com.fsck.k9.Account} is not
- * {@link com.fsck.k9.Account#isAvailable(android.content.Context)}.<br/>
+ * An {@link au.com.wallaceit.voicemail.Account} is not
+ * {@link au.com.wallaceit.voicemail.Account#isAvailable(android.content.Context)}.<br/>
  * The operation may be retried later.
  */
 public class UnavailableAccountException extends RuntimeException {

@@ -37,26 +37,26 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.FolderMode;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account.FolderMode;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.setup.AccountSettings;
-import com.fsck.k9.activity.setup.FolderSettings;
-import com.fsck.k9.activity.setup.Prefs;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.helper.SizeFormatter;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
+import au.com.wallaceit.voicemail.activity.setup.FolderSettings;
+import au.com.wallaceit.voicemail.activity.setup.Prefs;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.helper.SizeFormatter;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchField;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.service.MailService;
 
 import de.cketti.library.changelog.ChangeLog;
 
@@ -109,7 +109,7 @@ public class FolderList extends K9ListActivity {
                         mActionBarUnread.setVisibility(View.VISIBLE);
                     }
 
-                    String operation = mAdapter.mListener.getOperation(com.fsck.k9.activity.FolderList.this);
+                    String operation = mAdapter.mListener.getOperation(au.com.wallaceit.voicemail.activity.FolderList.this);
                     if (operation.length() < 1) {
                         mActionBarSubTitle.setText(mAccount.getEmail());
                     } else {
@@ -228,7 +228,7 @@ public class FolderList extends K9ListActivity {
     }
 
     public static Intent actionHandleAccountIntent(Context context, Account account, boolean fromShortcut) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.FolderList.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.FolderList.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(EXTRA_ACCOUNT, account.getUuid());
 
@@ -369,7 +369,7 @@ public class FolderList extends K9ListActivity {
 
         if (!mAccount.isAvailable(this)) {
             Log.i(VisualVoicemail.LOG_TAG, "account unavaliabale, not showing folder-list but account-list");
-            com.fsck.k9.activity.Accounts.listAccounts(this);
+            au.com.wallaceit.voicemail.activity.Accounts.listAccounts(this);
             finish();
             return;
         }
@@ -469,7 +469,7 @@ public class FolderList extends K9ListActivity {
         // There has to be a cheaper way to get at the localFolder object than this
         LocalFolder localFolder = null;
         try {
-            if (account == null || folderName == null || !account.isAvailable(com.fsck.k9.activity.FolderList.this)) {
+            if (account == null || folderName == null || !account.isAvailable(au.com.wallaceit.voicemail.activity.FolderList.this)) {
                 Log.i(VisualVoicemail.LOG_TAG, "not clear folder of unavailable account");
                 return;
             }
@@ -810,7 +810,7 @@ public class FolderList extends K9ListActivity {
                 Folder localFolder = null;
                 try {
                     if (account != null && folderName != null) {
-                        if (!account.isAvailable(com.fsck.k9.activity.FolderList.this)) {
+                        if (!account.isAvailable(au.com.wallaceit.voicemail.activity.FolderList.this)) {
                             Log.i(VisualVoicemail.LOG_TAG, "not refreshing folder of unavailable account");
                             return;
                         }
@@ -1239,7 +1239,7 @@ public class FolderList extends K9ListActivity {
 
         @Override
         public void onClick(View v) {
-            MessageList.actionDisplaySearch(com.fsck.k9.activity.FolderList.this, search, true, false);
+            MessageList.actionDisplaySearch(au.com.wallaceit.voicemail.activity.FolderList.this, search, true, false);
         }
     }
 }

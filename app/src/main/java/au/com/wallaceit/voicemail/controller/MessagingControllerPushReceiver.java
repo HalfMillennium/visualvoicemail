@@ -3,18 +3,18 @@ package au.com.wallaceit.voicemail.controller;
 import android.content.Context;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.controller.*;
-import com.fsck.k9.controller.MessagingListener;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.controller.*;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Folder;
 
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.PushReceiver;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.service.SleepService;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.service.SleepService;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -45,7 +45,7 @@ public class MessagingControllerPushReceiver implements PushReceiver {
         if (VisualVoicemail.DEBUG)
             Log.v(VisualVoicemail.LOG_TAG, "syncFolder(" + folder.getName() + ")");
         final CountDownLatch latch = new CountDownLatch(1);
-        controller.synchronizeMailbox(account, folder.getName(), new com.fsck.k9.controller.MessagingListener() {
+        controller.synchronizeMailbox(account, folder.getName(), new au.com.wallaceit.voicemail.controller.MessagingListener() {
             @Override
             public void synchronizeMailboxFinished(Account account, String folder,
             int totalMessagesInMailbox, int numNewMessages) {

@@ -3,7 +3,7 @@ package au.com.wallaceit.voicemail.search;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fsck.k9.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
 
 public interface SearchSpecification extends Parcelable {
 

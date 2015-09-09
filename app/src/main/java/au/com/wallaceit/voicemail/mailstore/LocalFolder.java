@@ -28,10 +28,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.Search;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.Search;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.BodyPart;
@@ -52,18 +52,18 @@ import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.SizeAware;
 import com.fsck.k9.mail.message.MessageHeaderParser;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.LocalBodyPart;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.LocalMessageExtractor;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.mailstore.LockableDatabase.DbCallback;
-import com.fsck.k9.mailstore.LockableDatabase.WrappedException;
-import com.fsck.k9.mailstore.MessageInfoExtractor;
-import com.fsck.k9.mailstore.MessageRemovalListener;
-import com.fsck.k9.mailstore.ThreadInfo;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalBodyPart;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor;
+import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
+import au.com.wallaceit.voicemail.mailstore.ThreadInfo;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -225,7 +225,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 Cursor cursor = null;
                 try {
                     cursor = db.rawQuery("SELECT id FROM folders where folders.name = ?",
-                            new String[] { com.fsck.k9.mailstore.LocalFolder.this.getName() });
+                            new String[] { au.com.wallaceit.voicemail.mailstore.LocalFolder.this.getName() });
                     if (cursor.moveToFirst()) {
                         int folderId = cursor.getInt(0);
                         return (folderId > 0);
@@ -249,7 +249,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (exists()) {
             throw new MessagingException("Folder " + mName + " already exists.");
         }
-        List<com.fsck.k9.mailstore.LocalFolder> foldersToCreate = new ArrayList<com.fsck.k9.mailstore.LocalFolder>(1);
+        List<au.com.wallaceit.voicemail.mailstore.LocalFolder> foldersToCreate = new ArrayList<au.com.wallaceit.voicemail.mailstore.LocalFolder>(1);
         foldersToCreate.add(this);
         this.localStore.createFolders(foldersToCreate, visibleLimit);
 
@@ -365,7 +365,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void setLastChecked(final long lastChecked) throws MessagingException {
         try {
             open(OPEN_MODE_RW);
-            com.fsck.k9.mailstore.LocalFolder.super.setLastChecked(lastChecked);
+            au.com.wallaceit.voicemail.mailstore.LocalFolder.super.setLastChecked(lastChecked);
         } catch (MessagingException e) {
             throw new WrappedException(e);
         }
@@ -376,7 +376,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void setLastPush(final long lastChecked) throws MessagingException {
         try {
             open(OPEN_MODE_RW);
-            com.fsck.k9.mailstore.LocalFolder.super.setLastPush(lastChecked);
+            au.com.wallaceit.voicemail.mailstore.LocalFolder.super.setLastPush(lastChecked);
         } catch (MessagingException e) {
             throw new WrappedException(e);
         }
@@ -813,7 +813,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public LocalMessage doDbWork(final SQLiteDatabase db) throws WrappedException, UnavailableStorageException {
                     try {
                         open(OPEN_MODE_RW);
-                        LocalMessage message = new LocalMessage(com.fsck.k9.mailstore.LocalFolder.this.localStore, uid, com.fsck.k9.mailstore.LocalFolder.this);
+                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalFolder.this.localStore, uid, au.com.wallaceit.voicemail.mailstore.LocalFolder.this);
                         Cursor cursor = null;
 
                         try {
@@ -856,7 +856,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public List<LocalMessage> doDbWork(final SQLiteDatabase db) throws WrappedException, UnavailableStorageException {
                     try {
                         open(OPEN_MODE_RW);
-                        return com.fsck.k9.mailstore.LocalFolder.this.localStore.getMessages(listener, com.fsck.k9.mailstore.LocalFolder.this,
+                        return au.com.wallaceit.voicemail.mailstore.LocalFolder.this.localStore.getMessages(listener, au.com.wallaceit.voicemail.mailstore.LocalFolder.this,
                                 "SELECT " + LocalStore.GET_MESSAGES_COLS +
                                 "FROM messages " +
                                 "LEFT JOIN threads ON (threads.message_id = messages.id) " +
@@ -893,19 +893,19 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     @Override
     public Map<String, String> copyMessages(List<? extends Message> msgs, Folder folder) throws MessagingException {
-        if (!(folder instanceof com.fsck.k9.mailstore.LocalFolder)) {
+        if (!(folder instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder)) {
             throw new MessagingException("copyMessages called with incorrect Folder");
         }
-        return ((com.fsck.k9.mailstore.LocalFolder) folder).appendMessages(msgs, true);
+        return ((au.com.wallaceit.voicemail.mailstore.LocalFolder) folder).appendMessages(msgs, true);
     }
 
     @Override
     public Map<String, String> moveMessages(final List<? extends Message> msgs, final Folder destFolder) throws MessagingException {
-        if (!(destFolder instanceof com.fsck.k9.mailstore.LocalFolder)) {
+        if (!(destFolder instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder)) {
             throw new MessagingException("moveMessages called with non-LocalFolder");
         }
 
-        final com.fsck.k9.mailstore.LocalFolder lDestFolder = (com.fsck.k9.mailstore.LocalFolder)destFolder;
+        final au.com.wallaceit.voicemail.mailstore.LocalFolder lDestFolder = (au.com.wallaceit.voicemail.mailstore.LocalFolder)destFolder;
 
         final Map<String, String> uidMap = new HashMap<String, String>();
 
@@ -931,7 +931,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                             uidMap.put(oldUID, newUid);
 
                             // Message threading in the target folder
-                            com.fsck.k9.mailstore.ThreadInfo threadInfo = lDestFolder.doMessageThreading(db, message);
+                            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = lDestFolder.doMessageThreading(db, message);
 
                             /*
                              * "Move" the message into the new folder
@@ -1088,7 +1088,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
     }
 
-    private com.fsck.k9.mailstore.ThreadInfo getThreadInfo(SQLiteDatabase db, String messageId, boolean onlyEmpty) {
+    private au.com.wallaceit.voicemail.mailstore.ThreadInfo getThreadInfo(SQLiteDatabase db, String messageId, boolean onlyEmpty) {
         if (messageId == null) {
             return null;
         }
@@ -1111,7 +1111,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                     long rootId = (cursor.isNull(2)) ? -1 : cursor.getLong(2);
                     long parentId = (cursor.isNull(3)) ? -1 : cursor.getLong(3);
 
-                    return new com.fsck.k9.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
+                    return new au.com.wallaceit.voicemail.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
                 }
             } finally {
                 cursor.close();
@@ -1200,14 +1200,14 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
         if (oldMessageId == -1) {
             // This is a new message. Do the message threading.
-            com.fsck.k9.mailstore.ThreadInfo threadInfo = doMessageThreading(db, message);
+            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = doMessageThreading(db, message);
             oldMessageId = threadInfo.msgId;
             rootId = threadInfo.rootId;
             parentId = threadInfo.parentId;
         }
 
         try {
-            com.fsck.k9.mailstore.MessageInfoExtractor messageExtractor = new com.fsck.k9.mailstore.MessageInfoExtractor(localStore.context, message);
+            au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor messageExtractor = new au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor(localStore.context, message);
             String preview = messageExtractor.getMessageTextPreview();
             int attachmentCount = messageExtractor.getAttachmentCount();
 
@@ -1687,8 +1687,8 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof com.fsck.k9.mailstore.LocalFolder) {
-            return ((com.fsck.k9.mailstore.LocalFolder)o).mName.equals(mName);
+        if (o instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder) {
+            return ((au.com.wallaceit.voicemail.mailstore.LocalFolder)o).mName.equals(mName);
         }
         return super.equals(o);
     }
@@ -1758,7 +1758,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     /**
      * <p>Fetches the most recent <b>numeric</b> UID value in this folder.  This is used by
-     * {@link com.fsck.k9.controller.MessagingController#shouldNotifyForMessage} to see if messages being
+     * {@link au.com.wallaceit.voicemail.controller.MessagingController#shouldNotifyForMessage} to see if messages being
      * fetched are new and unread.  Messages are "new" if they have a UID higher than the most recent UID prior
      * to synchronization.</p>
      *
@@ -1819,7 +1819,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         });
     }
 
-    private com.fsck.k9.mailstore.ThreadInfo doMessageThreading(SQLiteDatabase db, Message message)
+    private au.com.wallaceit.voicemail.mailstore.ThreadInfo doMessageThreading(SQLiteDatabase db, Message message)
             throws MessagingException {
         long rootId = -1;
         long parentId = -1;
@@ -1827,7 +1827,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         String messageId = message.getMessageId();
 
         // If there's already an empty message in the database, update that
-        com.fsck.k9.mailstore.ThreadInfo msgThreadInfo = getThreadInfo(db, messageId, true);
+        au.com.wallaceit.voicemail.mailstore.ThreadInfo msgThreadInfo = getThreadInfo(db, messageId, true);
 
         // Get the message IDs from the "References" header line
         String[] referencesArray = message.getHeader("References");
@@ -1854,11 +1854,11 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (messageIds == null) {
             // This is not a reply, nothing to do for us.
             return (msgThreadInfo != null) ?
-                    msgThreadInfo : new com.fsck.k9.mailstore.ThreadInfo(-1, -1, messageId, -1, -1);
+                    msgThreadInfo : new au.com.wallaceit.voicemail.mailstore.ThreadInfo(-1, -1, messageId, -1, -1);
         }
 
         for (String reference : messageIds) {
-            com.fsck.k9.mailstore.ThreadInfo threadInfo = getThreadInfo(db, reference, false);
+            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = getThreadInfo(db, reference, false);
 
             if (threadInfo == null) {
                 // Create placeholder message in 'messages' table
@@ -1919,7 +1919,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             msgId = -1;
         }
 
-        return new com.fsck.k9.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
+        return new au.com.wallaceit.voicemail.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
     }
 
     public List<Message> extractNewMessages(final List<Message> messages)

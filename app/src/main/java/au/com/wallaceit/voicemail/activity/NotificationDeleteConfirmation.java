@@ -11,14 +11,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.ConfirmationDialog;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.service.NotificationActionService;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.ConfirmationDialog;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.service.NotificationActionService;
 
 public class NotificationDeleteConfirmation extends Activity {
     private final static String EXTRA_ACCOUNT = "account";
@@ -30,7 +30,7 @@ public class NotificationDeleteConfirmation extends Activity {
     private ArrayList<MessageReference> mMessageRefs;
 
     public static PendingIntent getIntent(Context context, final Account account, final Serializable refs) {
-        Intent i = new Intent(context, com.fsck.k9.activity.NotificationDeleteConfirmation.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.NotificationDeleteConfirmation.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MESSAGE_LIST, refs);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

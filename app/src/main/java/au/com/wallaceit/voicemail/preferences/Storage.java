@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.helper.UrlEncodingHelper;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.UrlEncodingHelper;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.filter.Base64;
 
 import java.net.URI;
@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Storage implements SharedPreferences {
-    private static ConcurrentMap<Context, com.fsck.k9.preferences.Storage> storages =
-        new ConcurrentHashMap<Context, com.fsck.k9.preferences.Storage>();
+    private static ConcurrentMap<Context, au.com.wallaceit.voicemail.preferences.Storage> storages =
+        new ConcurrentHashMap<Context, au.com.wallaceit.voicemail.preferences.Storage>();
 
     private volatile ConcurrentMap<String, String> storage = new ConcurrentHashMap<String, String>();
 
@@ -144,8 +144,8 @@ public class Storage implements SharedPreferences {
     }
 
 
-    public static com.fsck.k9.preferences.Storage getStorage(Context context) {
-        com.fsck.k9.preferences.Storage tmpStorage = storages.get(context);
+    public static au.com.wallaceit.voicemail.preferences.Storage getStorage(Context context) {
+        au.com.wallaceit.voicemail.preferences.Storage tmpStorage = storages.get(context);
         if (tmpStorage != null) {
             if (VisualVoicemail.DEBUG) {
                 Log.d(VisualVoicemail.LOG_TAG, "Returning already existing Storage");
@@ -155,8 +155,8 @@ public class Storage implements SharedPreferences {
             if (VisualVoicemail.DEBUG) {
                 Log.d(VisualVoicemail.LOG_TAG, "Creating provisional storage");
             }
-            tmpStorage = new com.fsck.k9.preferences.Storage(context);
-            com.fsck.k9.preferences.Storage oldStorage = storages.putIfAbsent(context, tmpStorage);
+            tmpStorage = new au.com.wallaceit.voicemail.preferences.Storage(context);
+            au.com.wallaceit.voicemail.preferences.Storage oldStorage = storages.putIfAbsent(context, tmpStorage);
             if (oldStorage != null) {
                 if (VisualVoicemail.DEBUG) {
                     Log.d(VisualVoicemail.LOG_TAG, "Another thread beat us to creating the Storage, returning that one");
@@ -304,8 +304,8 @@ public class Storage implements SharedPreferences {
     }
 
     //@Override
-    public com.fsck.k9.preferences.Editor edit() {
-        return new com.fsck.k9.preferences.Editor(this);
+    public au.com.wallaceit.voicemail.preferences.Editor edit() {
+        return new au.com.wallaceit.voicemail.preferences.Editor(this);
     }
 
     //@Override

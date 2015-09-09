@@ -2,12 +2,12 @@ package au.com.wallaceit.voicemail.search;
 
 import android.content.Context;
 
-import com.fsck.k9.BaseAccount;
+import au.com.wallaceit.voicemail.BaseAccount;
 import com.fsck.k9.R;
-import com.fsck.k9.search.*;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.search.*;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 
 
 /**
@@ -20,32 +20,32 @@ public class SearchAccount implements BaseAccount {
 
 
     // create the all messages search ( all accounts is default when none specified )
-    public static com.fsck.k9.search.SearchAccount createAllMessagesAccount(Context context) {
+    public static au.com.wallaceit.voicemail.search.SearchAccount createAllMessagesAccount(Context context) {
         String name = context.getString(R.string.search_all_messages_title);
 
-        com.fsck.k9.search.LocalSearch tmpSearch = new com.fsck.k9.search.LocalSearch(name);
+        au.com.wallaceit.voicemail.search.LocalSearch tmpSearch = new au.com.wallaceit.voicemail.search.LocalSearch(name);
         tmpSearch.and(SearchField.SEARCHABLE, "1", Attribute.EQUALS);
 
-        return new com.fsck.k9.search.SearchAccount(ALL_MESSAGES, tmpSearch, name,
+        return new au.com.wallaceit.voicemail.search.SearchAccount(ALL_MESSAGES, tmpSearch, name,
                 context.getString(R.string.search_all_messages_detail));
     }
 
 
     // create the unified inbox meta account ( all accounts is default when none specified )
-    public static com.fsck.k9.search.SearchAccount createUnifiedInboxAccount(Context context) {
+    public static au.com.wallaceit.voicemail.search.SearchAccount createUnifiedInboxAccount(Context context) {
         String name = context.getString(R.string.integrated_inbox_title);
-        com.fsck.k9.search.LocalSearch tmpSearch = new com.fsck.k9.search.LocalSearch(name);
+        au.com.wallaceit.voicemail.search.LocalSearch tmpSearch = new au.com.wallaceit.voicemail.search.LocalSearch(name);
         tmpSearch.and(SearchField.INTEGRATE, "1", Attribute.EQUALS);
-        return new com.fsck.k9.search.SearchAccount(UNIFIED_INBOX, tmpSearch, name,
+        return new au.com.wallaceit.voicemail.search.SearchAccount(UNIFIED_INBOX, tmpSearch, name,
                 context.getString(R.string.integrated_inbox_detail));
     }
 
     private String mId;
     private String mEmail;
     private String mDescription;
-    private com.fsck.k9.search.LocalSearch mSearch;
+    private au.com.wallaceit.voicemail.search.LocalSearch mSearch;
 
-    public SearchAccount(String id, com.fsck.k9.search.LocalSearch search, String description, String email)
+    public SearchAccount(String id, au.com.wallaceit.voicemail.search.LocalSearch search, String description, String email)
             throws IllegalArgumentException {
 
         if (search == null) {
@@ -93,7 +93,7 @@ public class SearchAccount implements BaseAccount {
      * This isn't really a UUID. But since we don't expose this value to other apps and we only
      * use the account UUID as opaque string (e.g. as key in a {@code Map}) we're fine.<br>
      * Using a constant string is necessary to identify the same search account even when the
-     * corresponding {@link com.fsck.k9.search.SearchAccount} object has been recreated.
+     * corresponding {@link au.com.wallaceit.voicemail.search.SearchAccount} object has been recreated.
      * </p>
      */
     @Override

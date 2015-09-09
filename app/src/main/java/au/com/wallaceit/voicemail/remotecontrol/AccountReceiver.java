@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.fsck.k9.remotecontrol.K9AccountReceptor;
-import com.fsck.k9.remotecontrol.K9RemoteControl;
+import au.com.wallaceit.voicemail.remotecontrol.K9AccountReceptor;
+import au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl;
 
 class AccountReceiver extends BroadcastReceiver {
     K9AccountReceptor receptor = null;

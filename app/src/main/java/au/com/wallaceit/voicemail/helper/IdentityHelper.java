@@ -2,9 +2,9 @@ package au.com.wallaceit.voicemail.helper;
 
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.Identity;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;

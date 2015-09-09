@@ -11,11 +11,11 @@ import java.util.Map.Entry;
 
 import android.util.Log;
 
-import com.fsck.k9.FontSizes;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.preferences.SettingsExporter;
-import com.fsck.k9.preferences.SettingsImporter;
-import com.fsck.k9.preferences.Storage;
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.preferences.SettingsExporter;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter;
+import au.com.wallaceit.voicemail.preferences.Storage;
 
 /*
  * TODO:
@@ -107,7 +107,7 @@ public class Settings {
      *         The structure describing the different settings, possibly containing multiple
      *         versions.
      * @param validatedSettings
-     *         The settings as returned by {@link com.fsck.k9.preferences.Settings#validate(int, Map, Map, boolean)}.
+     *         The settings as returned by {@link au.com.wallaceit.voicemail.preferences.Settings#validate(int, Map, Map, boolean)}.
      *         This map is modified and contains the upgraded settings when this method returns.
      *
      * @return A set of setting names that were removed during the upgrade process or {@code null}
@@ -220,7 +220,7 @@ public class Settings {
      * <p>
      * This {@code TreeMap} is used to quickly find the {@code SettingsDescription} belonging to a
      * content version as read by {@link SettingsImporter}. See e.g.
-     * {@link com.fsck.k9.preferences.Settings#validate(int, Map, Map, boolean)}.
+     * {@link au.com.wallaceit.voicemail.preferences.Settings#validate(int, Map, Map, boolean)}.
      * </p>
      *
      * @param versionDescriptions
@@ -353,7 +353,7 @@ public class Settings {
     /**
      * Container to hold a {@link SettingsDescription} instance and a version number.
      *
-     * @see com.fsck.k9.preferences.Settings#versions(V...)
+     * @see au.com.wallaceit.voicemail.preferences.Settings#versions(V...)
      */
     public static class V {
         public final Integer version;
@@ -368,7 +368,7 @@ public class Settings {
     /**
      * Used for a nontrivial settings upgrade.
      *
-     * @see com.fsck.k9.preferences.Settings#upgrade(int, Map, Map, Map)
+     * @see au.com.wallaceit.voicemail.preferences.Settings#upgrade(int, Map, Map, Map)
      */
     public interface SettingsUpgrader {
         /**

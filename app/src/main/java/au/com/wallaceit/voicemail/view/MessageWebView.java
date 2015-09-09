@@ -8,12 +8,12 @@ import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.helper.HtmlConverter;
-import com.fsck.k9.helper.HtmlSanitizer;
-import com.fsck.k9.view.*;
-import com.fsck.k9.view.RigidWebView;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.helper.HtmlSanitizer;
+import au.com.wallaceit.voicemail.view.*;
+import au.com.wallaceit.voicemail.view.RigidWebView;
 
 
 public class MessageWebView extends RigidWebView {

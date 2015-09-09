@@ -12,18 +12,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.helper.SizeFormatter;
+import au.com.wallaceit.voicemail.helper.SizeFormatter;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.AttachmentViewCallback;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback;
 
 
 public class AttachmentView extends FrameLayout implements OnClickListener, OnLongClickListener {
     private AttachmentViewInfo attachment;
-    private com.fsck.k9.ui.messageview.AttachmentViewCallback callback;
+    private au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback callback;
 
     private Button viewButton;
     private Button downloadButton;
@@ -128,7 +128,7 @@ public class AttachmentView extends FrameLayout implements OnClickListener, OnLo
         callback.onSaveAttachmentToUserProvidedDirectory(attachment);
     }
 
-    public void setCallback(com.fsck.k9.ui.messageview.AttachmentViewCallback callback) {
+    public void setCallback(au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback callback) {
         this.callback = callback;
     }
 

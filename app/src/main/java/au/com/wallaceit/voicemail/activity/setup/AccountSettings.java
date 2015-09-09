@@ -22,29 +22,29 @@ import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.util.Log;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.DeletePolicy;
-import com.fsck.k9.Account.Expunge;
-import com.fsck.k9.Account.FolderMode;
-import com.fsck.k9.Account.MessageFormat;
-import com.fsck.k9.Account.QuoteStyle;
-import com.fsck.k9.Account.Searchable;
-import com.fsck.k9.Account.ShowPictures;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account.DeletePolicy;
+import au.com.wallaceit.voicemail.Account.Expunge;
+import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.Account.MessageFormat;
+import au.com.wallaceit.voicemail.Account.QuoteStyle;
+import au.com.wallaceit.voicemail.Account.Searchable;
+import au.com.wallaceit.voicemail.Account.ShowPictures;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.ChooseFolder;
-import com.fsck.k9.activity.ChooseIdentity;
-import com.fsck.k9.activity.ColorPickerDialog;
-import com.fsck.k9.activity.K9PreferenceActivity;
-import com.fsck.k9.activity.ManageIdentities;
-import com.fsck.k9.activity.setup.*;
-import com.fsck.k9.activity.setup.AccountSetupIncoming;
-import com.fsck.k9.activity.setup.AccountSetupOutgoing;
-import com.fsck.k9.crypto.OpenPgpApiHelper;
+import au.com.wallaceit.voicemail.activity.ChooseFolder;
+import au.com.wallaceit.voicemail.activity.ChooseIdentity;
+import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
+import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
+import au.com.wallaceit.voicemail.activity.ManageIdentities;
+import au.com.wallaceit.voicemail.activity.setup.*;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing;
+import au.com.wallaceit.voicemail.crypto.OpenPgpApiHelper;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.service.MailService;
 
 import org.openintents.openpgp.util.OpenPgpAppPreference;
 import org.openintents.openpgp.util.OpenPgpKeyPreference;
@@ -199,7 +199,7 @@ public class AccountSettings extends K9PreferenceActivity {
 
 
     public static void actionSettings(Context context, Account account) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSettings.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSettings.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         context.startActivity(i);
     }

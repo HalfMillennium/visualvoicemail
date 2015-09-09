@@ -13,7 +13,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;

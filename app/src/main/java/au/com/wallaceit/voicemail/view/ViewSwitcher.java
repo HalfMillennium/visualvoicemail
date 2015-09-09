@@ -1,6 +1,6 @@
 package au.com.wallaceit.voicemail.view;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 import android.content.Context;
 import android.util.AttributeSet;

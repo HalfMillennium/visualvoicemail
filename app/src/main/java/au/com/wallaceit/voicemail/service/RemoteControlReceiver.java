@@ -6,16 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.remotecontrol.K9RemoteControl;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.CoreReceiver;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.CoreReceiver;
 
 import java.util.List;
 
-import static com.fsck.k9.remotecontrol.K9RemoteControl.*;
+import static au.com.wallaceit.voicemail.remotecontrol.K9RemoteControl.*;
 
 public class RemoteControlReceiver extends CoreReceiver {
     @Override

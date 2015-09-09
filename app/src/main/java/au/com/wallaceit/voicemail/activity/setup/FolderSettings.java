@@ -8,22 +8,22 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.util.Log;
-import com.fsck.k9.*;
-import com.fsck.k9.activity.FolderInfoHolder;
-import com.fsck.k9.activity.K9PreferenceActivity;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
+import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Folder.FolderClass;
 
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.service.MailService;
 
 public class FolderSettings extends K9PreferenceActivity {
 
     private static final String EXTRA_FOLDER_NAME = "com.fsck.k9.folderName";
-    private static final String EXTRA_ACCOUNT = "com.fsck.k9.account";
+    private static final String EXTRA_ACCOUNT = "au.com.wallaceit.voicemail.account";
 
     private static final String PREFERENCE_TOP_CATERGORY = "folder_settings";
     private static final String PREFERENCE_DISPLAY_CLASS = "folder_settings_folder_display_mode";
@@ -43,7 +43,7 @@ public class FolderSettings extends K9PreferenceActivity {
     private ListPreference mNotifyClass;
 
     public static void actionSettings(Context context, Account account, String folderName) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.FolderSettings.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.FolderSettings.class);
         i.putExtra(EXTRA_FOLDER_NAME, folderName);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         context.startActivity(i);

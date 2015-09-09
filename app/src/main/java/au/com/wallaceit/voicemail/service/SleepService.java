@@ -3,11 +3,11 @@ package au.com.wallaceit.voicemail.service;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.BootReceiver;
-import com.fsck.k9.service.CoreService;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.BootReceiver;
+import au.com.wallaceit.voicemail.service.CoreService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SleepService extends CoreService {
 
-    private static String ALARM_FIRED = "com.fsck.k9.service.SleepService.ALARM_FIRED";
-    private static String LATCH_ID = "com.fsck.k9.service.SleepService.LATCH_ID_EXTRA";
+    private static String ALARM_FIRED = "au.com.wallaceit.voicemail.service.SleepService.ALARM_FIRED";
+    private static String LATCH_ID = "au.com.wallaceit.voicemail.service.SleepService.LATCH_ID_EXTRA";
 
 
     private static ConcurrentHashMap<Integer, SleepDatum> sleepData = new ConcurrentHashMap<Integer, SleepDatum>();
@@ -34,7 +34,7 @@ public class SleepService extends CoreService {
         sleepDatum.reacquireLatch = new CountDownLatch(1);
         sleepData.put(id, sleepDatum);
 
-        Intent i = new Intent(context, com.fsck.k9.service.SleepService.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.service.SleepService.class);
         i.putExtra(LATCH_ID, id);
         i.setAction(ALARM_FIRED + "." + id);
         long startTime = System.currentTimeMillis();

@@ -26,23 +26,23 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.setup.AccountSetupAccountType;
-import com.fsck.k9.activity.setup.AccountSetupCheckSettings;
-import com.fsck.k9.activity.setup.AccountSetupCheckSettings.CheckDirection;
-import com.fsck.k9.activity.setup.AccountSetupNames;
-import com.fsck.k9.helper.UrlEncodingHelper;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupAccountType;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupNames;
+import au.com.wallaceit.voicemail.helper.UrlEncodingHelper;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.account.AccountCreator;
-import com.fsck.k9.view.ClientCertificateSpinner;
-import com.fsck.k9.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
+import au.com.wallaceit.voicemail.account.AccountCreator;
+import au.com.wallaceit.voicemail.view.ClientCertificateSpinner;
+import au.com.wallaceit.voicemail.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
 
 /**
  * Prompts the user for the email address and password.
@@ -53,12 +53,12 @@ import com.fsck.k9.view.ClientCertificateSpinner.OnClientCertificateChangedListe
  */
 public class AccountSetupBasics extends K9Activity
     implements OnClickListener, TextWatcher, OnCheckedChangeListener, OnClientCertificateChangedListener {
-    private final static String EXTRA_ACCOUNT = "com.fsck.k9.AccountSetupBasics.account";
+    private final static String EXTRA_ACCOUNT = "au.com.wallaceit.voicemail.AccountSetupBasics.account";
     private final static int DIALOG_NOTE = 1;
     private final static String STATE_KEY_PROVIDER =
-            "com.fsck.k9.AccountSetupBasics.provider";
+            "au.com.wallaceit.voicemail.AccountSetupBasics.provider";
     private final static String STATE_KEY_CHECKED_INCOMING =
-            "com.fsck.k9.AccountSetupBasics.checkedIncoming";
+            "au.com.wallaceit.voicemail.AccountSetupBasics.checkedIncoming";
 
     private EditText mEmailView;
     private EditText mPasswordView;
@@ -74,7 +74,7 @@ public class AccountSetupBasics extends K9Activity
     private CheckBox mShowPasswordCheckBox;
 
     public static void actionNewAccount(Context context) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupBasics.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupBasics.class);
         context.startActivity(i);
     }
 

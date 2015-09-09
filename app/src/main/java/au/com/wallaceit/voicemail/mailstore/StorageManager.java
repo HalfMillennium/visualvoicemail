@@ -17,10 +17,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 /**
  * Manager for different {@link StorageProvider} -classes that abstract access
@@ -82,7 +82,7 @@ public class StorageManager {
          * @param context
          *            TODO
          * @return Whether this provider supports the current device.
-         * @see com.fsck.k9.mailstore.StorageManager#getAvailableProviders()
+         * @see au.com.wallaceit.voicemail.mailstore.StorageManager#getAvailableProviders()
          */
         boolean isSupported(Context context);
 
@@ -170,7 +170,7 @@ public class StorageManager {
      *
      * <p>
      * Moreover, this class validates the denoted storage path against mount
-     * points using {@link com.fsck.k9.mailstore.StorageManager#isMountPoint(File)}.
+     * points using {@link au.com.wallaceit.voicemail.mailstore.StorageManager#isMountPoint(File)}.
      * </p>
      */
     public abstract static class FixedStorageProviderBase implements StorageProvider {
@@ -494,11 +494,11 @@ public class StorageManager {
      */
     private List<StorageListener> mListeners = new ArrayList<StorageListener>();
 
-    private static transient com.fsck.k9.mailstore.StorageManager instance;
+    private static transient au.com.wallaceit.voicemail.mailstore.StorageManager instance;
 
-    public static synchronized com.fsck.k9.mailstore.StorageManager getInstance(final Context context) {
+    public static synchronized au.com.wallaceit.voicemail.mailstore.StorageManager getInstance(final Context context) {
         if (instance == null) {
-            instance = new com.fsck.k9.mailstore.StorageManager(context.getApplicationContext());
+            instance = new au.com.wallaceit.voicemail.mailstore.StorageManager(context.getApplicationContext());
         }
         return instance;
     }
@@ -619,7 +619,7 @@ public class StorageManager {
     /**
      * @return A map of available providers names, indexed by their ID. Never
      *         <code>null</code>.
-     * @see com.fsck.k9.mailstore.StorageManager
+     * @see au.com.wallaceit.voicemail.mailstore.StorageManager
      * @see StorageProvider#isSupported(Context)
      */
     public Map<String, String> getAvailableProviders() {
@@ -723,13 +723,13 @@ public class StorageManager {
      * </p>
      *
      * @param providerId
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      *             If the storage can't be locked.
      */
-    public void lockProvider(final String providerId) throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void lockProvider(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         final StorageProvider provider = getProvider(providerId);
         if (provider == null) {
-            throw new com.fsck.k9.mailstore.UnavailableStorageException("StorageProvider not found: " + providerId);
+            throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("StorageProvider not found: " + providerId);
         }
         // lock provider
         final SynchronizationAid sync = mProviderLocks.get(provider);
@@ -738,7 +738,7 @@ public class StorageManager {
             if (locked) {
                 sync.readLock.unlock();
             }
-            throw new com.fsck.k9.mailstore.UnavailableStorageException("StorageProvider is unmounting");
+            throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("StorageProvider is unmounting");
         } else if (locked && !provider.isReady(context)) {
             sync.readLock.unlock();
             throw new UnavailableStorageException("StorageProvider not ready");

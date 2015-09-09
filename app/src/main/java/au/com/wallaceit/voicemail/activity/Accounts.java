@@ -60,41 +60,41 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.ActivityListener;
-import com.fsck.k9.activity.ConfirmationDialog;
-import com.fsck.k9.activity.FolderList;
-import com.fsck.k9.activity.K9ListActivity;
-import com.fsck.k9.activity.MessageCompose;
-import com.fsck.k9.activity.MessageList;
-import com.fsck.k9.activity.UpgradeDatabases;
-import com.fsck.k9.activity.misc.ExtendedAsyncTask;
-import com.fsck.k9.activity.misc.NonConfigurationInstance;
-import com.fsck.k9.activity.setup.AccountSettings;
-import com.fsck.k9.activity.setup.AccountSetupBasics;
-import com.fsck.k9.activity.setup.Prefs;
-import com.fsck.k9.activity.setup.WelcomeMessage;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.helper.SizeFormatter;
+import au.com.wallaceit.voicemail.activity.ActivityListener;
+import au.com.wallaceit.voicemail.activity.ConfirmationDialog;
+import au.com.wallaceit.voicemail.activity.FolderList;
+import au.com.wallaceit.voicemail.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.activity.MessageCompose;
+import au.com.wallaceit.voicemail.activity.MessageList;
+import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.activity.misc.ExtendedAsyncTask;
+import au.com.wallaceit.voicemail.activity.misc.NonConfigurationInstance;
+import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupBasics;
+import au.com.wallaceit.voicemail.activity.setup.Prefs;
+import au.com.wallaceit.voicemail.activity.setup.WelcomeMessage;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.helper.SizeFormatter;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.preferences.SettingsExporter;
-import com.fsck.k9.preferences.SettingsImportExportException;
-import com.fsck.k9.preferences.SettingsImporter;
-import com.fsck.k9.preferences.SettingsImporter.AccountDescription;
-import com.fsck.k9.preferences.SettingsImporter.AccountDescriptionPair;
-import com.fsck.k9.preferences.SettingsImporter.ImportContents;
-import com.fsck.k9.preferences.SettingsImporter.ImportResults;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchAccount;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchField;
-import com.fsck.k9.view.ColorChip;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.preferences.SettingsExporter;
+import au.com.wallaceit.voicemail.preferences.SettingsImportExportException;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter.AccountDescription;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter.AccountDescriptionPair;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter.ImportContents;
+import au.com.wallaceit.voicemail.preferences.SettingsImporter.ImportResults;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchAccount;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.view.ColorChip;
 
 import de.cketti.library.changelog.ChangeLog;
 
@@ -160,7 +160,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 mActionBarUnread.setVisibility(View.VISIBLE);
             }
 
-            String operation = mListener.getOperation(com.fsck.k9.activity.Accounts.this);
+            String operation = mListener.getOperation(au.com.wallaceit.voicemail.activity.Accounts.this);
             operation.trim();
             if (operation.length() < 1) {
                 mActionBarSubTitle.setVisibility(View.GONE);
@@ -256,7 +256,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         @Override
         public void folderStatusChanged(Account account, String folderName, int unreadMessageCount) {
             try {
-                AccountStats stats = account.getStats(com.fsck.k9.activity.Accounts.this);
+                AccountStats stats = account.getStats(au.com.wallaceit.voicemail.activity.Accounts.this);
                 if (stats == null) {
                     Log.w(VisualVoicemail.LOG_TAG, "Unable to get account stats");
                 } else {
@@ -304,7 +304,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             String folder,
             int totalMessagesInMailbox,
         int numNewMessages) {
-            MessagingController.getInstance(getApplication()).getAccountStats(com.fsck.k9.activity.Accounts.this, account, mListener);
+            MessagingController.getInstance(getApplication()).getAccountStats(au.com.wallaceit.voicemail.activity.Accounts.this, account, mListener);
             super.synchronizeMailboxFinished(account, folder, totalMessagesInMailbox, numNewMessages);
 
             mHandler.progress(false);
@@ -337,7 +337,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
 
     public static void listAccounts(Context context) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.Accounts.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.Accounts.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_STARTUP, false);
@@ -345,7 +345,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     }
 
     public static void importSettings(Context context) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.Accounts.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.Accounts.class);
         intent.setAction(ACTION_IMPORT_SETTINGS);
         context.startActivity(intent);
     }
@@ -737,7 +737,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         public void restore(Activity activity) {
-            show((com.fsck.k9.activity.Accounts) activity, true);
+            show((au.com.wallaceit.voicemail.activity.Accounts) activity, true);
         }
 
         @Override
@@ -765,11 +765,11 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             return false;
         }
 
-        public void show(com.fsck.k9.activity.Accounts activity) {
+        public void show(au.com.wallaceit.voicemail.activity.Accounts activity) {
             show(activity, false);
         }
 
-        private void show(final com.fsck.k9.activity.Accounts activity, boolean restore) {
+        private void show(final au.com.wallaceit.voicemail.activity.Accounts activity, boolean restore) {
             ServerSettings incoming = RemoteStore.decodeStoreUri(mAccount.getStoreUri());
             ServerSettings outgoing = Transport.decodeTransportUri(mAccount.getTransportUri());
 
@@ -1025,7 +1025,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         protected void onPostExecute(Void result) {
-            com.fsck.k9.activity.Accounts activity = (com.fsck.k9.activity.Accounts) mActivity;
+            au.com.wallaceit.voicemail.activity.Accounts activity = (au.com.wallaceit.voicemail.activity.Accounts) mActivity;
 
             // Let the activity know that the background task is complete
             activity.setNonConfigurationInstance(null);
@@ -1076,10 +1076,10 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                             // are currently not inserted to be left
                         }
                         MessagingController.getInstance(getApplication())
-                        .deleteAccount(com.fsck.k9.activity.Accounts.this, realAccount);
-                        Preferences.getPreferences(com.fsck.k9.activity.Accounts.this)
+                        .deleteAccount(au.com.wallaceit.voicemail.activity.Accounts.this, realAccount);
+                        Preferences.getPreferences(au.com.wallaceit.voicemail.activity.Accounts.this)
                         .deleteAccount(realAccount);
-                        VisualVoicemail.setServicesEnabled(com.fsck.k9.activity.Accounts.this);
+                        VisualVoicemail.setServicesEnabled(au.com.wallaceit.voicemail.activity.Accounts.this);
                         refresh();
                     }
                 }
@@ -1345,7 +1345,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         })
         .setNeutralButton(R.string.changelog_full_title, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface d, int c) {
-                new ChangeLog(com.fsck.k9.activity.Accounts.this).getFullLogDialog().show();
+                new ChangeLog(au.com.wallaceit.voicemail.activity.Accounts.this).getFullLogDialog().show();
             }
         })
         .show();
@@ -1477,7 +1477,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         public void restore(Activity activity) {
-            show((com.fsck.k9.activity.Accounts) activity);
+            show((au.com.wallaceit.voicemail.activity.Accounts) activity);
         }
 
         @Override
@@ -1490,7 +1490,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             return false;
         }
 
-        public void show(final com.fsck.k9.activity.Accounts activity) {
+        public void show(final au.com.wallaceit.voicemail.activity.Accounts activity) {
             final String message = generateMessage(activity);
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -1516,7 +1516,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
          *
          * @return The message the dialog should display
          */
-        protected String generateMessage(com.fsck.k9.activity.Accounts activity) {
+        protected String generateMessage(au.com.wallaceit.voicemail.activity.Accounts activity) {
             return activity.getString(mMessageRes, mArguments);
         }
 
@@ -1526,7 +1526,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
          * @param activity
          *         The {@code Activity} this dialog belongs to.
          */
-        protected void okayAction(com.fsck.k9.activity.Accounts activity) {
+        protected void okayAction(au.com.wallaceit.voicemail.activity.Accounts activity) {
             // Do nothing
         }
     }
@@ -1559,7 +1559,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         }
 
         @Override
-        protected String generateMessage(com.fsck.k9.activity.Accounts activity) {
+        protected String generateMessage(au.com.wallaceit.voicemail.activity.Accounts activity) {
             //TODO: display names of imported accounts (name from file *and* possibly new name)
 
             int imported = mImportResults.importedAccounts.size();
@@ -1569,7 +1569,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         }
 
         @Override
-        protected void okayAction(com.fsck.k9.activity.Accounts activity) {
+        protected void okayAction(au.com.wallaceit.voicemail.activity.Accounts activity) {
             Context context = activity.getApplicationContext();
             Preferences preferences = Preferences.getPreferences(context);
             List<Account> disabledAccounts = new ArrayList<Account>();
@@ -1619,7 +1619,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         public void restore(Activity activity) {
-            show((com.fsck.k9.activity.Accounts) activity, mSelection);
+            show((au.com.wallaceit.voicemail.activity.Accounts) activity, mSelection);
         }
 
         @Override
@@ -1635,11 +1635,11 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             return false;
         }
 
-        public void show(com.fsck.k9.activity.Accounts activity) {
+        public void show(au.com.wallaceit.voicemail.activity.Accounts activity) {
             show(activity, null);
         }
 
-        public void show(final com.fsck.k9.activity.Accounts activity, SparseBooleanArray selection) {
+        public void show(final au.com.wallaceit.voicemail.activity.Accounts activity, SparseBooleanArray selection) {
             List<String> contents = new ArrayList<String>();
 
             if (mImportContents.globalSettings) {
@@ -1728,7 +1728,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
      *
      * @param inst
      *         The {@link NonConfigurationInstance} that should be retained when
-     *         {@link com.fsck.k9.activity.Accounts#onRetainNonConfigurationInstance()} is called.
+     *         {@link au.com.wallaceit.voicemail.activity.Accounts#onRetainNonConfigurationInstance()} is called.
      */
     private void setNonConfigurationInstance(NonConfigurationInstance inst) {
         mNonConfigurationInstance = inst;
@@ -1736,7 +1736,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
     class AccountsAdapter extends ArrayAdapter<BaseAccount> {
         public AccountsAdapter(List<BaseAccount> accounts) {
-            super(com.fsck.k9.activity.Accounts.this, 0, accounts);
+            super(au.com.wallaceit.voicemail.activity.Accounts.this, 0, accounts);
         }
 
         @Override
@@ -1770,7 +1770,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             AccountStats stats = accountStats.get(account.getUuid());
 
             if (stats != null && account instanceof Account && stats.size >= 0) {
-                holder.email.setText(SizeFormatter.formatSize(com.fsck.k9.activity.Accounts.this, stats.size));
+                holder.email.setText(SizeFormatter.formatSize(au.com.wallaceit.voicemail.activity.Accounts.this, stats.size));
                 holder.email.setVisibility(View.VISIBLE);
             } else {
                 if (account.getEmail().equals(account.getDescription())) {
@@ -1838,7 +1838,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 holder.folders.setVisibility(View.VISIBLE);
                 holder.folders.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
-                        FolderList.actionHandleAccount(com.fsck.k9.activity.Accounts.this, (Account)account);
+                        FolderList.actionHandleAccount(au.com.wallaceit.voicemail.activity.Accounts.this, (Account)account);
 
                     }
                 });
@@ -1871,7 +1871,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         }
 
         private OnClickListener createUnreadSearchListener(BaseAccount account) {
-            LocalSearch search = createUnreadSearch(com.fsck.k9.activity.Accounts.this, account);
+            LocalSearch search = createUnreadSearch(au.com.wallaceit.voicemail.activity.Accounts.this, account);
             return new AccountClickListener(search);
         }
 
@@ -1901,7 +1901,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         public void onClick(View v) {
-            MessageList.actionDisplaySearch(com.fsck.k9.activity.Accounts.this, search, true, false);
+            MessageList.actionDisplaySearch(au.com.wallaceit.voicemail.activity.Accounts.this, search, true, false);
         }
 
     }
@@ -1929,7 +1929,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         private String mFileName;
 
 
-        private ExportAsyncTask(com.fsck.k9.activity.Accounts activity, boolean includeGlobals,
+        private ExportAsyncTask(au.com.wallaceit.voicemail.activity.Accounts activity, boolean includeGlobals,
                                 Set<String> accountUuids) {
             super(activity);
             mIncludeGlobals = includeGlobals;
@@ -1957,7 +1957,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            com.fsck.k9.activity.Accounts activity = (com.fsck.k9.activity.Accounts) mActivity;
+            au.com.wallaceit.voicemail.activity.Accounts activity = (au.com.wallaceit.voicemail.activity.Accounts) mActivity;
 
             // Let the activity know that the background task is complete
             activity.setNonConfigurationInstance(null);
@@ -1985,7 +1985,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         private Uri mUri;
         private ImportResults mImportResults;
 
-        private ImportAsyncTask(com.fsck.k9.activity.Accounts activity, boolean includeGlobals,
+        private ImportAsyncTask(au.com.wallaceit.voicemail.activity.Accounts activity, boolean includeGlobals,
                                 List<String> accountUuids, boolean overwrite, Uri uri) {
             super(activity);
             mIncludeGlobals = includeGlobals;
@@ -2030,7 +2030,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            com.fsck.k9.activity.Accounts activity = (com.fsck.k9.activity.Accounts) mActivity;
+            au.com.wallaceit.voicemail.activity.Accounts activity = (au.com.wallaceit.voicemail.activity.Accounts) mActivity;
 
             // Let the activity know that the background task is complete
             activity.setNonConfigurationInstance(null);
@@ -2061,7 +2061,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         private Uri mUri;
         private ImportContents mImportContents;
 
-        private ListImportContentsAsyncTask(com.fsck.k9.activity.Accounts activity, Uri uri) {
+        private ListImportContentsAsyncTask(au.com.wallaceit.voicemail.activity.Accounts activity, Uri uri) {
             super(activity);
 
             mUri = uri;
@@ -2100,7 +2100,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            com.fsck.k9.activity.Accounts activity = (com.fsck.k9.activity.Accounts) mActivity;
+            au.com.wallaceit.voicemail.activity.Accounts activity = (au.com.wallaceit.voicemail.activity.Accounts) mActivity;
 
             // Let the activity know that the background task is complete
             activity.setNonConfigurationInstance(null);
@@ -2142,7 +2142,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         @Override
         protected void onPostExecute(Void arg) {
-            com.fsck.k9.activity.Accounts activity = (com.fsck.k9.activity.Accounts) mActivity;
+            au.com.wallaceit.voicemail.activity.Accounts activity = (au.com.wallaceit.voicemail.activity.Accounts) mActivity;
 
             // Let the activity know that the background task is complete
             activity.setNonConfigurationInstance(null);

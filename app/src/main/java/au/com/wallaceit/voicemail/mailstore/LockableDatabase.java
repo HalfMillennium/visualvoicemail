@@ -12,11 +12,11 @@ import android.database.sqlite.SQLiteException;
 import android.os.Build;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.helper.FileHelper;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.FileHelper;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 public class LockableDatabase {
 
@@ -35,7 +35,7 @@ public class LockableDatabase {
          * @return Any relevant data. Can be <code>null</code>.
          * @throws WrappedException
          * @throws MessagingException
-         * @throws com.fsck.k9.mailstore.UnavailableStorageException
+         * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
          */
         T doDbWork(SQLiteDatabase db) throws WrappedException, MessagingException;
     }
@@ -85,7 +85,7 @@ public class LockableDatabase {
                 } finally {
                     unlockWrite();
                 }
-            } catch (com.fsck.k9.mailstore.UnavailableStorageException e) {
+            } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
                 Log.w(VisualVoicemail.LOG_TAG, "Unable to writelock on unmount", e);
             }
         }
@@ -102,7 +102,7 @@ public class LockableDatabase {
 
             try {
                 openOrCreateDataspace();
-            } catch (com.fsck.k9.mailstore.UnavailableStorageException e) {
+            } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
                 Log.e(VisualVoicemail.LOG_TAG, "Unable to open DB on mount", e);
             }
         }
@@ -178,14 +178,14 @@ public class LockableDatabase {
      * done with the storage.
      * </p>
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      *             If storage can't be locked because it is not available
      */
-    protected void lockRead() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    protected void lockRead() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         mReadLock.lock();
         try {
             getStorageManager().lockProvider(mStorageProviderId);
-        } catch (com.fsck.k9.mailstore.UnavailableStorageException e) {
+        } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
             mReadLock.unlock();
             throw e;
         } catch (RuntimeException e) {
@@ -208,10 +208,10 @@ public class LockableDatabase {
      * done with the storage.
      * </p>
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      *             If storage can't be locked because it is not available.
      */
-    protected void lockWrite() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    protected void lockWrite() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         lockWrite(mStorageProviderId);
     }
 
@@ -227,14 +227,14 @@ public class LockableDatabase {
      * @param providerId
      *            Never <code>null</code>.
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      *             If storage can't be locked because it is not available.
      */
-    protected void lockWrite(final String providerId) throws com.fsck.k9.mailstore.UnavailableStorageException {
+    protected void lockWrite(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         mWriteLock.lock();
         try {
             getStorageManager().lockProvider(providerId);
-        } catch (com.fsck.k9.mailstore.UnavailableStorageException e) {
+        } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
             mWriteLock.unlock();
             throw e;
         } catch (RuntimeException e) {
@@ -270,7 +270,7 @@ public class LockableDatabase {
      *
      * @param <T>
      * @return Whatever {@link DbCallback#doDbWork(SQLiteDatabase)} returns.
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      */
     public <T> T execute(final boolean transactional, final DbCallback<T> callback) throws MessagingException {
         lockRead();
@@ -358,7 +358,7 @@ public class LockableDatabase {
         }
     }
 
-    public void open() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void open() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         lockWrite();
         try {
             openOrCreateDataspace();
@@ -370,9 +370,9 @@ public class LockableDatabase {
 
     /**
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      */
-    private void openOrCreateDataspace() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    private void openOrCreateDataspace() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
 
         lockWrite();
         try {
@@ -408,9 +408,9 @@ public class LockableDatabase {
      * @param providerId
      *            Never <code>null</code>.
      * @return DB file.
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      */
-    protected File prepareStorage(final String providerId) throws com.fsck.k9.mailstore.UnavailableStorageException {
+    protected File prepareStorage(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         final StorageManager storageManager = getStorageManager();
 
         final File databaseFile = storageManager.getDatabase(uUid, providerId);
@@ -422,7 +422,7 @@ public class LockableDatabase {
         if (!databaseParentDir.exists()) {
             if (!databaseParentDir.mkdirs()) {
                 // Android seems to be unmounting the storage...
-                throw new com.fsck.k9.mailstore.UnavailableStorageException("Unable to access: " + databaseParentDir);
+                throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("Unable to access: " + databaseParentDir);
             }
             FileHelper.touchFile(databaseParentDir, ".nomedia");
         }
@@ -442,20 +442,20 @@ public class LockableDatabase {
     /**
      * Delete the backing database.
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      */
-    public void delete() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void delete() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         delete(false);
     }
 
-    public void recreate() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void recreate() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         delete(true);
     }
 
     /**
      * @param recreate
      *            <code>true</code> if the DB should be recreated after delete
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      */
     private void delete(final boolean recreate) throws UnavailableStorageException {
         lockWrite();

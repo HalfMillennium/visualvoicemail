@@ -9,11 +9,11 @@ import java.util.TreeMap;
 
 import android.content.SharedPreferences;
 
-import com.fsck.k9.EmailAddressValidator;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.EmailAddressValidator;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.preferences.Settings;
-import com.fsck.k9.preferences.Settings.*;
+import au.com.wallaceit.voicemail.preferences.Settings;
+import au.com.wallaceit.voicemail.preferences.Settings.*;
 
 public class IdentitySettings {
     public static final Map<String, TreeMap<Integer, SettingsDescription>> SETTINGS;

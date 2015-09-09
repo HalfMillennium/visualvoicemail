@@ -11,11 +11,11 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fsck.k9.Identity;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.EditIdentity;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.EditIdentity;
 
 public class ManageIdentities extends ChooseIdentity {
     private boolean mIdentitiesChanged = false;
@@ -35,10 +35,10 @@ public class ManageIdentities extends ChooseIdentity {
     }
 
     private void editItem(int i) {
-        Intent intent = new Intent(com.fsck.k9.activity.ManageIdentities.this, com.fsck.k9.activity.EditIdentity.class);
-        intent.putExtra(com.fsck.k9.activity.EditIdentity.EXTRA_ACCOUNT, mAccount.getUuid());
-        intent.putExtra(com.fsck.k9.activity.EditIdentity.EXTRA_IDENTITY, mAccount.getIdentity(i));
-        intent.putExtra(com.fsck.k9.activity.EditIdentity.EXTRA_IDENTITY_INDEX, i);
+        Intent intent = new Intent(au.com.wallaceit.voicemail.activity.ManageIdentities.this, au.com.wallaceit.voicemail.activity.EditIdentity.class);
+        intent.putExtra(au.com.wallaceit.voicemail.activity.EditIdentity.EXTRA_ACCOUNT, mAccount.getUuid());
+        intent.putExtra(au.com.wallaceit.voicemail.activity.EditIdentity.EXTRA_IDENTITY, mAccount.getIdentity(i));
+        intent.putExtra(au.com.wallaceit.voicemail.activity.EditIdentity.EXTRA_IDENTITY_INDEX, i);
         startActivityForResult(intent, ACTIVITY_EDIT_IDENTITY);
     }
 
@@ -53,7 +53,7 @@ public class ManageIdentities extends ChooseIdentity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.new_identity:
-            Intent intent = new Intent(com.fsck.k9.activity.ManageIdentities.this, com.fsck.k9.activity.EditIdentity.class);
+            Intent intent = new Intent(au.com.wallaceit.voicemail.activity.ManageIdentities.this, au.com.wallaceit.voicemail.activity.EditIdentity.class);
             intent.putExtra(EditIdentity.EXTRA_ACCOUNT, mAccount.getUuid());
             startActivityForResult(intent, ACTIVITY_EDIT_IDENTITY);
             break;

@@ -16,12 +16,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.helper.FileHelper;
-import com.fsck.k9.helper.UrlEncodingHelper;
+import au.com.wallaceit.voicemail.helper.FileHelper;
+import au.com.wallaceit.voicemail.helper.UrlEncodingHelper;
 import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.provider.AttachmentProvider.AttachmentProviderColumns;
+import au.com.wallaceit.voicemail.provider.AttachmentProvider.AttachmentProviderColumns;
 import org.apache.commons.io.IOUtils;
 
 

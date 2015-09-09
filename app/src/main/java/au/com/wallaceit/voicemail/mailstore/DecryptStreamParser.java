@@ -11,8 +11,8 @@ import java.util.Stack;
 import android.content.Context;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.crypto.DecryptedTempFileBody;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.crypto.DecryptedTempFileBody;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.BodyPart;
 import com.fsck.k9.mail.Message;

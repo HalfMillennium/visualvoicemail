@@ -11,8 +11,8 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.Viewable;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.MessagePreviewExtractor;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.MessagePreviewExtractor;
 
 
 class MessageInfoExtractor {
@@ -28,7 +28,7 @@ class MessageInfoExtractor {
 
     public String getMessageTextPreview() throws MessagingException {
         getViewablesIfNecessary();
-        return com.fsck.k9.mailstore.MessagePreviewExtractor.extractPreview(context, viewables);
+        return au.com.wallaceit.voicemail.mailstore.MessagePreviewExtractor.extractPreview(context, viewables);
     }
 
     public int getAttachmentCount() throws MessagingException {

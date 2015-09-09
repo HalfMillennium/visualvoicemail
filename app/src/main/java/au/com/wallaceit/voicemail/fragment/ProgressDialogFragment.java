@@ -12,8 +12,8 @@ public class ProgressDialogFragment extends DialogFragment {
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_MESSAGE = "message";
 
-    public static com.fsck.k9.fragment.ProgressDialogFragment newInstance(String title, String message) {
-        com.fsck.k9.fragment.ProgressDialogFragment fragment = new com.fsck.k9.fragment.ProgressDialogFragment();
+    public static au.com.wallaceit.voicemail.fragment.ProgressDialogFragment newInstance(String title, String message) {
+        au.com.wallaceit.voicemail.fragment.ProgressDialogFragment fragment = new au.com.wallaceit.voicemail.fragment.ProgressDialogFragment();
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
@@ -51,6 +51,6 @@ public class ProgressDialogFragment extends DialogFragment {
 
 
     public interface CancelListener {
-        void onCancel(com.fsck.k9.fragment.ProgressDialogFragment fragment);
+        void onCancel(au.com.wallaceit.voicemail.fragment.ProgressDialogFragment fragment);
     }
 }

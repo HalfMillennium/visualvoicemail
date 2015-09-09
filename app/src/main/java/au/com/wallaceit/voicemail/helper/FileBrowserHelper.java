@@ -12,7 +12,7 @@ import android.net.Uri;
 import android.text.InputType;
 import android.widget.EditText;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
 
 public class FileBrowserHelper {
@@ -27,7 +27,7 @@ public class FileBrowserHelper {
         { "com.androidworkz.action.PICK_DIRECTORY", "file://" }
     }; // SystemExplorer
 
-    private static com.fsck.k9.helper.FileBrowserHelper sInstance;
+    private static au.com.wallaceit.voicemail.helper.FileBrowserHelper sInstance;
 
     /**
      * callback class to provide the result of the fallback textedit path dialog
@@ -49,9 +49,9 @@ public class FileBrowserHelper {
      */
     private FileBrowserHelper() {
     }
-    public synchronized static com.fsck.k9.helper.FileBrowserHelper getInstance() {
+    public synchronized static au.com.wallaceit.voicemail.helper.FileBrowserHelper getInstance() {
         if (sInstance == null) {
-            sInstance = new com.fsck.k9.helper.FileBrowserHelper();
+            sInstance = new au.com.wallaceit.voicemail.helper.FileBrowserHelper();
         }
         return sInstance;
     }

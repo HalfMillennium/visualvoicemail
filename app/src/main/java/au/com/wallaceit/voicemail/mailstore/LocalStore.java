@@ -11,28 +11,28 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.helper.UrlEncodingHelper;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.helper.UrlEncodingHelper;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.LocalFolder.DataLocation;
-import com.fsck.k9.mailstore.StorageManager.StorageProvider;
-import com.fsck.k9.mailstore.LockableDatabase.DbCallback;
-import com.fsck.k9.mailstore.LockableDatabase.WrappedException;
-import com.fsck.k9.mailstore.UnavailableStorageException;
-import com.fsck.k9.provider.EmailProvider;
-import com.fsck.k9.provider.EmailProvider.MessageColumns;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchField;
-import com.fsck.k9.search.SqlQueryBuilder;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder.DataLocation;
+import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.provider.EmailProvider;
+import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
 import org.apache.james.mime4j.codec.Base64InputStream;
 import org.apache.james.mime4j.codec.QuotedPrintableInputStream;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -76,7 +76,7 @@ public class LocalStore extends Store implements Serializable {
     /**
      * Local stores indexed by UUID because the Uri may change due to migration to/from SD-card.
      */
-    private static ConcurrentMap<String, com.fsck.k9.mailstore.LocalStore> sLocalStores = new ConcurrentHashMap<String, com.fsck.k9.mailstore.LocalStore>();
+    private static ConcurrentMap<String, au.com.wallaceit.voicemail.mailstore.LocalStore> sLocalStores = new ConcurrentHashMap<String, au.com.wallaceit.voicemail.mailstore.LocalStore>();
 
     /*
      * a String containing the columns getMessages expects to work with
@@ -167,7 +167,7 @@ public class LocalStore extends Store implements Serializable {
      * This constructor is only used by {@link Store#getLocalInstance(Account, Context)}
      * @param account
      * @param context
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException if not {@link StorageProvider#isReady(Context)}
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException if not {@link StorageProvider#isReady(Context)}
      */
     public LocalStore(final Account account, final Context context) throws MessagingException {
         mAccount = account;
@@ -184,10 +184,10 @@ public class LocalStore extends Store implements Serializable {
     /**
      * Get an instance of a local mail store.
      *
-     * @throws com.fsck.k9.mailstore.UnavailableStorageException
+     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
      *          if not {@link StorageProvider#isReady(Context)}
      */
-    public static com.fsck.k9.mailstore.LocalStore getInstance(Account account, Context context)
+    public static au.com.wallaceit.voicemail.mailstore.LocalStore getInstance(Account account, Context context)
             throws MessagingException {
 
         String accountUuid = account.getUuid();
@@ -201,12 +201,12 @@ public class LocalStore extends Store implements Serializable {
         // Use per-account locks so DatabaseUpgradeService always knows which account database is
         // currently upgraded.
         synchronized (lock) {
-            com.fsck.k9.mailstore.LocalStore store = sLocalStores.get(accountUuid);
+            au.com.wallaceit.voicemail.mailstore.LocalStore store = sLocalStores.get(accountUuid);
 
             if (store == null) {
                 // Creating a LocalStore instance will create or upgrade the database if
                 // necessary. This could take some time.
-                store = new com.fsck.k9.mailstore.LocalStore(account, context);
+                store = new au.com.wallaceit.voicemail.mailstore.LocalStore(account, context);
 
                 sLocalStores.put(accountUuid, store);
             }
@@ -377,7 +377,7 @@ public class LocalStore extends Store implements Serializable {
                                 continue;
                             }
                             String folderName = cursor.getString(FOLDER_NAME_INDEX);
-                            LocalFolder folder = new LocalFolder(com.fsck.k9.mailstore.LocalStore.this, folderName);
+                            LocalFolder folder = new LocalFolder(au.com.wallaceit.voicemail.mailstore.LocalStore.this, folderName);
                             folder.open(cursor);
 
                             folders.add(folder);
@@ -400,11 +400,11 @@ public class LocalStore extends Store implements Serializable {
     public void checkSettings() throws MessagingException {
     }
 
-    public void delete() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void delete() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         database.delete();
     }
 
-    public void recreate() throws com.fsck.k9.mailstore.UnavailableStorageException {
+    public void recreate() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
         database.recreate();
     }
 
@@ -597,7 +597,7 @@ public class LocalStore extends Store implements Serializable {
                     cursor = db.rawQuery(queryString + " LIMIT 10", placeHolders);
 
                     while (cursor.moveToNext()) {
-                        LocalMessage message = new LocalMessage(com.fsck.k9.mailstore.LocalStore.this, null, folder);
+                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore.this, null, folder);
                         message.populateFromGetMessageCursor(cursor);
 
                         messages.add(message);
@@ -610,7 +610,7 @@ public class LocalStore extends Store implements Serializable {
                     cursor = db.rawQuery(queryString + " LIMIT -1 OFFSET 10", placeHolders);
 
                     while (cursor.moveToNext()) {
-                        LocalMessage message = new LocalMessage(com.fsck.k9.mailstore.LocalStore.this, null, folder);
+                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore.this, null, folder);
                         message.populateFromGetMessageCursor(cursor);
 
                         messages.add(message);
@@ -880,7 +880,7 @@ public class LocalStore extends Store implements Serializable {
                 database.execute(true, new DbCallback<Void>() {
                     @Override
                     public Void doDbWork(final SQLiteDatabase db) throws WrappedException,
-                            com.fsck.k9.mailstore.UnavailableStorageException {
+                            au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
 
                         selectionCallback.doDbWork(db, selection.toString(),
                                 selectionArgs.toArray(EMPTY_STRING_ARRAY));
@@ -901,7 +901,7 @@ public class LocalStore extends Store implements Serializable {
     }
 
     /**
-     * Defines the behavior of {@link com.fsck.k9.mailstore.LocalStore#doBatchSetSelection(BatchSetSelection, int)}.
+     * Defines the behavior of {@link au.com.wallaceit.voicemail.mailstore.LocalStore#doBatchSetSelection(BatchSetSelection, int)}.
      */
     public interface BatchSetSelection {
         /**
@@ -929,10 +929,10 @@ public class LocalStore extends Store implements Serializable {
          *         {@code " IN (?,?,?)"} (starts with a space).
          * @param selectionArgs
          *         The current subset of the argument list.
-         * @throws com.fsck.k9.mailstore.UnavailableStorageException
+         * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
          */
         void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                throws com.fsck.k9.mailstore.UnavailableStorageException;
+                throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
         /**
          * This will be executed after each invocation of
@@ -978,7 +978,7 @@ public class LocalStore extends Store implements Serializable {
 
             @Override
             public void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                    throws com.fsck.k9.mailstore.UnavailableStorageException {
+                    throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
 
                 db.update("messages", cv, "(empty IS NULL OR empty != 1) AND id" + selectionSet,
                         selectionArgs);
@@ -1026,7 +1026,7 @@ public class LocalStore extends Store implements Serializable {
 
             @Override
             public void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                    throws com.fsck.k9.mailstore.UnavailableStorageException {
+                    throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
 
                 db.execSQL("UPDATE messages SET " + flagColumn + " = " + ((newState) ? "1" : "0") +
                         " WHERE id IN (" +

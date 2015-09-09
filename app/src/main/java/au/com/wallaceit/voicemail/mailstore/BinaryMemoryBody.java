@@ -10,8 +10,8 @@ import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.RawDataBody;
 import com.fsck.k9.mail.internet.SizeAware;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 
 public class BinaryMemoryBody implements Body, RawDataBody, SizeAware {

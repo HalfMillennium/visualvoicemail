@@ -12,13 +12,13 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.controller.MessagingController;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.service.*;
-import com.fsck.k9.service.BootReceiver;
-import com.fsck.k9.service.MailService;
+import au.com.wallaceit.voicemail.service.*;
+import au.com.wallaceit.voicemail.service.BootReceiver;
+import au.com.wallaceit.voicemail.service.MailService;
 
 /**
  * {@code CoreService} is the base class for all K-9 Services.
@@ -60,7 +60,7 @@ import com.fsck.k9.service.MailService;
  */
 public abstract class CoreService extends Service {
 
-    public static final String WAKE_LOCK_ID = "com.fsck.k9.service.CoreService.wakeLockId";
+    public static final String WAKE_LOCK_ID = "au.com.wallaceit.voicemail.service.CoreService.wakeLockId";
 
     private static ConcurrentHashMap<Integer, TracingWakeLock> sWakeLocks =
         new ConcurrentHashMap<Integer, TracingWakeLock>();
@@ -124,7 +124,7 @@ public abstract class CoreService extends Service {
             boolean createIfNotExists) {
 
         if (wakeLockId != null) {
-            intent.putExtra(com.fsck.k9.service.BootReceiver.WAKE_LOCK_ID, wakeLockId);
+            intent.putExtra(au.com.wallaceit.voicemail.service.BootReceiver.WAKE_LOCK_ID, wakeLockId);
             return;
         }
 
@@ -225,7 +225,7 @@ public abstract class CoreService extends Service {
         }
 
         // If we were started by BootReceiver, release the wake lock acquired there.
-        int wakeLockId = intent.getIntExtra(com.fsck.k9.service.BootReceiver.WAKE_LOCK_ID, -1);
+        int wakeLockId = intent.getIntExtra(au.com.wallaceit.voicemail.service.BootReceiver.WAKE_LOCK_ID, -1);
         if (wakeLockId != -1) {
             BootReceiver.releaseWakeLock(this, wakeLockId);
         }
@@ -377,7 +377,7 @@ public abstract class CoreService extends Service {
      * Subclasses need to implement this instead of overriding {@link #onStartCommand(Intent, int, int)}.
      *
      * <p>
-     * This allows {@link com.fsck.k9.service.CoreService} to manage the service lifecycle, incl. wake lock management.
+     * This allows {@link au.com.wallaceit.voicemail.service.CoreService} to manage the service lifecycle, incl. wake lock management.
      * </p>
 
      * @param intent

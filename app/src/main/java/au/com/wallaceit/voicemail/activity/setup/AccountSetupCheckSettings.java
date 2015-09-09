@@ -17,11 +17,13 @@ import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.fsck.k9.*;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.fragment.ConfirmationDialogFragment;
-import com.fsck.k9.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
+
+import com.fsck.k9.R;
 import com.fsck.k9.mail.AuthenticationFailedException;
 import com.fsck.k9.mail.CertificateValidationException;
 import com.fsck.k9.mail.MessagingException;
@@ -75,7 +77,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
     public static void actionCheckSettings(Activity context, Account account,
             CheckDirection direction) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupCheckSettings.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_CHECK_DIRECTION, direction);
         context.startActivityForResult(i, ACTIVITY_REQUEST_CODE);
@@ -248,7 +250,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
                 // TODO: refactor with DialogFragment.
                 // This is difficult because we need to pass through chain[0] for onClick()
-                new AlertDialog.Builder(com.fsck.k9.activity.setup.AccountSetupCheckSettings.this)
+                new AlertDialog.Builder(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this)
                 .setTitle(getString(R.string.account_setup_failed_dlg_invalid_certificate_title))
                 //.setMessage(getString(R.string.account_setup_failed_dlg_invalid_certificate)
                 .setMessage(getString(msgResId, exMessage)
@@ -288,7 +290,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
                     R.string.account_setup_failed_dlg_certificate_message_fmt,
                     e.getMessage() == null ? "" : e.getMessage());
         }
-        com.fsck.k9.activity.setup.AccountSetupCheckSettings.actionCheckSettings(com.fsck.k9.activity.setup.AccountSetupCheckSettings.this, mAccount,
+        au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.actionCheckSettings(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this, mAccount,
                 mDirection);
     }
 
@@ -445,7 +447,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
         private void clearCertificateErrorNotifications(CheckDirection direction) {
             final MessagingController ctrl = MessagingController.getInstance(getApplication());
-            ctrl.clearCertificateErrorNotifications(com.fsck.k9.activity.setup.AccountSetupCheckSettings.this,
+            ctrl.clearCertificateErrorNotifications(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this,
                     account, direction);
         }
 

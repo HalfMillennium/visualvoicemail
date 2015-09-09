@@ -29,25 +29,25 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fsck.k9.R;
-import com.fsck.k9.helper.ClipboardManager;
-import com.fsck.k9.helper.Contacts;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.helper.ClipboardManager;
+import au.com.wallaceit.voicemail.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.MessageViewInfo.MessageViewContainer;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo.MessageViewContainer;
 
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation.CryptoError;
-import com.fsck.k9.ui.messageview.*;
-import com.fsck.k9.ui.messageview.AttachmentViewCallback;
-import com.fsck.k9.ui.messageview.DownloadImageTask;
-import com.fsck.k9.ui.messageview.OpenPgpHeaderView;
-import com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback;
-import com.fsck.k9.ui.messageview.ShowPicturesController;
-import com.fsck.k9.view.K9WebViewClient;
-import com.fsck.k9.view.MessageHeader.OnLayoutChangedListener;
-import com.fsck.k9.view.MessageWebView;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation.CryptoError;
+import au.com.wallaceit.voicemail.ui.messageview.*;
+import au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback;
+import au.com.wallaceit.voicemail.ui.messageview.DownloadImageTask;
+import au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderView;
+import au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback;
+import au.com.wallaceit.voicemail.ui.messageview.ShowPicturesController;
+import au.com.wallaceit.voicemail.view.K9WebViewClient;
+import au.com.wallaceit.voicemail.view.MessageHeader.OnLayoutChangedListener;
+import au.com.wallaceit.voicemail.view.MessageWebView;
 
 
 public class MessageContainerView extends LinearLayout implements OnClickListener,
@@ -75,7 +75,7 @@ public class MessageContainerView extends LinearLayout implements OnClickListene
     private LinearLayout mHiddenAttachments;
     private boolean showingPictures;
     private LayoutInflater mInflater;
-    private com.fsck.k9.ui.messageview.AttachmentViewCallback attachmentCallback;
+    private au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback attachmentCallback;
     private View mAttachmentsContainer;
     private SavedState mSavedState;
     private ClipboardManager mClipboardManager;
@@ -187,7 +187,7 @@ public class MessageContainerView extends LinearLayout implements OnClickListene
                             }
                             case MENU_ITEM_IMAGE_SAVE: {
                                 //TODO: Use download manager
-                                new com.fsck.k9.ui.messageview.DownloadImageTask(getContext()).execute(url);
+                                new au.com.wallaceit.voicemail.ui.messageview.DownloadImageTask(getContext()).execute(url);
                                 break;
                             }
                             case MENU_ITEM_IMAGE_COPY: {
@@ -370,8 +370,8 @@ public class MessageContainerView extends LinearLayout implements OnClickListene
     }
 
     public void displayMessageViewContainer(MessageViewContainer messageViewContainer,
-            boolean automaticallyLoadPictures, com.fsck.k9.ui.messageview.ShowPicturesController showPicturesController,
-            com.fsck.k9.ui.messageview.AttachmentViewCallback attachmentCallback, com.fsck.k9.ui.messageview.OpenPgpHeaderViewCallback openPgpHeaderViewCallback,
+            boolean automaticallyLoadPictures, au.com.wallaceit.voicemail.ui.messageview.ShowPicturesController showPicturesController,
+            au.com.wallaceit.voicemail.ui.messageview.AttachmentViewCallback attachmentCallback, au.com.wallaceit.voicemail.ui.messageview.OpenPgpHeaderViewCallback openPgpHeaderViewCallback,
             boolean displayPgpHeader) throws MessagingException {
 
         this.attachmentCallback = attachmentCallback;

@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 
 public class FileHelper {

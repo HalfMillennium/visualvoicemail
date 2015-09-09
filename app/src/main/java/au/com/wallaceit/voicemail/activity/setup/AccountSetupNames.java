@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import com.fsck.k9.*;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.helper.Utility;
 
 public class AccountSetupNames extends K9Activity implements OnClickListener {
     private static final String EXTRA_ACCOUNT = "account";
@@ -29,7 +29,7 @@ public class AccountSetupNames extends K9Activity implements OnClickListener {
     private Button mDoneButton;
 
     public static void actionSetNames(Context context, Account account) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupNames.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupNames.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         context.startActivity(i);
     }

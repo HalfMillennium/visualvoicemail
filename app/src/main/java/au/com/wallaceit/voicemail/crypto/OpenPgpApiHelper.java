@@ -2,7 +2,7 @@ package au.com.wallaceit.voicemail.crypto;
 
 import android.text.TextUtils;
 
-import com.fsck.k9.Identity;
+import au.com.wallaceit.voicemail.Identity;
 
 
 public class OpenPgpApiHelper {

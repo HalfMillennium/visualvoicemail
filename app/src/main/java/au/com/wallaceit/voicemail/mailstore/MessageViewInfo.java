@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.Part;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
 
 
 public class MessageViewInfo {
@@ -24,7 +24,7 @@ public class MessageViewInfo {
     public static class MessageViewContainer {
         public final String text;
         public final Part rootPart;
-        public final List<com.fsck.k9.mailstore.AttachmentViewInfo> attachments;
+        public final List<au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo> attachments;
         public final OpenPgpResultAnnotation cryptoAnnotation;
 
 

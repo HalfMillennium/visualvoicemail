@@ -41,27 +41,27 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.DeletePolicy;
-import com.fsck.k9.Account.Expunge;
-import com.fsck.k9.VisualVoicemail.NotificationHideSubject;
-import com.fsck.k9.VisualVoicemail.Intents;
-import com.fsck.k9.VisualVoicemail.NotificationQuickDelete;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account.DeletePolicy;
+import au.com.wallaceit.voicemail.Account.Expunge;
+import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
+import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
+import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.FolderList;
-import com.fsck.k9.activity.MessageList;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.activity.NotificationDeleteConfirmation;
-import com.fsck.k9.activity.setup.AccountSetupCheckSettings.CheckDirection;
-import com.fsck.k9.activity.setup.AccountSetupIncoming;
-import com.fsck.k9.activity.setup.AccountSetupOutgoing;
-import com.fsck.k9.cache.EmailProviderCache;
-import com.fsck.k9.controller.*;
-import com.fsck.k9.controller.MessagingControllerPushReceiver;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.helper.Contacts;
-import com.fsck.k9.helper.MessageHelper;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.FolderList;
+import au.com.wallaceit.voicemail.activity.MessageList;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.activity.NotificationDeleteConfirmation;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing;
+import au.com.wallaceit.voicemail.cache.EmailProviderCache;
+import au.com.wallaceit.voicemail.controller.*;
+import au.com.wallaceit.voicemail.controller.MessagingControllerPushReceiver;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.MessageHelper;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Address;
@@ -84,22 +84,22 @@ import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.mailstore.MessageRemovalListener;
+import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
 import com.fsck.k9.mail.MessageRetrievalListener;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.mailstore.LocalStore.PendingCommand;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.LocalStore.PendingCommand;
 import com.fsck.k9.mail.store.pop3.Pop3Store;
-import com.fsck.k9.mailstore.UnavailableStorageException;
-import com.fsck.k9.provider.EmailProvider;
-import com.fsck.k9.provider.EmailProvider.StatsColumns;
-import com.fsck.k9.search.ConditionsTreeNode;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchAccount;
-import com.fsck.k9.search.SearchSpecification;
-import com.fsck.k9.search.SqlQueryBuilder;
-import com.fsck.k9.service.NotificationActionService;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.provider.EmailProvider;
+import au.com.wallaceit.voicemail.provider.EmailProvider.StatsColumns;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchAccount;
+import au.com.wallaceit.voicemail.search.SearchSpecification;
+import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
+import au.com.wallaceit.voicemail.service.NotificationActionService;
 
 
 /**
@@ -178,7 +178,7 @@ public class MessagingController implements Runnable {
      */
     private static final int UNSYNC_CHUNK_SIZE = 5;
 
-    private static com.fsck.k9.controller.MessagingController inst = null;
+    private static au.com.wallaceit.voicemail.controller.MessagingController inst = null;
     private BlockingQueue<Command> mCommands = new PriorityBlockingQueue<Command>();
 
     private Thread mThread;
@@ -376,9 +376,9 @@ public class MessagingController implements Runnable {
         }
     }
 
-    public synchronized static com.fsck.k9.controller.MessagingController getInstance(Context context) {
+    public synchronized static au.com.wallaceit.voicemail.controller.MessagingController getInstance(Context context) {
         if (inst == null) {
-            inst = new com.fsck.k9.controller.MessagingController(context.getApplicationContext());
+            inst = new au.com.wallaceit.voicemail.controller.MessagingController(context.getApplicationContext());
         }
         return inst;
     }
@@ -1786,7 +1786,7 @@ public class MessagingController implements Runnable {
                 messageChanged = true;
             }
         } else {
-            for (Flag flag : com.fsck.k9.controller.MessagingController.SYNC_FLAGS) {
+            for (Flag flag : au.com.wallaceit.voicemail.controller.MessagingController.SYNC_FLAGS) {
                 if (remoteMessage.isSet(flag) != localMessage.isSet(flag)) {
                     localMessage.setFlag(flag, remoteMessage.isSet(flag));
                     messageChanged = true;

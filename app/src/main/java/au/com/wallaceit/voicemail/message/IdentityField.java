@@ -37,10 +37,10 @@ public enum IdentityField {
      * These values are sanity checked for integer-ness during decoding.
      * </p>
      *
-     * @return The list of integer {@link com.fsck.k9.message.IdentityField}s.
+     * @return The list of integer {@link au.com.wallaceit.voicemail.message.IdentityField}s.
      */
-    public static com.fsck.k9.message.IdentityField[] getIntegerFields() {
-        return new com.fsck.k9.message.IdentityField[] { LENGTH, OFFSET, FOOTER_OFFSET, PLAIN_LENGTH, PLAIN_OFFSET };
+    public static au.com.wallaceit.voicemail.message.IdentityField[] getIntegerFields() {
+        return new au.com.wallaceit.voicemail.message.IdentityField[] { LENGTH, OFFSET, FOOTER_OFFSET, PLAIN_LENGTH, PLAIN_OFFSET };
     }
 
     // Version identifier for "new style" identity. ! is an impossible value in base64 encoding, so we

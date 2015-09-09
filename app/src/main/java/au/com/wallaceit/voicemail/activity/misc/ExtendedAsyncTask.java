@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.fsck.k9.activity.misc.NonConfigurationInstance;
+import au.com.wallaceit.voicemail.activity.misc.NonConfigurationInstance;
 
 /**
  * Extends {@link AsyncTask} with methods to attach and detach an {@link Activity}.

@@ -9,12 +9,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.fsck.k9.Account;
-import com.fsck.k9.Identity;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.K9ListActivity;
 
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class ChooseIdentity extends K9ListActivity {
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(com.fsck.k9.activity.ChooseIdentity.this, getString(R.string.identity_has_no_email),
+                    Toast.makeText(au.com.wallaceit.voicemail.activity.ChooseIdentity.this, getString(R.string.identity_has_no_email),
                                    Toast.LENGTH_LONG).show();
                 }
             }

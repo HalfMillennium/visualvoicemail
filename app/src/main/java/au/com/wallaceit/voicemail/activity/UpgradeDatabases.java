@@ -1,13 +1,13 @@
 package au.com.wallaceit.voicemail.activity;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.K9Activity;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.service.DatabaseUpgradeService;
+import au.com.wallaceit.voicemail.service.DatabaseUpgradeService;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -32,7 +32,7 @@ import android.widget.TextView;
  * <li>{@link #actionUpgradeDatabases(Context, Intent)} will call {@link VisualVoicemail#areDatabasesUpToDate()}
  *     to check if we already know whether the databases have been upgraded.</li>
  * <li>{@link VisualVoicemail#areDatabasesUpToDate()} will compare the last known database version stored in a
- *     {@link SharedPreferences} file to {@link com.fsck.k9.mailstore.LocalStore#DB_VERSION}. This
+ *     {@link SharedPreferences} file to {@link au.com.wallaceit.voicemail.mailstore.LocalStore#DB_VERSION}. This
  *     is done as an optimization because it's faster than opening all of the accounts' databases
  *     one by one.</li>
  * <li>If there was an error reading the cached database version or if it shows the databases need
@@ -62,7 +62,7 @@ public class UpgradeDatabases extends K9Activity {
 
 
     /**
-     * Start the {@link com.fsck.k9.activity.UpgradeDatabases} activity if necessary.
+     * Start the {@link au.com.wallaceit.voicemail.activity.UpgradeDatabases} activity if necessary.
      *
      * @param context
      *         The {@link Context} used to start the activity.
@@ -80,7 +80,7 @@ public class UpgradeDatabases extends K9Activity {
             return false;
         }
 
-        Intent intent = new Intent(context, com.fsck.k9.activity.UpgradeDatabases.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.UpgradeDatabases.class);
         intent.setAction(ACTION_UPGRADE_DATABASES);
         intent.putExtra(EXTRA_START_INTENT, startIntent);
 

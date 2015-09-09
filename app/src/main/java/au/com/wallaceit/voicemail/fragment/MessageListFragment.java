@@ -65,40 +65,40 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.SortType;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account.SortType;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.ActivityListener;
-import com.fsck.k9.activity.ChooseFolder;
-import com.fsck.k9.activity.FolderInfoHolder;
-import com.fsck.k9.activity.MessageReference;
-import com.fsck.k9.activity.misc.ContactPictureLoader;
-import com.fsck.k9.cache.EmailProviderCache;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.fragment.ConfirmationDialogFragment;
-import com.fsck.k9.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
-import com.fsck.k9.helper.ContactPicture;
-import com.fsck.k9.helper.MergeCursorWithUniqueId;
-import com.fsck.k9.helper.MessageHelper;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.activity.ActivityListener;
+import au.com.wallaceit.voicemail.activity.ChooseFolder;
+import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
+import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
+import au.com.wallaceit.voicemail.cache.EmailProviderCache;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
+import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
+import au.com.wallaceit.voicemail.helper.ContactPicture;
+import au.com.wallaceit.voicemail.helper.MergeCursorWithUniqueId;
+import au.com.wallaceit.voicemail.helper.MessageHelper;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.provider.EmailProvider;
-import com.fsck.k9.provider.EmailProvider.MessageColumns;
-import com.fsck.k9.provider.EmailProvider.SpecialColumns;
-import com.fsck.k9.provider.EmailProvider.ThreadColumns;
-import com.fsck.k9.search.ConditionsTreeNode;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchSpecification;
-import com.fsck.k9.search.SearchSpecification.SearchCondition;
-import com.fsck.k9.search.SearchSpecification.SearchField;
-import com.fsck.k9.search.SqlQueryBuilder;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.provider.EmailProvider;
+import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
+import au.com.wallaceit.voicemail.provider.EmailProvider.SpecialColumns;
+import au.com.wallaceit.voicemail.provider.EmailProvider.ThreadColumns;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchSpecification;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
 
 import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -156,8 +156,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
 
 
-    public static com.fsck.k9.fragment.MessageListFragment newInstance(LocalSearch search, boolean isThreadDisplay, boolean threadedList) {
-        com.fsck.k9.fragment.MessageListFragment fragment = new com.fsck.k9.fragment.MessageListFragment();
+    public static au.com.wallaceit.voicemail.fragment.MessageListFragment newInstance(LocalSearch search, boolean isThreadDisplay, boolean threadedList) {
+        au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = new au.com.wallaceit.voicemail.fragment.MessageListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_SEARCH, search);
         args.putBoolean(ARG_IS_THREAD_DISPLAY, isThreadDisplay);
@@ -492,10 +492,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         private static final int ACTION_RESTORE_LIST_POSITION = 6;
         private static final int ACTION_OPEN_MESSAGE = 7;
 
-        private WeakReference<com.fsck.k9.fragment.MessageListFragment> mFragment;
+        private WeakReference<au.com.wallaceit.voicemail.fragment.MessageListFragment> mFragment;
 
-        public MessageListHandler(com.fsck.k9.fragment.MessageListFragment fragment) {
-            mFragment = new WeakReference<com.fsck.k9.fragment.MessageListFragment>(fragment);
+        public MessageListHandler(au.com.wallaceit.voicemail.fragment.MessageListFragment fragment) {
+            mFragment = new WeakReference<au.com.wallaceit.voicemail.fragment.MessageListFragment>(fragment);
         }
         public void folderLoading(String folder, boolean loading) {
             android.os.Message msg = android.os.Message.obtain(this, ACTION_FOLDER_LOADING,
@@ -523,7 +523,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             post(new Runnable() {
                 @Override
                 public void run() {
-                    com.fsck.k9.fragment.MessageListFragment fragment = mFragment.get();
+                    au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = mFragment.get();
                     if (fragment != null) {
                         fragment.updateFooter(message);
                     }
@@ -537,7 +537,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
 
         public void restoreListPosition() {
-            com.fsck.k9.fragment.MessageListFragment fragment = mFragment.get();
+            au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = mFragment.get();
             if (fragment != null) {
                 android.os.Message msg = android.os.Message.obtain(this, ACTION_RESTORE_LIST_POSITION,
                         fragment.mSavedListState);
@@ -554,7 +554,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         @Override
         public void handleMessage(android.os.Message msg) {
-            com.fsck.k9.fragment.MessageListFragment fragment = mFragment.get();
+            au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = mFragment.get();
             if (fragment == null) {
                 return;
             }
@@ -870,7 +870,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     }
 
     /**
-     * Restore the state of a previous {@link com.fsck.k9.fragment.MessageListFragment} instance.
+     * Restore the state of a previous {@link au.com.wallaceit.voicemail.fragment.MessageListFragment} instance.
      *
      * @see #onSaveInstanceState(Bundle)
      */

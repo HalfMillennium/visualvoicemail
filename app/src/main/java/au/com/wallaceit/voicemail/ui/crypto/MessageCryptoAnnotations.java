@@ -4,7 +4,7 @@ package au.com.wallaceit.voicemail.ui.crypto;
 import java.util.HashMap;
 
 import com.fsck.k9.mail.Part;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
 
 
 public class MessageCryptoAnnotations {

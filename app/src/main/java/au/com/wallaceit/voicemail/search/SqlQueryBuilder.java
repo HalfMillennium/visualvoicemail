@@ -2,21 +2,21 @@ package au.com.wallaceit.voicemail.search;
 
 import java.util.List;
 
-import com.fsck.k9.Account;
+import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Folder;
-import com.fsck.k9.mailstore.LocalFolder;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.search.*;
-import com.fsck.k9.search.ConditionsTreeNode;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchCondition;
-import com.fsck.k9.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.search.*;
+import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 
 
 public class SqlQueryBuilder {
-    public static void buildWhereClause(Account account, com.fsck.k9.search.ConditionsTreeNode node,
+    public static void buildWhereClause(Account account, au.com.wallaceit.voicemail.search.ConditionsTreeNode node,
             StringBuilder query, List<String> selectionArgs) {
         buildWhereClauseInternal(account, node, query, selectionArgs);
     }

@@ -27,26 +27,26 @@ import android.os.StrictMode;
 import android.text.format.Time;
 import android.util.Log;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.SortType;
-import com.fsck.k9.PRNGFixes;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.activity.MessageCompose;
-import com.fsck.k9.activity.UpgradeDatabases;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
+import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.activity.MessageCompose;
+import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+
+import com.fsck.k9.BuildConfig;
+import com.fsck.k9.R;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.K9MailLib;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.provider.UnreadWidgetProvider;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.provider.UnreadWidgetProvider;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
-import com.fsck.k9.service.BootReceiver;
-import com.fsck.k9.service.MailService;
-import com.fsck.k9.service.ShutdownReceiver;
-import com.fsck.k9.service.StorageGoneReceiver;
+import au.com.wallaceit.voicemail.service.BootReceiver;
+import au.com.wallaceit.voicemail.service.MailService;
+import au.com.wallaceit.voicemail.service.ShutdownReceiver;
+import au.com.wallaceit.voicemail.service.StorageGoneReceiver;
 
 public class VisualVoicemail extends Application {
     /**
@@ -465,7 +465,7 @@ public class VisualVoicemail extends Application {
      * Save settings from our statics into the app database.
      * <p/>
      * If you're adding a preference here, odds are you'll need to add it to
-     * {@link com.fsck.k9.preferences.GlobalSettings}, too.
+     * {@link au.com.wallaceit.voicemail.preferences.GlobalSettings}, too.
      *
      * @param editor Preferences to save into
      */
@@ -659,7 +659,7 @@ public class VisualVoicemail extends Application {
 
     /**
      * Loads the last known database version of the accounts' databases from a
-     * {@link SharedPreference}.
+     * {@link SharedPreferences}.
      *
      * <p>
      * If the stored version matches {@link LocalStore#DB_VERSION} we know that the databases are
@@ -686,7 +686,7 @@ public class VisualVoicemail extends Application {
      * Load preferences into our statics.
      *
      * If you're adding a preference here, odds are you'll need to add it to
-     * {@link com.fsck.k9.preferences.GlobalSettings}, too.
+     * {@link au.com.wallaceit.voicemail.preferences.GlobalSettings}, too.
      *
      * @param prefs Preferences to load
      */

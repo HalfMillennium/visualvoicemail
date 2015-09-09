@@ -2,8 +2,8 @@ package au.com.wallaceit.voicemail.activity;
 
 import java.util.Date;
 
-import com.fsck.k9.activity.FolderInfoHolder;
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 public class MessageInfoHolder {
     public String date;
@@ -33,10 +33,10 @@ public class MessageInfoHolder {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof com.fsck.k9.activity.MessageInfoHolder)) {
+        if (!(o instanceof au.com.wallaceit.voicemail.activity.MessageInfoHolder)) {
             return false;
         }
-        com.fsck.k9.activity.MessageInfoHolder other = (com.fsck.k9.activity.MessageInfoHolder)o;
+        au.com.wallaceit.voicemail.activity.MessageInfoHolder other = (au.com.wallaceit.voicemail.activity.MessageInfoHolder)o;
         return message.equals(other.message);
     }
 

@@ -5,18 +5,18 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.util.Log;
 
-import com.fsck.k9.Account.QuoteStyle;
-import com.fsck.k9.Identity;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.MessageReference;
+import au.com.wallaceit.voicemail.Account.QuoteStyle;
+import au.com.wallaceit.voicemail.Identity;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.MessageReference;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.message.*;
-import com.fsck.k9.message.InsertableHtmlContent;
-import com.fsck.k9.message.SimpleMessageFormat;
+import au.com.wallaceit.voicemail.message.*;
+import au.com.wallaceit.voicemail.message.InsertableHtmlContent;
+import au.com.wallaceit.voicemail.message.SimpleMessageFormat;
 
 
 public class IdentityHeaderBuilder {
-    private com.fsck.k9.message.InsertableHtmlContent quotedHtmlContent;
+    private au.com.wallaceit.voicemail.message.InsertableHtmlContent quotedHtmlContent;
     private QuoteStyle quoteStyle;
     private SimpleMessageFormat messageFormat;
     private Identity identity;
@@ -122,62 +122,62 @@ public class IdentityHeaderBuilder {
         uri.appendQueryParameter(field.value(), value);
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setQuotedHtmlContent(InsertableHtmlContent quotedHtmlContent) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuotedHtmlContent(InsertableHtmlContent quotedHtmlContent) {
         this.quotedHtmlContent = quotedHtmlContent;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setQuoteStyle(QuoteStyle quoteStyle) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuoteStyle(QuoteStyle quoteStyle) {
         this.quoteStyle = quoteStyle;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setQuoteTextMode(QuotedTextMode quotedTextMode) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuoteTextMode(QuotedTextMode quotedTextMode) {
         this.quotedTextMode = quotedTextMode;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setMessageFormat(SimpleMessageFormat messageFormat) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setMessageFormat(SimpleMessageFormat messageFormat) {
         this.messageFormat = messageFormat;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setIdentity(Identity identity) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setIdentity(Identity identity) {
         this.identity = identity;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setIdentityChanged(boolean identityChanged) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setIdentityChanged(boolean identityChanged) {
         this.identityChanged = identityChanged;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setSignature(String signature) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setSignature(String signature) {
         this.signature = signature;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setSignatureChanged(boolean signatureChanged) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setSignatureChanged(boolean signatureChanged) {
         this.signatureChanged = signatureChanged;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setMessageReference(MessageReference messageReference) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setMessageReference(MessageReference messageReference) {
         this.messageReference = messageReference;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setBody(TextBody body) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setBody(TextBody body) {
         this.body = body;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setBodyPlain(TextBody bodyPlain) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setBodyPlain(TextBody bodyPlain) {
         this.bodyPlain = bodyPlain;
         return this;
     }
 
-    public com.fsck.k9.message.IdentityHeaderBuilder setCursorPosition(int cursorPosition) {
+    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setCursorPosition(int cursorPosition) {
         this.cursorPosition = cursorPosition;
         return this;
     }

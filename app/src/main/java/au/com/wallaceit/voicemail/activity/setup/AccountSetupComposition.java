@@ -9,10 +9,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import com.fsck.k9.Account;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.K9Activity;
 
 public class AccountSetupComposition extends K9Activity {
 
@@ -30,7 +30,7 @@ public class AccountSetupComposition extends K9Activity {
     private LinearLayout mAccountSignatureLayout;
 
     public static void actionEditCompositionSettings(Activity context, Account account) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.AccountSetupComposition.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupComposition.class);
         i.setAction(Intent.ACTION_EDIT);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         context.startActivity(i);

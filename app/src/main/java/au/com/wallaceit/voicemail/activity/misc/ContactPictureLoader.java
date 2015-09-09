@@ -26,7 +26,7 @@ import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.widget.QuickContactBadge;
 
-import com.fsck.k9.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 
 public class ContactPictureLoader {
@@ -327,7 +327,7 @@ public class ContactPictureLoader {
      * that is trying to load the contact picture.
      *
      * <p>
-     * The reference is used by {@link com.fsck.k9.activity.misc.ContactPictureLoader#cancelPotentialWork(Address,
+     * The reference is used by {@link au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader#cancelPotentialWork(Address,
      * QuickContactBadge)} to find out if the contact picture is already being loaded by a
      * {@code ContactPictureRetrievalTask}.
      * </p>

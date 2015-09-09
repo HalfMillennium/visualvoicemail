@@ -9,9 +9,9 @@ import android.content.Intent;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.helper.*;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.*;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 
 import java.util.ArrayList;
@@ -70,10 +70,10 @@ public class Contacts {
      * the contacts.</p>
      *
      * @param context A {@link Context} instance.
-     * @return Appropriate {@link com.fsck.k9.helper.Contacts} instance for this device.
+     * @return Appropriate {@link au.com.wallaceit.voicemail.helper.Contacts} instance for this device.
      */
-    public static com.fsck.k9.helper.Contacts getInstance(Context context) {
-        return new com.fsck.k9.helper.Contacts(context);
+    public static au.com.wallaceit.voicemail.helper.Contacts getInstance(Context context) {
+        return new au.com.wallaceit.voicemail.helper.Contacts(context);
     }
 
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.fsck.k9.R;
-import com.fsck.k9.crypto.DecryptedTempFileBody;
+import au.com.wallaceit.voicemail.crypto.DecryptedTempFileBody;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.BodyPart;
@@ -12,20 +12,20 @@ import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
-import com.fsck.k9.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.Viewable;
-import com.fsck.k9.mailstore.AttachmentViewInfo;
-import com.fsck.k9.mailstore.LocalPart;
-import com.fsck.k9.mailstore.MessageViewInfo;
-import com.fsck.k9.mailstore.MessageViewInfo.MessageViewContainer;
-import com.fsck.k9.mailstore.OpenPgpResultAnnotation;
-import com.fsck.k9.mailstore.ViewableContainer;
-import com.fsck.k9.provider.AttachmentProvider;
-import com.fsck.k9.provider.K9FileProvider;
-import com.fsck.k9.ui.crypto.MessageCryptoAnnotations;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalPart;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo;
+import au.com.wallaceit.voicemail.mailstore.MessageViewInfo.MessageViewContainer;
+import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
+import au.com.wallaceit.voicemail.mailstore.ViewableContainer;
+import au.com.wallaceit.voicemail.provider.AttachmentProvider;
+import au.com.wallaceit.voicemail.provider.K9FileProvider;
+import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoAnnotations;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -446,7 +446,7 @@ public class LocalMessageExtractor {
             List<Viewable> viewables = MessageExtractor.getViewables(part, attachments);
 
             // 3. parse viewables into html string
-            ViewableContainer viewable = com.fsck.k9.mailstore.LocalMessageExtractor.extractTextAndAttachments(context, viewables,
+            ViewableContainer viewable = au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor.extractTextAndAttachments(context, viewables,
                     attachments);
             List<AttachmentViewInfo> attachmentInfos = extractAttachmentInfos(context, attachments);
 

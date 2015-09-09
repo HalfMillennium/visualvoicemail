@@ -67,25 +67,25 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.*;
-import com.fsck.k9.Account.MessageFormat;
-import com.fsck.k9.Account.QuoteStyle;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account.MessageFormat;
+import au.com.wallaceit.voicemail.Account.QuoteStyle;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.loader.AttachmentContentLoader;
-import com.fsck.k9.activity.loader.AttachmentInfoLoader;
-import com.fsck.k9.activity.misc.Attachment;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.crypto.PgpData;
-import com.fsck.k9.fragment.ProgressDialogFragment;
-import com.fsck.k9.helper.ContactItem;
-import com.fsck.k9.helper.Contacts;
-import com.fsck.k9.helper.HtmlConverter;
-import com.fsck.k9.helper.IdentityHelper;
-import com.fsck.k9.helper.SimpleTextWatcher;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.loader.AttachmentContentLoader;
+import au.com.wallaceit.voicemail.activity.loader.AttachmentInfoLoader;
+import au.com.wallaceit.voicemail.activity.misc.Attachment;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.crypto.PgpData;
+import au.com.wallaceit.voicemail.fragment.ProgressDialogFragment;
+import au.com.wallaceit.voicemail.helper.ContactItem;
+import au.com.wallaceit.voicemail.helper.Contacts;
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
+import au.com.wallaceit.voicemail.helper.IdentityHelper;
+import au.com.wallaceit.voicemail.helper.SimpleTextWatcher;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.Flag;
@@ -98,15 +98,15 @@ import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.message.IdentityField;
-import com.fsck.k9.message.IdentityHeaderParser;
-import com.fsck.k9.message.InsertableHtmlContent;
-import com.fsck.k9.message.MessageBuilder;
-import com.fsck.k9.message.QuotedTextMode;
-import com.fsck.k9.message.SimpleMessageFormat;
-import com.fsck.k9.ui.EolConvertingEditText;
-import com.fsck.k9.view.MessageWebView;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.message.IdentityField;
+import au.com.wallaceit.voicemail.message.IdentityHeaderParser;
+import au.com.wallaceit.voicemail.message.InsertableHtmlContent;
+import au.com.wallaceit.voicemail.message.MessageBuilder;
+import au.com.wallaceit.voicemail.message.QuotedTextMode;
+import au.com.wallaceit.voicemail.message.SimpleMessageFormat;
+import au.com.wallaceit.voicemail.ui.EolConvertingEditText;
+import au.com.wallaceit.voicemail.view.MessageWebView;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.SimpleHtmlSerializer;
@@ -137,30 +137,30 @@ public class MessageCompose extends K9Activity implements OnClickListener,
     private static final String EXTRA_MESSAGE_REFERENCE = "message_reference";
 
     private static final String STATE_KEY_ATTACHMENTS =
-        "com.fsck.k9.activity.MessageCompose.attachments";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.attachments";
     private static final String STATE_KEY_CC_SHOWN =
-        "com.fsck.k9.activity.MessageCompose.ccShown";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.ccShown";
     private static final String STATE_KEY_BCC_SHOWN =
-        "com.fsck.k9.activity.MessageCompose.bccShown";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.bccShown";
     private static final String STATE_KEY_QUOTED_TEXT_MODE =
-        "com.fsck.k9.activity.MessageCompose.QuotedTextShown";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.QuotedTextShown";
     private static final String STATE_KEY_SOURCE_MESSAGE_PROCED =
-        "com.fsck.k9.activity.MessageCompose.stateKeySourceMessageProced";
-    private static final String STATE_KEY_DRAFT_ID = "com.fsck.k9.activity.MessageCompose.draftId";
-    private static final String STATE_KEY_HTML_QUOTE = "com.fsck.k9.activity.MessageCompose.HTMLQuote";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.stateKeySourceMessageProced";
+    private static final String STATE_KEY_DRAFT_ID = "au.com.wallaceit.voicemail.activity.MessageCompose.draftId";
+    private static final String STATE_KEY_HTML_QUOTE = "au.com.wallaceit.voicemail.activity.MessageCompose.HTMLQuote";
     private static final String STATE_IDENTITY_CHANGED =
-        "com.fsck.k9.activity.MessageCompose.identityChanged";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.identityChanged";
     private static final String STATE_IDENTITY =
-        "com.fsck.k9.activity.MessageCompose.identity";
+        "au.com.wallaceit.voicemail.activity.MessageCompose.identity";
     private static final String STATE_PGP_DATA = "pgpData";
-    private static final String STATE_IN_REPLY_TO = "com.fsck.k9.activity.MessageCompose.inReplyTo";
-    private static final String STATE_REFERENCES = "com.fsck.k9.activity.MessageCompose.references";
-    private static final String STATE_KEY_READ_RECEIPT = "com.fsck.k9.activity.MessageCompose.messageReadReceipt";
-    private static final String STATE_KEY_DRAFT_NEEDS_SAVING = "com.fsck.k9.activity.MessageCompose.mDraftNeedsSaving";
+    private static final String STATE_IN_REPLY_TO = "au.com.wallaceit.voicemail.activity.MessageCompose.inReplyTo";
+    private static final String STATE_REFERENCES = "au.com.wallaceit.voicemail.activity.MessageCompose.references";
+    private static final String STATE_KEY_READ_RECEIPT = "au.com.wallaceit.voicemail.activity.MessageCompose.messageReadReceipt";
+    private static final String STATE_KEY_DRAFT_NEEDS_SAVING = "au.com.wallaceit.voicemail.activity.MessageCompose.mDraftNeedsSaving";
     private static final String STATE_KEY_FORCE_PLAIN_TEXT =
-            "com.fsck.k9.activity.MessageCompose.forcePlainText";
+            "au.com.wallaceit.voicemail.activity.MessageCompose.forcePlainText";
     private static final String STATE_KEY_QUOTED_TEXT_FORMAT =
-            "com.fsck.k9.activity.MessageCompose.quotedTextFormat";
+            "au.com.wallaceit.voicemail.activity.MessageCompose.quotedTextFormat";
     private static final String STATE_KEY_NUM_ATTACHMENTS_LOADING = "numAttachmentsLoading";
     private static final String STATE_KEY_WAITING_FOR_ATTACHMENTS = "waitingForAttachments";
 
@@ -357,19 +357,19 @@ public class MessageCompose extends K9Activity implements OnClickListener,
                     break;
                 case MSG_SKIPPED_ATTACHMENTS:
                     Toast.makeText(
-                        com.fsck.k9.activity.MessageCompose.this,
+                        au.com.wallaceit.voicemail.activity.MessageCompose.this,
                         getString(R.string.message_compose_attachments_skipped_toast),
                         Toast.LENGTH_LONG).show();
                     break;
                 case MSG_SAVED_DRAFT:
                     Toast.makeText(
-                        com.fsck.k9.activity.MessageCompose.this,
+                        au.com.wallaceit.voicemail.activity.MessageCompose.this,
                         getString(R.string.message_saved_toast),
                         Toast.LENGTH_LONG).show();
                     break;
                 case MSG_DISCARDED_DRAFT:
                     Toast.makeText(
-                        com.fsck.k9.activity.MessageCompose.this,
+                        au.com.wallaceit.voicemail.activity.MessageCompose.this,
                         getString(R.string.message_discarded_toast),
                         Toast.LENGTH_LONG).show();
                     break;
@@ -400,7 +400,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
                 Preferences.getPreferences(context).getDefaultAccount().getUuid() :
                 account.getUuid();
 
-        Intent i = new Intent(context, com.fsck.k9.activity.MessageCompose.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.MessageCompose.class);
         i.putExtra(EXTRA_ACCOUNT, accountUuid);
         i.setAction(ACTION_COMPOSE);
         context.startActivity(i);
@@ -419,7 +419,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             LocalMessage message,
             boolean replyAll,
             String messageBody) {
-        Intent i = new Intent(context, com.fsck.k9.activity.MessageCompose.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.MessageCompose.class);
         i.putExtra(EXTRA_MESSAGE_BODY, messageBody);
         i.putExtra(EXTRA_MESSAGE_REFERENCE, message.makeMessageReference());
         if (replyAll) {
@@ -456,7 +456,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             Context context,
             LocalMessage message,
             String messageBody) {
-        Intent i = new Intent(context, com.fsck.k9.activity.MessageCompose.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.MessageCompose.class);
         i.putExtra(EXTRA_MESSAGE_BODY, messageBody);
         i.putExtra(EXTRA_MESSAGE_REFERENCE, message.makeMessageReference());
         i.setAction(ACTION_FORWARD);
@@ -472,7 +472,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
      * @param messageReference
      */
     public static void actionEditDraft(Context context, MessageReference messageReference) {
-        Intent i = new Intent(context, com.fsck.k9.activity.MessageCompose.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.MessageCompose.class);
         i.putExtra(EXTRA_MESSAGE_REFERENCE, messageReference);
         i.setAction(ACTION_EDIT_DRAFT);
         context.startActivity(i);
@@ -534,7 +534,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             return;
         }
 
-        mContacts = Contacts.getInstance(com.fsck.k9.activity.MessageCompose.this);
+        mContacts = Contacts.getInstance(au.com.wallaceit.voicemail.activity.MessageCompose.this);
 
         EmailAddressAdapter mAddressAdapter = new EmailAddressAdapter(mThemeContext);
         Validator mAddressValidator = new EmailAddressValidator();
@@ -1403,7 +1403,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
                 Log.e(VisualVoicemail.LOG_TAG, "OpenPGP Error ID:" + error.getErrorId());
                 Log.e(VisualVoicemail.LOG_TAG, "OpenPGP Error Message:" + error.getMessage());
 
-                Toast.makeText(com.fsck.k9.activity.MessageCompose.this,
+                Toast.makeText(au.com.wallaceit.voicemail.activity.MessageCompose.this,
                         getString(R.string.openpgp_error, error.getMessage()),
                         Toast.LENGTH_LONG).show();
             }
@@ -1541,7 +1541,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         progressBar.setVisibility(isLoadingComplete ? View.GONE : View.VISIBLE);
 
         ImageButton delete = (ImageButton) view.findViewById(R.id.attachment_delete);
-        delete.setOnClickListener(com.fsck.k9.activity.MessageCompose.this);
+        delete.setOnClickListener(au.com.wallaceit.voicemail.activity.MessageCompose.this);
         delete.setTag(view);
 
         view.setTag(attachment);
@@ -1566,7 +1566,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         public Loader<Attachment> onCreateLoader(int id, Bundle args) {
             onFetchAttachmentStarted();
             Attachment attachment = args.getParcelable(LOADER_ARG_ATTACHMENT);
-            return new AttachmentInfoLoader(com.fsck.k9.activity.MessageCompose.this, attachment);
+            return new AttachmentInfoLoader(au.com.wallaceit.voicemail.activity.MessageCompose.this, attachment);
         }
 
         @Override
@@ -1600,7 +1600,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         @Override
         public Loader<Attachment> onCreateLoader(int id, Bundle args) {
             Attachment attachment = args.getParcelable(LOADER_ARG_ATTACHMENT);
-            return new AttachmentContentLoader(com.fsck.k9.activity.MessageCompose.this, attachment);
+            return new AttachmentContentLoader(au.com.wallaceit.voicemail.activity.MessageCompose.this, attachment);
         }
 
         @Override
@@ -2104,7 +2104,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dismissDialog(DIALOG_CONFIRM_DISCARD_ON_BACK);
-                        Toast.makeText(com.fsck.k9.activity.MessageCompose.this,
+                        Toast.makeText(au.com.wallaceit.voicemail.activity.MessageCompose.this,
                                        getString(R.string.message_discarded_toast),
                                        Toast.LENGTH_LONG).show();
                         onDiscard();
@@ -3013,7 +3013,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         public void messageUidChanged(Account account, String folder, String oldUid, String newUid) {
             // Track UID changes of the source message
             if (mMessageReference != null) {
-                final Account sourceAccount = Preferences.getPreferences(com.fsck.k9.activity.MessageCompose.this).getAccount(mMessageReference.getAccountUuid());
+                final Account sourceAccount = Preferences.getPreferences(au.com.wallaceit.voicemail.activity.MessageCompose.this).getAccount(mMessageReference.getAccountUuid());
                 final String sourceFolder = mMessageReference.getFolderName();
                 final String sourceMessageUid = mMessageReference.getUid();
 

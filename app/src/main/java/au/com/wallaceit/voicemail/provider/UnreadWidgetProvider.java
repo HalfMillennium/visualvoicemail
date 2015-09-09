@@ -1,13 +1,13 @@
 package au.com.wallaceit.voicemail.provider;
 
-import com.fsck.k9.*;
+import au.com.wallaceit.voicemail.*;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.UnreadWidgetConfiguration;
-import com.fsck.k9.activity.FolderList;
-import com.fsck.k9.activity.MessageList;
-import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchAccount;
+import au.com.wallaceit.voicemail.activity.UnreadWidgetConfiguration;
+import au.com.wallaceit.voicemail.activity.FolderList;
+import au.com.wallaceit.voicemail.activity.MessageList;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchAccount;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -32,10 +32,10 @@ public class UnreadWidgetProvider extends AppWidgetProvider {
         Context appContext = context.getApplicationContext();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(appContext);
 
-        ComponentName thisWidget = new ComponentName(appContext, com.fsck.k9.provider.UnreadWidgetProvider.class);
+        ComponentName thisWidget = new ComponentName(appContext, au.com.wallaceit.voicemail.provider.UnreadWidgetProvider.class);
         int[] widgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-        Intent intent = new Intent(context, com.fsck.k9.provider.UnreadWidgetProvider.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.provider.UnreadWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
 

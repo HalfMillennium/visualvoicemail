@@ -11,16 +11,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import com.fsck.k9.R;
-import com.fsck.k9.helper.Utility;
+import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.LocalStore;
-import com.fsck.k9.mailstore.LockableDatabase;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.LockableDatabase;
 
 class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
     /**

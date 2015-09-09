@@ -6,9 +6,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.*;
-import com.fsck.k9.*;
-import com.fsck.k9.activity.K9PreferenceActivity;
-import com.fsck.k9.activity.setup.SliderPreference;
+import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
+import au.com.wallaceit.voicemail.activity.setup.SliderPreference;
 
 /**
  * Activity to configure the font size of the information displayed in the
@@ -63,7 +63,7 @@ public class FontSizeSettings extends K9PreferenceActivity {
      * @param context The application context.
      */
     public static void actionEditSettings(Context context) {
-        Intent i = new Intent(context, com.fsck.k9.activity.setup.FontSizeSettings.class);
+        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.FontSizeSettings.class);
         context.startActivity(i);
     }
 

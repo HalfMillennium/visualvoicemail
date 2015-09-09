@@ -8,8 +8,8 @@ import java.io.InputStream;
 
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.SizeAware;
-import com.fsck.k9.mailstore.*;
-import com.fsck.k9.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.mailstore.*;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
 
 
 /**

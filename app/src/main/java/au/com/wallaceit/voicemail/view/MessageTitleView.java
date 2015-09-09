@@ -5,10 +5,10 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.fsck.k9.view.MessageHeader;
+import au.com.wallaceit.voicemail.view.MessageHeader;
 
 /**
- * This {@link TextView} is used in the custom view of the {@link com.fsck.k9.activity.MessageList}
+ * This {@link TextView} is used in the custom view of the {@link au.com.wallaceit.voicemail.activity.MessageList}
  * action bar.
  * It will hide the subject line in {@link MessageHeader} if the subject fits completely into the
  * action bar's title view.

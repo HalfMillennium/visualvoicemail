@@ -1,9 +1,9 @@
 package au.com.wallaceit.voicemail.preferences;
 
 import android.util.Log;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.preferences.*;
-import com.fsck.k9.preferences.Storage;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.preferences.*;
+import au.com.wallaceit.voicemail.preferences.Storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class Editor implements android.content.SharedPreferences.Editor {
-    private com.fsck.k9.preferences.Storage storage;
+    private au.com.wallaceit.voicemail.preferences.Storage storage;
     private Map<String, String> changes = new HashMap<String, String>();
     private List<String> removals = new ArrayList<String>();
     private boolean removeAll = false;

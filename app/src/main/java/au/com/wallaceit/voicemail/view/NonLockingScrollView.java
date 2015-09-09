@@ -27,8 +27,8 @@ import android.view.ViewParent;
 import android.webkit.WebView;
 import android.widget.ScrollView;
 
-import com.fsck.k9.view.*;
-import com.fsck.k9.view.MessageWebView;
+import au.com.wallaceit.voicemail.view.*;
+import au.com.wallaceit.voicemail.view.MessageWebView;
 
 import java.util.ArrayList;
 import java.util.List;

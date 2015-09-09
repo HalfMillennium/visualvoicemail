@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
-import com.fsck.k9.activity.K9ActivityCommon;
-import com.fsck.k9.activity.K9ActivityCommon.K9ActivityMagic;
-import com.fsck.k9.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
+import au.com.wallaceit.voicemail.activity.K9ActivityCommon;
+import au.com.wallaceit.voicemail.activity.K9ActivityCommon.K9ActivityMagic;
+import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 
 
 public class K9Activity extends Activity implements K9ActivityMagic {

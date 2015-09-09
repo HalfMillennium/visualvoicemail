@@ -27,40 +27,40 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.Account.SortType;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.VisualVoicemail.SplitViewMode;
-import com.fsck.k9.Preferences;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
+import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.R;
-import com.fsck.k9.activity.*;
-import com.fsck.k9.activity.Accounts;
-import com.fsck.k9.activity.FolderList;
-import com.fsck.k9.activity.K9Activity;
-import com.fsck.k9.activity.MessageCompose;
-import com.fsck.k9.activity.Search;
-import com.fsck.k9.activity.UpgradeDatabases;
-import com.fsck.k9.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
-import com.fsck.k9.activity.setup.AccountSettings;
-import com.fsck.k9.activity.setup.FolderSettings;
-import com.fsck.k9.activity.setup.Prefs;
-import com.fsck.k9.crypto.PgpData;
-import com.fsck.k9.fragment.MessageListFragment;
-import com.fsck.k9.fragment.MessageListFragment.MessageListFragmentListener;
-import com.fsck.k9.ui.messageview.MessageViewFragment;
-import com.fsck.k9.ui.messageview.MessageViewFragment.MessageViewFragmentListener;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.mailstore.LocalMessage;
-import com.fsck.k9.search.LocalSearch;
-import com.fsck.k9.search.SearchAccount;
-import com.fsck.k9.search.SearchSpecification;
-import com.fsck.k9.search.SearchSpecification.Attribute;
-import com.fsck.k9.search.SearchSpecification.SearchCondition;
-import com.fsck.k9.search.SearchSpecification.SearchField;
-import com.fsck.k9.view.MessageHeader;
-import com.fsck.k9.view.MessageTitleView;
-import com.fsck.k9.view.ViewSwitcher;
-import com.fsck.k9.view.ViewSwitcher.OnSwitchCompleteListener;
+import au.com.wallaceit.voicemail.activity.*;
+import au.com.wallaceit.voicemail.activity.Accounts;
+import au.com.wallaceit.voicemail.activity.FolderList;
+import au.com.wallaceit.voicemail.activity.K9Activity;
+import au.com.wallaceit.voicemail.activity.MessageCompose;
+import au.com.wallaceit.voicemail.activity.Search;
+import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
+import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
+import au.com.wallaceit.voicemail.activity.setup.FolderSettings;
+import au.com.wallaceit.voicemail.activity.setup.Prefs;
+import au.com.wallaceit.voicemail.crypto.PgpData;
+import au.com.wallaceit.voicemail.fragment.MessageListFragment;
+import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragmentListener;
+import au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment;
+import au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment.MessageViewFragmentListener;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.search.SearchAccount;
+import au.com.wallaceit.voicemail.search.SearchSpecification;
+import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
+import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
+import au.com.wallaceit.voicemail.view.MessageHeader;
+import au.com.wallaceit.voicemail.view.MessageTitleView;
+import au.com.wallaceit.voicemail.view.ViewSwitcher;
+import au.com.wallaceit.voicemail.view.ViewSwitcher.OnSwitchCompleteListener;
 
 import de.cketti.library.changelog.ChangeLog;
 
@@ -84,8 +84,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     private static final String EXTRA_MESSAGE_REFERENCE = "message_reference";
 
     // used for remote search
-    public static final String EXTRA_SEARCH_ACCOUNT = "com.fsck.k9.search_account";
-    private static final String EXTRA_SEARCH_FOLDER = "com.fsck.k9.search_folder";
+    public static final String EXTRA_SEARCH_ACCOUNT = "au.com.wallaceit.voicemail.search_account";
+    private static final String EXTRA_SEARCH_FOLDER = "au.com.wallaceit.voicemail.search_folder";
 
     private static final String STATE_DISPLAY_MODE = "displayMode";
     private static final String STATE_MESSAGE_LIST_WAS_DISPLAYED = "messageListWasDisplayed";
@@ -108,7 +108,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     public static Intent intentDisplaySearch(Context context, SearchSpecification search,
             boolean noThreading, boolean newTask, boolean clearTop) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.MessageList.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.MessageList.class);
         intent.putExtra(EXTRA_SEARCH, search);
         intent.putExtra(EXTRA_NO_THREADING, noThreading);
 
@@ -123,7 +123,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     }
 
     public static Intent shortcutIntent(Context context, String specialFolder) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.MessageList.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.MessageList.class);
         intent.setAction(ACTION_SHORTCUT);
         intent.putExtra(EXTRA_SPECIAL_FOLDER, specialFolder);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -134,7 +134,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     public static Intent actionDisplayMessageIntent(Context context,
             MessageReference messageReference) {
-        Intent intent = new Intent(context, com.fsck.k9.activity.MessageList.class);
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.MessageList.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(EXTRA_MESSAGE_REFERENCE, messageReference);
         return intent;

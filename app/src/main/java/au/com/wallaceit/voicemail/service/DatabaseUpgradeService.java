@@ -11,13 +11,13 @@ import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.fsck.k9.Account;
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.Preferences;
-import com.fsck.k9.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 /**
  * Service used to upgrade the accounts' databases and/or track the progress of the upgrade.
@@ -69,22 +69,22 @@ public class DatabaseUpgradeService extends Service {
      * Action used to start this service.
      */
     private static final String ACTION_START_SERVICE =
-            "com.fsck.k9.service.DatabaseUpgradeService.startService";
+            "au.com.wallaceit.voicemail.service.DatabaseUpgradeService.startService";
 
     private static final String WAKELOCK_TAG = "DatabaseUpgradeService";
     private static final long WAKELOCK_TIMEOUT = 10 * 60 * 1000;    // 10 minutes
 
 
     /**
-     * Start {@link com.fsck.k9.service.DatabaseUpgradeService}.
+     * Start {@link au.com.wallaceit.voicemail.service.DatabaseUpgradeService}.
      *
      * @param context
      *         The {@link Context} used to start this service.
      */
     public static void startService(Context context) {
         Intent i = new Intent();
-        i.setClass(context, com.fsck.k9.service.DatabaseUpgradeService.class);
-        i.setAction(com.fsck.k9.service.DatabaseUpgradeService.ACTION_START_SERVICE);
+        i.setClass(context, au.com.wallaceit.voicemail.service.DatabaseUpgradeService.class);
+        i.setAction(au.com.wallaceit.voicemail.service.DatabaseUpgradeService.ACTION_START_SERVICE);
         context.startService(i);
     }
 

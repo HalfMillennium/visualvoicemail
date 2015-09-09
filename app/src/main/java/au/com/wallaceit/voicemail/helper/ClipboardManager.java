@@ -5,17 +5,17 @@ import android.content.Context;
 
 
 /**
- * Access the system clipboard using the new {@link com.fsck.k9.helper.ClipboardManager} introduced with API 11
+ * Access the system clipboard using the new {@link au.com.wallaceit.voicemail.helper.ClipboardManager} introduced with API 11
  */
 public class ClipboardManager {
 
-    private static com.fsck.k9.helper.ClipboardManager sInstance = null;
+    private static au.com.wallaceit.voicemail.helper.ClipboardManager sInstance = null;
 
-    public static com.fsck.k9.helper.ClipboardManager getInstance(Context context) {
+    public static au.com.wallaceit.voicemail.helper.ClipboardManager getInstance(Context context) {
         Context appContext = context.getApplicationContext();
 
         if (sInstance == null) {
-            sInstance = new com.fsck.k9.helper.ClipboardManager(appContext);
+            sInstance = new au.com.wallaceit.voicemail.helper.ClipboardManager(appContext);
         }
 
         return sInstance;

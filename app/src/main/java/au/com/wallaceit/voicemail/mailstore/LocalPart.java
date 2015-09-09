@@ -1,7 +1,7 @@
 package au.com.wallaceit.voicemail.mailstore;
 
 
-import com.fsck.k9.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 public interface LocalPart {
     String getAccountUuid();

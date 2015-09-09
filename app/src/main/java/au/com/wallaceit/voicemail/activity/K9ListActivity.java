@@ -7,10 +7,10 @@ import android.view.MotionEvent;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.activity.K9ActivityCommon;
-import com.fsck.k9.activity.K9ActivityCommon.K9ActivityMagic;
-import com.fsck.k9.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.K9ActivityCommon;
+import au.com.wallaceit.voicemail.activity.K9ActivityCommon.K9ActivityMagic;
+import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 
 
 public class K9ListActivity extends ListActivity implements K9ActivityMagic {

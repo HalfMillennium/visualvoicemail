@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.fsck.k9.VisualVoicemail;
-import com.fsck.k9.mailstore.StorageManager;
-import com.fsck.k9.service.StorageReceiver;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.service.StorageReceiver;
 
 /**
  * That BroadcastReceiver is only interested in UNMOUNT events.
