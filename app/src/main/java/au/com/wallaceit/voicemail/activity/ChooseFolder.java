@@ -24,7 +24,7 @@ import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.FolderMode;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.FolderListFilter;
 import au.com.wallaceit.voicemail.activity.K9ListActivity;
 import au.com.wallaceit.voicemail.activity.MessageReference;

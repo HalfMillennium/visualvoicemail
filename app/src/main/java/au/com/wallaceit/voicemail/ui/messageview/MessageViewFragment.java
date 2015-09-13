@@ -30,7 +30,7 @@ import android.widget.Toast;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
@@ -212,11 +212,11 @@ public class MessageViewFragment extends Fragment implements ConfirmationDialogF
         mFragmentListener.updateMenu();
     }
 
-    public void handleCryptoResult(int requestCode, int resultCode, Intent data) {
+    /*public void handleCryptoResult(int requestCode, int resultCode, Intent data) {
         if (messageCryptoHelper != null) {
             messageCryptoHelper.handleCryptoResult(requestCode, resultCode, data);
         }
-    }
+    }*/
 
     private void startLoadingMessageFromDatabase() {
         getLoaderManager().initLoader(LOCAL_MESSAGE_LOADER_ID, null, localMessageLoaderCallback);
@@ -348,24 +348,6 @@ public class MessageViewFragment extends Fragment implements ConfirmationDialogF
         LocalMessage messageToMove = mMessage;
         mFragmentListener.showNextMessageOrReturn();
         mController.moveMessage(mAccount, srcFolder, messageToMove, dstFolder, null);
-    }
-
-    public void onReply() {
-        if (mMessage != null) {
-            mFragmentListener.onReply(mMessage, mPgpData);
-        }
-    }
-
-    public void onReplyAll() {
-        if (mMessage != null) {
-            mFragmentListener.onReplyAll(mMessage, mPgpData);
-        }
-    }
-
-    public void onForward() {
-        if (mMessage != null) {
-            mFragmentListener.onForward(mMessage, mPgpData);
-        }
     }
 
     public void onToggleFlagged() {
@@ -703,10 +685,7 @@ public class MessageViewFragment extends Fragment implements ConfirmationDialogF
     }
 
     public interface MessageViewFragmentListener {
-        public void onForward(LocalMessage mMessage, PgpData mPgpData);
         public void disableDeleteAction();
-        public void onReplyAll(LocalMessage mMessage, PgpData mPgpData);
-        public void onReply(LocalMessage mMessage, PgpData mPgpData);
         public void displayMessageSubject(String title);
         public void setProgress(boolean b);
         public void showNextMessageOrReturn();

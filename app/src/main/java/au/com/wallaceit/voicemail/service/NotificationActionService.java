@@ -8,7 +8,6 @@ import java.util.List;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
-import au.com.wallaceit.voicemail.activity.MessageCompose;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.Flag;
@@ -222,19 +221,6 @@ public class NotificationActionService extends CoreService {
                         String srcFolder = messageToMove.getFolder().getName();
                         controller.moveMessage(account, srcFolder, messageToMove, dstFolder, null);
                     }
-                }
-            } else if (REPLY_ACTION.equals(action)) {
-                if (VisualVoicemail.DEBUG)
-                    Log.i(VisualVoicemail.LOG_TAG, "NotificationActionService initiating reply");
-
-                MessageReference ref = intent.getParcelableExtra(EXTRA_MESSAGE);
-                LocalMessage message = ref.restoreToLocalMessage(this);
-                if (message != null) {
-                    Intent i = MessageCompose.getActionReplyIntent(this, message, false, null);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                } else {
-                    Log.i(VisualVoicemail.LOG_TAG, "Could not execute reply action.");
                 }
             } else if (ACKNOWLEDGE_ACTION.equals(action)) {
                 // nothing to do here, we just want to cancel the notification so the list

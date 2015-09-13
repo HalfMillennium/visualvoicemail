@@ -20,7 +20,7 @@ import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.crypto.MessageDecryptVerifier;
 import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.BodyPart;
@@ -80,12 +80,12 @@ public class MessageCryptoHelper {
     public void decryptOrVerifyMessagePartsIfNecessary(LocalMessage message) {
         this.message = message;
 
-        if (!account.isOpenPgpProviderConfigured()) {
+        //if (!account.isOpenPgpProviderConfigured()) {
             returnResultToFragment();
             return;
-        }
+        //}
 
-        List<Part> encryptedParts = MessageDecryptVerifier.findEncryptedParts(message);
+        /*List<Part> encryptedParts = MessageDecryptVerifier.findEncryptedParts(message);
         processFoundParts(encryptedParts, CryptoPartType.ENCRYPTED, CryptoError.ENCRYPTED_BUT_INCOMPLETE,
                 MessageHelper.createEmptyPart());
 
@@ -95,10 +95,10 @@ public class MessageCryptoHelper {
         List<Part> inlineParts = MessageDecryptVerifier.findPgpInlineParts(message);
         addFoundInlinePgpParts(inlineParts);
 
-        decryptOrVerifyNextPart();
+        decryptOrVerifyNextPart();*/
     }
 
-    private void processFoundParts(List<Part> foundParts, CryptoPartType cryptoPartType, CryptoError errorIfIncomplete,
+    /*private void processFoundParts(List<Part> foundParts, CryptoPartType cryptoPartType, CryptoError errorIfIncomplete,
             MimeBodyPart replacementPart) {
         for (Part part : foundParts) {
             if (MessageHelper.isCompletePartAvailable(part)) {
@@ -448,7 +448,7 @@ public class MessageCryptoHelper {
     private void onCryptoFinished() {
         partsToDecryptOrVerify.removeFirst();
         decryptOrVerifyNextPart();
-    }
+    }*/
 
     private void returnResultToFragment() {
         callback.onCryptoOperationsFinished(messageAnnotations);

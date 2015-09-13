@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.ShowPictures;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
@@ -94,9 +94,9 @@ public class MessageTopView extends LinearLayout implements au.com.wallaceit.voi
 
         for (MessageViewContainer container : messageViewInfo.containers) {
             MessageContainerView view = (MessageContainerView) mInflater.inflate(R.layout.message_container, null);
-            boolean displayPgpHeader = account.isOpenPgpProviderConfigured();
+            //boolean displayPgpHeader = account.isOpenPgpProviderConfigured();
             view.displayMessageViewContainer(container, automaticallyLoadPictures, this, attachmentCallback,
-                    openPgpHeaderViewCallback, displayPgpHeader);
+                    openPgpHeaderViewCallback, false);
 
             containerViews.addView(view);
         }

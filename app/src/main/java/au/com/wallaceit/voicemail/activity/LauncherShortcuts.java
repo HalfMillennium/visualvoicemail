@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.BaseAccount;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.*;
 import au.com.wallaceit.voicemail.activity.AccountList;
 import au.com.wallaceit.voicemail.activity.FolderList;
@@ -45,7 +45,7 @@ public class LauncherShortcuts extends AccountList {
         intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
         String description = account.getDescription();
         if (description == null || description.isEmpty()) {
-            description = account.getEmail();
+            description = account.getPhoneNumber();
         }
         intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, description);
         Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.icon);

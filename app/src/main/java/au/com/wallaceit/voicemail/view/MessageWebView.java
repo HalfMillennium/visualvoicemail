@@ -9,7 +9,7 @@ import android.webkit.WebSettings;
 import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import au.com.wallaceit.voicemail.helper.HtmlSanitizer;
 import au.com.wallaceit.voicemail.view.*;

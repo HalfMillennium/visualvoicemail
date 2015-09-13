@@ -8,7 +8,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 
 import au.com.wallaceit.voicemail.BaseAccount;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.AccountList;
 import au.com.wallaceit.voicemail.provider.UnreadWidgetProvider;
 

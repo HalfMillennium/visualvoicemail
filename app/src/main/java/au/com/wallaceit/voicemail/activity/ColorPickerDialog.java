@@ -1,6 +1,6 @@
 package au.com.wallaceit.voicemail.activity;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import android.app.AlertDialog;
 import android.content.*;
 import android.view.LayoutInflater;

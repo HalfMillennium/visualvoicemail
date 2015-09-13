@@ -3,7 +3,7 @@ package au.com.wallaceit.voicemail.mailstore;
 import android.content.Context;
 import android.net.Uri;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.crypto.DecryptedTempFileBody;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;

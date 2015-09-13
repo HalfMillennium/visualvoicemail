@@ -7,10 +7,9 @@ import java.util.Locale;
 
 import android.content.Context;
 
-import au.com.wallaceit.voicemail.Account.QuoteStyle;
 import au.com.wallaceit.voicemail.Identity;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.misc.Attachment;
 import au.com.wallaceit.voicemail.crypto.PgpData;
@@ -27,9 +26,6 @@ import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
 import au.com.wallaceit.voicemail.mailstore.TempFileBody;
 import au.com.wallaceit.voicemail.mailstore.TempFileMessageBody;
-import au.com.wallaceit.voicemail.message.*;
-import au.com.wallaceit.voicemail.message.InsertableHtmlContent;
-import au.com.wallaceit.voicemail.message.SimpleMessageFormat;
 
 import org.apache.james.mime4j.codec.EncoderUtil;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -51,7 +47,7 @@ public class MessageBuilder {
     private PgpData pgpData;
     private List<Attachment> attachments;
     private String signature;
-    private QuoteStyle quoteStyle;
+    //private QuoteStyle quoteStyle;
     private QuotedTextMode quotedTextMode;
     private String quotedText;
     private InsertableHtmlContent quotedHtmlContent;
@@ -190,7 +186,7 @@ public class MessageBuilder {
                 .setMessageFormat(messageFormat)
                 .setMessageReference(messageReference)
                 .setQuotedHtmlContent(quotedHtmlContent)
-                .setQuoteStyle(quoteStyle)
+                //.setQuoteStyle(quoteStyle)
                 .setQuoteTextMode(quotedTextMode)
                 .setSignature(signature)
                 .setSignatureChanged(signatureChanged)
@@ -295,7 +291,7 @@ public class MessageBuilder {
          * opens a saved draft.
          */
         boolean includeQuotedText = (isDraft || quotedTextMode == QuotedTextMode.SHOW);
-        boolean isReplyAfterQuote = (quoteStyle == QuoteStyle.PREFIX && this.isReplyAfterQuote);
+        //boolean isReplyAfterQuote = (quoteStyle == QuoteStyle.PREFIX && this.isReplyAfterQuote);
 
         textBodyBuilder.setIncludeQuotedText(false);
         if (includeQuotedText) {
@@ -397,10 +393,10 @@ public class MessageBuilder {
         return this;
     }
 
-    public au.com.wallaceit.voicemail.message.MessageBuilder setQuoteStyle(QuoteStyle quoteStyle) {
+    /*public au.com.wallaceit.voicemail.message.MessageBuilder setQuoteStyle(QuoteStyle quoteStyle) {
         this.quoteStyle = quoteStyle;
         return this;
-    }
+    }*/
 
     public au.com.wallaceit.voicemail.message.MessageBuilder setQuotedTextMode(QuotedTextMode quotedTextMode) {
         this.quotedTextMode = quotedTextMode;

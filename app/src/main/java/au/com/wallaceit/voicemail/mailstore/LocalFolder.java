@@ -119,9 +119,9 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         return getAccount().getUuid();
     }
 
-    public boolean getSignatureUse() {
+    /*public boolean getSignatureUse() {
         return getAccount().getSignatureUse();
-    }
+    }*/
 
     public void setLastSelectedFolderName(String destFolderName) {
         getAccount().setLastSelectedFolderName(destFolderName);

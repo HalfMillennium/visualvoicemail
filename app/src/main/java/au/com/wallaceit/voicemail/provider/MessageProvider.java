@@ -20,7 +20,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.*;
-import com.fsck.k9.BuildConfig;
+import au.com.wallaceit.voicemail.BuildConfig;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
 import au.com.wallaceit.voicemail.activity.MessageInfoHolder;
 import au.com.wallaceit.voicemail.controller.MessagingController;

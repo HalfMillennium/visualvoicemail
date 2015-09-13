@@ -39,7 +39,7 @@ import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.FolderMode;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.*;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
@@ -111,7 +111,7 @@ public class FolderList extends K9ListActivity {
 
                     String operation = mAdapter.mListener.getOperation(au.com.wallaceit.voicemail.activity.FolderList.this);
                     if (operation.length() < 1) {
-                        mActionBarSubTitle.setText(mAccount.getEmail());
+                        mActionBarSubTitle.setText(mAccount.getPhoneNumber());
                     } else {
                         mActionBarSubTitle.setText(operation);
                     }
@@ -504,11 +504,6 @@ public class FolderList extends K9ListActivity {
 
         case R.id.search:
             onSearchRequested();
-
-            return true;
-
-        case R.id.compose:
-            MessageCompose.actionCompose(this, mAccount);
 
             return true;
 

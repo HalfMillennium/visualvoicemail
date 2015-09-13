@@ -453,13 +453,12 @@ public class SettingsImporter {
         }
 
         // Write identities
-        if (account.identities != null) {
-            importIdentities(editor, contentVersion, uuid, account, overwrite, existingAccount,
-                    prefs);
+        /*if (account.identities != null) {
+            importIdentities(editor, contentVersion, uuid, account, overwrite, existingAccount,prefs);
         } else if (!mergeImportedAccount) {
             // Require accounts to at least have one identity
             throw new InvalidSettingValueException();
-        }
+        }*/
 
         // Write folder settings
         if (account.folders != null) {
@@ -508,7 +507,7 @@ public class SettingsImporter {
         }
     }
 
-    private static void importIdentities(SharedPreferences.Editor editor, int contentVersion,
+    /*private static void importIdentities(SharedPreferences.Editor editor, int contentVersion,
             String uuid, ImportedAccount account, boolean overwrite, Account existingAccount,
             Preferences prefs) throws InvalidSettingValueException {
 
@@ -604,7 +603,7 @@ public class SettingsImporter {
                 }
             }
         }
-    }
+    }*/
 
     private static boolean isAccountNameUsed(String name, List<Account> accounts) {
         for (Account account : accounts) {

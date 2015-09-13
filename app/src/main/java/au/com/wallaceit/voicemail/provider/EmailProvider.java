@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import au.com.wallaceit.voicemail.Account;
-import com.fsck.k9.BuildConfig;
+import au.com.wallaceit.voicemail.BuildConfig;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.cache.EmailProviderCacheCursor;
 import au.com.wallaceit.voicemail.helper.Utility;

@@ -32,12 +32,11 @@ import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.*;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.K9Activity;
-import au.com.wallaceit.voicemail.activity.MessageCompose;
 import au.com.wallaceit.voicemail.activity.Search;
 import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
@@ -607,10 +606,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
                 break;
             }
-            case KeyEvent.KEYCODE_C: {
-                mMessageListFragment.onCompose();
-                return true;
-            }
             case KeyEvent.KEYCODE_Q: {
                 if (mMessageListFragment != null && mMessageListFragment.isSingleAccountMode()) {
                     onShowFolderList();
@@ -675,24 +670,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     mMessageListFragment.onToggleRead();
                 } else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onToggleRead();
-                }
-                return true;
-            }
-            case KeyEvent.KEYCODE_F: {
-                if (mMessageViewFragment != null) {
-                    mMessageViewFragment.onForward();
-                }
-                return true;
-            }
-            case KeyEvent.KEYCODE_A: {
-                if (mMessageViewFragment != null) {
-                    mMessageViewFragment.onReplyAll();
-                }
-                return true;
-            }
-            case KeyEvent.KEYCODE_R: {
-                if (mMessageViewFragment != null) {
-                    mMessageViewFragment.onReply();
                 }
                 return true;
             }
@@ -768,10 +745,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         switch (itemId) {
             case android.R.id.home: {
                 goBack();
-                return true;
-            }
-            case R.id.compose: {
-                mMessageListFragment.onCompose();
                 return true;
             }
             case R.id.toggle_message_view_theme: {
@@ -850,18 +823,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             }
             case R.id.delete: {
                 mMessageViewFragment.onDelete();
-                return true;
-            }
-            case R.id.reply: {
-                mMessageViewFragment.onReply();
-                return true;
-            }
-            case R.id.reply_all: {
-                mMessageViewFragment.onReplyAll();
-                return true;
-            }
-            case R.id.forward: {
-                mMessageViewFragment.onForward();
                 return true;
             }
             case R.id.share: {
@@ -1177,50 +1138,21 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         Account account = prefs.getAccount(messageReference.getAccountUuid());
         String folderName = messageReference.getFolderName();
 
-        if (folderName.equals(account.getDraftsFolderName())) {
-            MessageCompose.actionEditDraft(this, messageReference);
-        } else {
-            mMessageViewContainer.removeView(mMessageViewPlaceHolder);
+        mMessageViewContainer.removeView(mMessageViewPlaceHolder);
 
-            if (mMessageListFragment != null) {
-                mMessageListFragment.setActiveMessage(messageReference);
-            }
-
-            MessageViewFragment fragment = MessageViewFragment.newInstance(messageReference);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.message_view_container, fragment);
-            mMessageViewFragment = fragment;
-            ft.commit();
-
-            if (mDisplayMode != DisplayMode.SPLIT_VIEW) {
-                showMessageView();
-            }
+        if (mMessageListFragment != null) {
+            mMessageListFragment.setActiveMessage(messageReference);
         }
-    }
 
-    @Override
-    public void onResendMessage(LocalMessage message) {
-        MessageCompose.actionEditDraft(this, message.makeMessageReference());
-    }
+        MessageViewFragment fragment = MessageViewFragment.newInstance(messageReference);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.message_view_container, fragment);
+        mMessageViewFragment = fragment;
+        ft.commit();
 
-    @Override
-    public void onForward(LocalMessage message) {
-        MessageCompose.actionForward(this, message, null);
-    }
-
-    @Override
-    public void onReply(LocalMessage message) {
-        MessageCompose.actionReply(this, message, false, null);
-    }
-
-    @Override
-    public void onReplyAll(LocalMessage message) {
-        MessageCompose.actionReply(this, message, true, null);
-    }
-
-    @Override
-    public void onCompose(Account account) {
-        MessageCompose.actionCompose(this, account);
+        if (mDisplayMode != DisplayMode.SPLIT_VIEW) {
+            showMessageView();
+        }
     }
 
     @Override
@@ -1405,21 +1337,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     }
 
     @Override
-    public void onReply(LocalMessage message, PgpData pgpData) {
-        MessageCompose.actionReply(this, message, false, pgpData.getDecryptedData());
-    }
-
-    @Override
-    public void onReplyAll(LocalMessage message, PgpData pgpData) {
-        MessageCompose.actionReply(this, message, true, pgpData.getDecryptedData());
-    }
-
-    @Override
-    public void onForward(LocalMessage mMessage, PgpData mPgpData) {
-        MessageCompose.actionForward(this, mMessage, mPgpData.getDecryptedData());
-    }
-
-    @Override
     public void showNextMessageOrReturn() {
         if (VisualVoicemail.messageViewReturnToList() || !showLogicalNextMessage()) {
             if (mDisplayMode == DisplayMode.SPLIT_VIEW) {
@@ -1568,8 +1485,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (mMessageViewFragment != null) {
+        /*if (mMessageViewFragment != null) {
             mMessageViewFragment.handleCryptoResult(requestCode, resultCode, data);
-        }
+        }*/
     }
 }

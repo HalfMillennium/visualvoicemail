@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 import android.util.Log;
 
-import au.com.wallaceit.voicemail.Account.QuoteStyle;
 import au.com.wallaceit.voicemail.Identity;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;
@@ -17,7 +16,7 @@ import au.com.wallaceit.voicemail.message.SimpleMessageFormat;
 
 public class IdentityHeaderBuilder {
     private au.com.wallaceit.voicemail.message.InsertableHtmlContent quotedHtmlContent;
-    private QuoteStyle quoteStyle;
+    //private QuoteStyle quoteStyle;
     private SimpleMessageFormat messageFormat;
     private Identity identity;
     private boolean signatureChanged;
@@ -75,7 +74,7 @@ public class IdentityHeaderBuilder {
         }
 
         // Save the quote style (useful for forwards).
-        appendValue(IdentityField.QUOTE_STYLE, quoteStyle);
+        //appendValue(IdentityField.QUOTE_STYLE, quoteStyle);
 
         // Save the message format for this offset.
         appendValue(IdentityField.MESSAGE_FORMAT, messageFormat);
@@ -127,10 +126,10 @@ public class IdentityHeaderBuilder {
         return this;
     }
 
-    public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuoteStyle(QuoteStyle quoteStyle) {
+    /*public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuoteStyle(QuoteStyle quoteStyle) {
         this.quoteStyle = quoteStyle;
         return this;
-    }
+    }*/
 
     public au.com.wallaceit.voicemail.message.IdentityHeaderBuilder setQuoteTextMode(QuotedTextMode quotedTextMode) {
         this.quotedTextMode = quotedTextMode;

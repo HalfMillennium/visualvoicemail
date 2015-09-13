@@ -17,9 +17,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.FolderMode;
-import au.com.wallaceit.voicemail.activity.setup.*;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing;
-import au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder;
+
 import com.fsck.k9.mail.NetworkType;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
@@ -534,7 +532,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                 }
 
 
-                AccountSetupOutgoing.actionOutgoingSettings(this, mAccount, mMakeDefault);
+                //AccountSetupOutgoing.actionOutgoingSettings(this, mAccount, mMakeDefault);
                 finish();
             }
         }

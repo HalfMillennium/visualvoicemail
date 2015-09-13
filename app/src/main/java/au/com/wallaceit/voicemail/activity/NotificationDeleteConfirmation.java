@@ -14,7 +14,7 @@ import android.os.Bundle;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.*;
 import au.com.wallaceit.voicemail.activity.ConfirmationDialog;
 import au.com.wallaceit.voicemail.activity.MessageReference;

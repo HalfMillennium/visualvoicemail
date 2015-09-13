@@ -47,7 +47,7 @@ import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
 import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.MessageList;
@@ -55,11 +55,7 @@ import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.NotificationDeleteConfirmation;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
-import au.com.wallaceit.voicemail.controller.*;
-import au.com.wallaceit.voicemail.controller.MessagingControllerPushReceiver;
-import au.com.wallaceit.voicemail.controller.MessagingListener;
 import au.com.wallaceit.voicemail.helper.Contacts;
 import au.com.wallaceit.voicemail.helper.MessageHelper;
 import com.fsck.k9.mail.power.TracingPowerManager;
@@ -2537,12 +2533,8 @@ public class MessagingController implements Runnable {
             return;
         }
 
-        final int id = incoming
-                ? VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_INCOMING + account.getAccountNumber()
-                : VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_OUTGOING + account.getAccountNumber();
-        final Intent i = incoming
-                ? AccountSetupIncoming.intentActionEditIncomingSettings(context, account)
-                : AccountSetupOutgoing.intentActionEditOutgoingSettings(context, account);
+        final int id = VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_INCOMING + account.getAccountNumber();
+        final Intent i = AccountSetupIncoming.intentActionEditIncomingSettings(context, account);
         final PendingIntent pi = PendingIntent.getActivity(context,
                 account.getAccountNumber(), i, PendingIntent.FLAG_UPDATE_CURRENT);
         final String title = context.getString(
@@ -2639,7 +2631,7 @@ public class MessagingController implements Runnable {
             Date nowDate = new Date(nowTime);
             message.setInternalDate(nowDate);
             message.addSentDate(nowDate, VisualVoicemail.hideTimeZone());
-            message.setFrom(new Address(account.getEmail(), "K9mail internal"));
+            message.setFrom(new Address(account.getPhoneNumber(), "K9mail internal"));
 
             localFolder.appendMessages(Collections.singletonList(message));
 
@@ -3224,7 +3216,7 @@ public class MessagingController implements Runnable {
 
         String accountDescription = account.getDescription();
         String accountName = (TextUtils.isEmpty(accountDescription)) ?
-                account.getEmail() : accountDescription;
+                account.getPhoneNumber() : accountDescription;
 
         builder.setTicker(context.getString(R.string.notification_bg_send_ticker,
                 accountName));
@@ -4341,7 +4333,7 @@ public class MessagingController implements Runnable {
                 synchronizeFolder(account, folder, ignoreLastCheckedTime, accountInterval, listener);
             }
         } catch (MessagingException e) {
-            Log.e(VisualVoicemail.LOG_TAG, "Unable to synchronize account " + account.getName(), e);
+            Log.e(VisualVoicemail.LOG_TAG, "Unable to synchronize account " + account.getPhoneNumber(), e);
             addErrorMessage(account, null, e);
         } finally {
             putBackground("clear notification flag for " + account.getDescription(), null, new Runnable() {
@@ -4512,7 +4504,7 @@ public class MessagingController implements Runnable {
     private boolean shouldNotifyForMessage(Account account, LocalFolder localFolder, Message message) {
         // If we don't even have an account name, don't show the notification.
         // (This happens during initial account setup)
-        if (account.getName() == null) {
+        if (account.getPhoneNumber() == null) {
             return false;
         }
 
@@ -4574,9 +4566,9 @@ public class MessagingController implements Runnable {
 
         // Don't notify if the sender address matches one of our identities and the user chose not
         // to be notified for such messages.
-        if (account.isAnIdentity(message.getFrom()) && !account.isNotifySelfNewMail()) {
+        /*if (account.isAnIdentity(message.getFrom()) && !account.isNotifySelfNewMail()) {
             return false;
-        }
+        }*/
 
         return true;
     }
@@ -4613,7 +4605,7 @@ public class MessagingController implements Runnable {
             final Address[] fromAddrs = message.getFrom();
 
             if (fromAddrs != null) {
-                isSelf = account.isAnIdentity(fromAddrs);
+                //isSelf = account.isAnIdentity(fromAddrs);
                 if (!isSelf && fromAddrs.length > 0) {
                     return MessageHelper.toFriendly(fromAddrs[0], contacts).toString();
                 }
@@ -4777,7 +4769,7 @@ public class MessagingController implements Runnable {
         builder.setNumber(unreadCount);
 
         String accountDescr = (account.getDescription() != null) ?
-                account.getDescription() : account.getEmail();
+                account.getDescription() : account.getPhoneNumber();
         final ArrayList<MessageReference> allRefs = new ArrayList<MessageReference>();
         data.supplyAllMessageRefs(allRefs);
 

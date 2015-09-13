@@ -10,7 +10,7 @@ import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
 import au.com.wallaceit.voicemail.activity.MessageInfoHolder;
 import au.com.wallaceit.voicemail.helper.*;
@@ -55,68 +55,64 @@ public class MessageHelper {
                          final FolderInfoHolder folder,
                          Account account) {
         final au.com.wallaceit.voicemail.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? au.com.wallaceit.voicemail.helper.Contacts.getInstance(mContext) : null;
-        try {
-            target.message = message;
-            target.compareArrival = message.getInternalDate();
-            target.compareDate = message.getSentDate();
-            if (target.compareDate == null) {
-                target.compareDate = message.getInternalDate();
-            }
+        target.message = message;
+        target.compareArrival = message.getInternalDate();
+        target.compareDate = message.getSentDate();
+        if (target.compareDate == null) {
+            target.compareDate = message.getInternalDate();
+        }
 
-            target.folder = folder;
+        target.folder = folder;
 
-            target.read = message.isSet(Flag.SEEN);
-            target.answered = message.isSet(Flag.ANSWERED);
-            target.forwarded = message.isSet(Flag.FORWARDED);
-            target.flagged = message.isSet(Flag.FLAGGED);
+        target.read = message.isSet(Flag.SEEN);
+        target.answered = message.isSet(Flag.ANSWERED);
+        target.forwarded = message.isSet(Flag.FORWARDED);
+        target.flagged = message.isSet(Flag.FLAGGED);
 
-            Address[] addrs = message.getFrom();
+        Address[] addrs = message.getFrom();
 
-            if (addrs.length > 0 &&  account.isAnIdentity(addrs[0])) {
+            /*if (addrs.length > 0 &&  account.isAnIdentity(addrs[0])) {
                 CharSequence to = toFriendly(message.getRecipients(RecipientType.TO), contactHelper);
                 target.compareCounterparty = to.toString();
                 target.sender = new SpannableStringBuilder(mContext.getString(R.string.message_to_label)).append(to);
-            } else {
-                target.sender = toFriendly(addrs, contactHelper);
-                target.compareCounterparty = target.sender.toString();
-            }
+            } else {*/
+        target.sender = toFriendly(addrs, contactHelper);
+        target.compareCounterparty = target.sender.toString();
+        //}
 
-            if (addrs.length > 0) {
-                target.senderAddress = addrs[0].getAddress();
-            } else {
-                // a reasonable fallback "whomever we were corresponding with
-                target.senderAddress = target.compareCounterparty;
-            }
-
-            target.uid = message.getUid();
-            target.account = message.getFolder().getAccountUuid();
-            target.uri = message.getUri();
-        } catch (MessagingException me) {
-            Log.w(VisualVoicemail.LOG_TAG, "Unable to load message info", me);
+        if (addrs.length > 0) {
+            target.senderAddress = addrs[0].getAddress();
+        } else {
+            // a reasonable fallback "whomever we were corresponding with
+            target.senderAddress = target.compareCounterparty;
         }
+
+        target.uid = message.getUid();
+        target.account = message.getFolder().getAccountUuid();
+        target.uri = message.getUri();
     }
 
     public CharSequence getDisplayName(Account account, Address[] fromAddrs, Address[] toAddrs) {
         final au.com.wallaceit.voicemail.helper.Contacts contactHelper = VisualVoicemail.showContactName() ? au.com.wallaceit.voicemail.helper.Contacts.getInstance(mContext) : null;
 
         CharSequence displayName;
-        if (fromAddrs.length > 0 && account.isAnIdentity(fromAddrs[0])) {
+        /*if (fromAddrs.length > 0 && account.isAnIdentity(fromAddrs[0])) {
             CharSequence to = toFriendly(toAddrs, contactHelper);
             displayName = new SpannableStringBuilder(
                     mContext.getString(R.string.message_to_label)).append(to);
-        } else {
+        } else {*/
             displayName = toFriendly(fromAddrs, contactHelper);
-        }
+        //}
 
         return displayName;
     }
 
     public boolean toMe(Account account, Address[] toAddrs) {
-        for (Address address : toAddrs) {
+        /*for (Address address : toAddrs) {
             if (account.isAnIdentity(address)) {
                 return true;
             }
-        }
+        }*/
         return false;
     }
 

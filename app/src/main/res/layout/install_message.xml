@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="76dp"
+            android:layout_height="76dip"
+            android:contentDescription="@string/app_logo"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/welcome_heading"
+
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dip"
+        android:text="@string/beta_message"
+        android:textColor="#ffce0000"
+        android:textSize="20sp"
+        android:id="@+id/beta_message"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fadingEdge="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:padding="8dip"
+                android:text="@string/install_message"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:id="@+id/install_message"
+                android:layout_weight="1" />
+
+<!--             <View
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1" /> -->
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/wizard_next"
+        android:layout_width="fill_parent"
+        android:layout_height="54dp" />
+
+</LinearLayout>

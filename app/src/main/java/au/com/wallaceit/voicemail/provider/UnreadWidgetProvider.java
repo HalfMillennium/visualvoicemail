@@ -1,7 +1,7 @@
 package au.com.wallaceit.voicemail.provider;
 
 import au.com.wallaceit.voicemail.*;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.UnreadWidgetConfiguration;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.MessageList;

@@ -12,16 +12,12 @@ import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.Account.FolderMode;
-import au.com.wallaceit.voicemail.Account.MessageFormat;
-import au.com.wallaceit.voicemail.Account.QuoteStyle;
 import au.com.wallaceit.voicemail.Account.Searchable;
 import au.com.wallaceit.voicemail.Account.ShowPictures;
 import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
-import au.com.wallaceit.voicemail.preferences.*;
-import au.com.wallaceit.voicemail.preferences.Settings;
 import au.com.wallaceit.voicemail.preferences.Settings.*;
 
 public class AccountSettings {
@@ -37,12 +33,12 @@ public class AccountSettings {
          * and use that for whatever you add here.
          */
 
-        s.put("alwaysBcc", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("alwaysBcc", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(11, new StringSetting(""))
         ));
         s.put("alwaysShowCcBcc", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(13, new BooleanSetting(false))
-        ));
+        ));*/
         s.put("archiveFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Archive"))
         ));
@@ -56,13 +52,13 @@ public class AccountSettings {
         s.put("chipColor", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new ColorSetting(0xFF0000FF))
         ));
-        s.put("cryptoApp", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("cryptoApp", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("apg")),
                 new V(36, new StringSetting(Account.NO_OPENPGP_PROVIDER))
         ));
-        s.put("defaultQuotedTextShown", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("defaultQuotedTextShown", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_QUOTED_TEXT_SHOWN))
-        ));
+        ));*/
         s.put("deletePolicy", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new DeletePolicySetting(DeletePolicy.NEVER))
         ));
@@ -121,7 +117,7 @@ public class AccountSettings {
                 new V(1, new IntegerResourceSetting(-1,
                         R.array.account_settings_message_age_values))
         ));
-        s.put("messageFormat", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("messageFormat", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<MessageFormat>(
                         MessageFormat.class, Account.DEFAULT_MESSAGE_FORMAT))
         ));
@@ -130,7 +126,7 @@ public class AccountSettings {
         ));
         s.put("messageReadReceipt", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_MESSAGE_READ_RECEIPT))
-        ));
+        ));*/
         s.put("notifyMailCheck", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
@@ -146,7 +142,7 @@ public class AccountSettings {
         s.put("pushPollOnConnect", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
-        s.put("quotePrefix", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("quotePrefix", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting(Account.DEFAULT_QUOTE_PREFIX))
         ));
         s.put("quoteStyle", au.com.wallaceit.voicemail.preferences.Settings.versions(
@@ -155,7 +151,7 @@ public class AccountSettings {
         ));
         s.put("replyAfterQuote", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_REPLY_AFTER_QUOTE))
-        ));
+        ));*/
         s.put("ring", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
         ));
@@ -185,9 +181,9 @@ public class AccountSettings {
         s.put("spamFolderName", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new StringSetting("Spam"))
         ));
-        s.put("stripSignature", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("stripSignature", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(2, new BooleanSetting(Account.DEFAULT_STRIP_SIGNATURE))
-        ));
+        ));*/
         s.put("subscribedFoldersOnly", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));
@@ -220,10 +216,10 @@ public class AccountSettings {
         s.put("allowRemoteSearch", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(true))
         ));
-        s.put("remoteSearchNumResults", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("remoteSearchNumResults", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new IntegerResourceSetting(Account.DEFAULT_REMOTE_SEARCH_NUM_RESULTS,
                         R.array.account_settings_remote_search_num_results_values))
-        ));
+        ));*/
         s.put("remoteSearchFullText", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(false))
         ));

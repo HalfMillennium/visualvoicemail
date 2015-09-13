@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import au.com.wallaceit.voicemail.*;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.K9ListActivity;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 
@@ -126,15 +126,15 @@ public abstract class AccountList extends K9ListActivity implements OnItemClickL
             }
 
             String description = account.getDescription();
-            if (account.getEmail().equals(description)) {
+            if (account.getPhoneNumber().equals(description)) {
                 holder.email.setVisibility(View.GONE);
             } else {
                 holder.email.setVisibility(View.VISIBLE);
-                holder.email.setText(account.getEmail());
+                holder.email.setText(account.getPhoneNumber());
             }
 
             if (description == null || description.isEmpty()) {
-                description = account.getEmail();
+                description = account.getPhoneNumber();
             }
 
             holder.description.setText(description);

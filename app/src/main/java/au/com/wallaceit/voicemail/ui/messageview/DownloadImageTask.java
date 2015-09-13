@@ -17,7 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.FileHelper;
 import au.com.wallaceit.voicemail.helper.UrlEncodingHelper;
 import com.fsck.k9.mail.internet.MimeUtility;

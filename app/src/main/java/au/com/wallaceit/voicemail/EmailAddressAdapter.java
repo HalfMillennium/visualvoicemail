@@ -16,7 +16,7 @@
 
 package au.com.wallaceit.voicemail;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import android.content.Context;

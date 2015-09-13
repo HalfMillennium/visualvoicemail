@@ -12,8 +12,6 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
-
-     This file is from k9mail and has been modified for visualvoicemail
 -->
 
     <!--
@@ -127,4 +125,5 @@
         in_box="INBOX"
         visable="no"
         />
+
 </providers>

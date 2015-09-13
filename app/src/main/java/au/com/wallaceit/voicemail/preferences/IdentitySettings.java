@@ -11,7 +11,7 @@ import android.content.SharedPreferences;
 
 import au.com.wallaceit.voicemail.EmailAddressValidator;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.preferences.Settings;
 import au.com.wallaceit.voicemail.preferences.Settings.*;
 

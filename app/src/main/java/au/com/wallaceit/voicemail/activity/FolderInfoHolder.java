@@ -3,7 +3,7 @@ package au.com.wallaceit.voicemail.activity;
 import android.content.Context;
 
 import au.com.wallaceit.voicemail.Account;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import com.fsck.k9.mail.Folder;
 
 public class FolderInfoHolder implements Comparable<au.com.wallaceit.voicemail.activity.FolderInfoHolder> {

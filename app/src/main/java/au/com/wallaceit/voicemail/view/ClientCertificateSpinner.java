@@ -2,7 +2,7 @@
 package au.com.wallaceit.voicemail.view;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 
 import android.app.Activity;
 import android.content.Context;

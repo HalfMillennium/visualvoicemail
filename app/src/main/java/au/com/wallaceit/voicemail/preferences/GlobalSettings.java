@@ -20,7 +20,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
 import au.com.wallaceit.voicemail.VisualVoicemail.Theme;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.preferences.*;
 import au.com.wallaceit.voicemail.preferences.Settings;

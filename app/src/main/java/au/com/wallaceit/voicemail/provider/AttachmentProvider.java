@@ -15,7 +15,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
-import com.fsck.k9.BuildConfig;
+import au.com.wallaceit.voicemail.BuildConfig;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.MessagingException;

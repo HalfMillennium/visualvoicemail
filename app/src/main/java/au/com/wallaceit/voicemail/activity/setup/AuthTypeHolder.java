@@ -2,7 +2,7 @@ package au.com.wallaceit.voicemail.activity.setup;
 
 import android.content.res.Resources;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import com.fsck.k9.mail.AuthType;
 
 class AuthTypeHolder {

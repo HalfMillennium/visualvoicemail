@@ -28,7 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.ClipboardManager;
 import au.com.wallaceit.voicemail.helper.Contacts;
 import au.com.wallaceit.voicemail.helper.Utility;

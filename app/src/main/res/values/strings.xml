@@ -5,54 +5,17 @@
     <!-- This should make it easier for forks to change the branding -->
 
     <!-- Used in AndroidManifest.xml -->
-    <string name="app_name">K-9 Mail</string>
     <string name="beta_app_name">K-9 Mail BETA</string>
 
     <string name="shortcuts_title">K-9 Accounts</string>
     <string name="unread_widget_label">K-9 Unread</string>
 
-    <string name="remote_control_label">K-9 Mail remote control</string>
-    <string name="remote_control_desc">Allows this application to control K-9 Mail activities and settings.</string>
-
-
     <!-- Used in the about dialog -->
-    <string name="app_authors">Google, The K-9 Dog Walkers.</string>
-    <string name="app_copyright_fmt">Copyright 2008-<xliff:g>%s</xliff:g> The K-9 Dog Walkers. Portions Copyright 2006-<xliff:g>%s</xliff:g> the Android Open Source Project.</string>
     <string name="app_license">Licensed under the Apache License, Version 2.0.</string>
 
 
     <!-- Welcome message -->
-    <string name="welcome_message_title">Welcome to K-9 Mail</string>
-    <string name="accounts_welcome"><![CDATA[
-<p>
-K-9 Mail is a powerful free email client for Android.
-</p><p>
-Its improved features include:
-</p>
-<ul>
-  <li>Push mail using IMAP IDLE</li>
-  <li>Better performance</li>
-  <li>Message refiling</li>
-  <li>Email signatures</li>
-  <li>Bcc-to-self</li>
-  <li>Folder subscriptions</li>
-  <li>All folder synchronization</li>
-  <li>Return-address configuration</li>
-  <li>Keyboard shortcuts</li>
-  <li>Better IMAP support</li>
-  <li>Saving attachments to SD</li>
-  <li>Empty Trash</li>
-  <li>Message sorting</li>
-  <li>…and more</li>
-</ul>
-<p>
-Please note that K-9 does not support most free Hotmail accounts and, like many mail clients, has
-some quirks when talking to Microsoft Exchange.
-</p><p>
-Please submit bug reports, contribute new features and ask questions at
-<a href="http://k9mail.googlecode.com/">http://k9mail.googlecode.com/</a>.
-</p>
-    ]]></string>
+    <string name="welcome_message_title">Welcome to Visual Voicemail</string>
 
 
     <!-- Default signature -->
@@ -1155,5 +1118,45 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="crypto_incomplete_message">Incomplete message</string>
     <!-- Note: This references message_view_download_remainder -->
     <string name="crypto_download_complete_message_to_decrypt">Click \'Download complete message\' to allow decryption.</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="app_webpage_url">http://vvm.martin.cc</string>
+
+    <!-- Visual voicemail specific -->
+    <string name="app_name">Visual Voicemail</string>
+
+    <!-- Used in the about dialog -->
+    <string name="app_authors">Martin-Azizi &amp; Michael Wallace</string>
+    <string name="app_copyright_fmt">Copyright 2012-<xliff:g>%s</xliff:g></string>
+
+    <!-- Installation message -->
+    <string name="beta_message">Visual Voicemail is still under development, ONLY Vodafone Australia is supported</string>
+    <string name="install_message">Visual Voicemail for Android connects to standard IMAP-based visual-voicemail servers (popularized by iPhone) that are deployed by many carriers across the world.\n\nThese carriers are currently supported:\n   - Vodafone Australia\n\nOn the next screen you will be asked to supply the details of your Voicemail account and talked though the setup procedure.\n\nNote: If your carrier is not listed above and provides such a service, let us know and we\'ll see if we can implement it in our application.</string>
+    <string name="account_provider_hint">Network Provider</string>
+    <string name="account_phone_number_hint">Mobile Number</string>
+    <string name="account_password_hint">Password</string>
+
+    <string name="setup_instructions_1">1: To activate Visual Voicemail, tap the button above to dial 1217\n\n2: Enter your Mobile Phone Number and Voicemail password below (eg 0412345678 / 123456).</string>
+    <string name="setup_instructions_2"></string>
+
+    <string name="setup_help_1">If you don\'t know your Voicemail password you can set a new password by:\n
+(1) Dial 121 from you mobile phone\n
+(2) enter "*" to get to the "main menu"\n
+(3) enter "3" to select "personal preferences"\n
+(4) enter "2" to select "login options"\n
+(5) enter "1" to select "change password"\n
+(6) enter your new password followed by a "#"\n</string>
+
+    <string name="welcome_heading">Welcome to Visual Voicemail for Android</string>
+    <string name="app_logo">Application Logo</string>
+    <string name="select_voicemail_provider">Select Your Voicemail Provider</string>
+    <string name="app_desc">Visual Voicemail for Android</string>
+    <string name="account_settings_auto_check_label">Auto Check Method</string>
+    <string name="activate_visual_voicemail">Activate Visual Voicemail</string>
+    <string name="setup_help_label">Setup Help</string>
+    <string name="open_external_action">Open In External Player</string>
 
 </resources>

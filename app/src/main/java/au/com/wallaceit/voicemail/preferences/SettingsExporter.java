@@ -317,14 +317,14 @@ public class SettingsExporter {
             if (comps.length >= 3) {
                 String thirdPart = comps[2];
 
-                if (Account.IDENTITY_DESCRIPTION_KEY.equals(secondPart)) {
+                /*if (Account.IDENTITY_DESCRIPTION_KEY.equals(secondPart)) {
                     // This is an identity key. Save identity index for later...
                     try {
                         identities.add(Integer.parseInt(thirdPart));
-                    } catch (NumberFormatException e) { /* ignore */ }
+                    } catch (NumberFormatException e) {  }
                     // ... but don't write it now.
                     continue;
-                }
+                }*/
 
                 if (FolderSettings.SETTINGS.containsKey(thirdPart)) {
                     // This is a folder key. Save folder name for later...
@@ -395,24 +395,24 @@ public class SettingsExporter {
         String suffix = "." + identity;
 
         // Write name belonging to the identity
-        String name = (String) prefs.get(prefix + Account.IDENTITY_NAME_KEY + suffix);
+        /*String name = (String) prefs.get(prefix + Account.IDENTITY_NAME_KEY + suffix);
         serializer.startTag(null, NAME_ELEMENT);
         serializer.text(name);
-        serializer.endTag(null, NAME_ELEMENT);
+        serializer.endTag(null, NAME_ELEMENT);*/
 
         // Write email address belonging to the identity
-        String email = (String) prefs.get(prefix + Account.IDENTITY_EMAIL_KEY + suffix);
+        /*String email = (String) prefs.get(prefix + Account.IDENTITY_EMAIL_KEY + suffix);
         serializer.startTag(null, EMAIL_ELEMENT);
         serializer.text(email);
-        serializer.endTag(null, EMAIL_ELEMENT);
+        serializer.endTag(null, EMAIL_ELEMENT);*/
 
         // Write identity description
-        String description = (String) prefs.get(prefix + Account.IDENTITY_DESCRIPTION_KEY + suffix);
+        /*String description = (String) prefs.get(prefix + Account.IDENTITY_DESCRIPTION_KEY + suffix);
         if (description != null) {
             serializer.startTag(null, DESCRIPTION_ELEMENT);
             serializer.text(description);
             serializer.endTag(null, DESCRIPTION_ELEMENT);
-        }
+        }*/
 
         // Write identity settings
         serializer.startTag(null, SETTINGS_ELEMENT);

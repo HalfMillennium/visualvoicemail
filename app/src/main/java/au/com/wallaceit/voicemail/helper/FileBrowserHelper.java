@@ -13,7 +13,7 @@ import android.text.InputType;
 import android.widget.EditText;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 
 public class FileBrowserHelper {
     /**

@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +42,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -61,18 +59,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.*;
-import com.fsck.k9.R;
-import au.com.wallaceit.voicemail.activity.ActivityListener;
-import au.com.wallaceit.voicemail.activity.ConfirmationDialog;
-import au.com.wallaceit.voicemail.activity.FolderList;
-import au.com.wallaceit.voicemail.activity.K9ListActivity;
-import au.com.wallaceit.voicemail.activity.MessageCompose;
-import au.com.wallaceit.voicemail.activity.MessageList;
-import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.misc.ExtendedAsyncTask;
 import au.com.wallaceit.voicemail.activity.misc.NonConfigurationInstance;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupBasics;
+import au.com.wallaceit.voicemail.activity.setup.AccountSetup;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.activity.setup.WelcomeMessage;
 import au.com.wallaceit.voicemail.controller.MessagingController;
@@ -80,7 +71,6 @@ import au.com.wallaceit.voicemail.helper.SizeFormatter;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
-import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.store.RemoteStore;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.preferences.SettingsExporter;
@@ -95,8 +85,6 @@ import au.com.wallaceit.voicemail.search.SearchAccount;
 import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 import au.com.wallaceit.voicemail.view.ColorChip;
-
-import de.cketti.library.changelog.ChangeLog;
 
 
 public class Accounts extends K9ListActivity implements OnItemClickListener {
@@ -373,7 +361,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     }
 
 
-    @Override
+    /*@Override
     public void onNewIntent(Intent intent) {
         Uri uri = intent.getData();
         Log.i(VisualVoicemail.LOG_TAG, "Accounts Activity got uri " + uri);
@@ -387,15 +375,15 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 onImport(uri);
             }
         }
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        if (!VisualVoicemail.isHideSpecialAccounts()) {
+        /*if (!VisualVoicemail.isHideSpecialAccounts()) {
             createSpecialAccounts();
-        }
+        }*/
 
         List<Account> accounts = Preferences.getPreferences(this).getAccounts();
         Intent intent = getIntent();
@@ -415,7 +403,16 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             return;
         }
 
-        boolean startup = intent.getBooleanExtra(EXTRA_STARTUP, true);
+        // force these settings
+        VisualVoicemail.setHideSpecialAccounts(true);       // hide "Unified Inbox" and "All Messages"
+        VisualVoicemail.setStartIntegratedInbox(false);
+
+        // Open the first & only account
+        onOpenAccount(accounts.get(0));
+        finish();
+        return;
+
+        /*boolean startup = intent.getBooleanExtra(EXTRA_STARTUP, true);
         if (startup && VisualVoicemail.startIntegratedInbox() && !VisualVoicemail.isHideSpecialAccounts()) {
             onOpenAccount(mUnifiedInboxAccount);
             finish();
@@ -453,7 +450,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         ChangeLog cl = new ChangeLog(this);
         if (cl.isFirstRun()) {
             cl.getLogDialog().show();
-        }
+        }*/
     }
 
     private void initializeActionBar() {
@@ -610,7 +607,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     }
 
     private void onAddNewAccount() {
-        AccountSetupBasics.actionNewAccount(this);
+        AccountSetup.actionNewAccount(this);
     }
 
     private void onEditPrefs() {
@@ -639,16 +636,6 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
     private void onEmptyTrash(Account account) {
         MessagingController.getInstance(getApplication()).emptyTrash(account, null);
-    }
-
-
-    private void onCompose() {
-        Account defaultAccount = Preferences.getPreferences(this).getDefaultAccount();
-        if (defaultAccount != null) {
-            MessageCompose.actionCompose(this, defaultAccount);
-        } else {
-            onAddNewAccount();
-        }
     }
 
     /**
@@ -1255,12 +1242,9 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         case R.id.check_mail:
             onCheckMail(null);
             break;
-        case R.id.compose:
-            onCompose();
-            break;
-        case R.id.about:
+        /*case R.id.about:
             onAbout();
-            break;
+            break;*/
         case R.id.search:
             onSearchRequested();
             break;
@@ -1288,7 +1272,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         new String[] {"Glide", "https://github.com/bumptech/glide"}
     };
 
-    private void onAbout() {
+    /*private void onAbout() {
         String appName = getString(R.string.app_name);
         int year = Calendar.getInstance().get(Calendar.YEAR);
         WebView wv = new WebView(this);
@@ -1349,7 +1333,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             }
         })
         .show();
-    }
+    }*/
 
     /**
      * Get current version number.
@@ -1773,17 +1757,17 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 holder.email.setText(SizeFormatter.formatSize(au.com.wallaceit.voicemail.activity.Accounts.this, stats.size));
                 holder.email.setVisibility(View.VISIBLE);
             } else {
-                if (account.getEmail().equals(account.getDescription())) {
+                if (account.getPhoneNumber().equals(account.getDescription())) {
                     holder.email.setVisibility(View.GONE);
                 } else {
                     holder.email.setVisibility(View.VISIBLE);
-                    holder.email.setText(account.getEmail());
+                    holder.email.setText(account.getPhoneNumber());
                 }
             }
 
             String description = account.getDescription();
             if (description == null || description.isEmpty()) {
-                description = account.getEmail();
+                description = account.getPhoneNumber();
             }
 
             holder.description.setText(description);

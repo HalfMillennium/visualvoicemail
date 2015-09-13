@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -28,13 +29,12 @@ import android.text.format.Time;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account.SortType;
-import au.com.wallaceit.voicemail.activity.MessageCompose;
 import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
 
-import com.fsck.k9.BuildConfig;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.BuildConfig;
+import au.com.wallaceit.voicemail.R;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.K9MailLib;
 import com.fsck.k9.mail.Message;
@@ -49,6 +49,7 @@ import au.com.wallaceit.voicemail.service.ShutdownReceiver;
 import au.com.wallaceit.voicemail.service.StorageGoneReceiver;
 
 public class VisualVoicemail extends Application {
+
     /**
      * Components that are interested in knowing when the VisualVoicemail instance is
      * available and ready (Android invokes Application.onCreate() after other
@@ -98,8 +99,8 @@ public class VisualVoicemail extends Application {
     /**
      * This will be {@code true} once the initialization is complete and {@link #notifyObservers()}
      * was called.
-     * Afterwards calls to {@link #registerApplicationAware(VisualVoicemail.ApplicationAware)} will
-     * immediately call {@link VisualVoicemail.ApplicationAware#initializeComponent(VisualVoicemail)} for the
+     * Afterwards calls to {@link #registerApplicationAware(ApplicationAware)} will
+     * immediately call {@link ApplicationAware#initializeComponent(Application)} (VisualVoicemail)} for the
      * supplied argument.
      */
     private static boolean sInitialized = false;
@@ -392,7 +393,7 @@ public class VisualVoicemail extends Application {
              */
             MailService.actionReset(context, wakeLockId);
         }
-        Class<?>[] classes = { MessageCompose.class, BootReceiver.class, MailService.class };
+        Class<?>[] classes = { BootReceiver.class, MailService.class };
 
         for (Class<?> clazz : classes) {
 
@@ -584,15 +585,15 @@ public class VisualVoicemail extends Application {
                 try {
                     Uri uri = Uri.parse("email://messages/" + account.getAccountNumber() + "/" + Uri.encode(folder) + "/" + Uri.encode(message.getUid()));
                     Intent intent = new Intent(action, uri);
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_ACCOUNT, account.getDescription());
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_FOLDER, folder);
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_SENT_DATE, message.getSentDate());
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_FROM, Address.toString(message.getFrom()));
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_TO, Address.toString(message.getRecipients(Message.RecipientType.TO)));
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_CC, Address.toString(message.getRecipients(Message.RecipientType.CC)));
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_BCC, Address.toString(message.getRecipients(Message.RecipientType.BCC)));
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_SUBJECT, message.getSubject());
-                    intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_FROM_SELF, account.isAnIdentity(message.getFrom()));
+                    intent.putExtra(Intents.EmailReceived.EXTRA_ACCOUNT, account.getDescription());
+                    intent.putExtra(Intents.EmailReceived.EXTRA_FOLDER, folder);
+                    intent.putExtra(Intents.EmailReceived.EXTRA_SENT_DATE, message.getSentDate());
+                    intent.putExtra(Intents.EmailReceived.EXTRA_FROM, Address.toString(message.getFrom()));
+                    intent.putExtra(Intents.EmailReceived.EXTRA_TO, Address.toString(message.getRecipients(Message.RecipientType.TO)));
+                    intent.putExtra(Intents.EmailReceived.EXTRA_CC, Address.toString(message.getRecipients(Message.RecipientType.CC)));
+                    intent.putExtra(Intents.EmailReceived.EXTRA_BCC, Address.toString(message.getRecipients(Message.RecipientType.BCC)));
+                    intent.putExtra(Intents.EmailReceived.EXTRA_SUBJECT, message.getSubject());
+                    //intent.putExtra(Intents.EmailReceived.EXTRA_FROM_SELF, account.isAnIdentity(message.getFrom()));
                     VisualVoicemail.this.sendBroadcast(intent);
                     if (VisualVoicemail.DEBUG)
                         Log.d(VisualVoicemail.LOG_TAG, "Broadcasted: action=" + action
@@ -622,19 +623,19 @@ public class VisualVoicemail extends Application {
 
             @Override
             public void synchronizeMailboxRemovedMessage(Account account, String folder, Message message) {
-                broadcastIntent(VisualVoicemail.Intents.EmailReceived.ACTION_EMAIL_DELETED, account, folder, message);
+                broadcastIntent(Intents.EmailReceived.ACTION_EMAIL_DELETED, account, folder, message);
                 updateUnreadWidget();
             }
 
             @Override
             public void messageDeleted(Account account, String folder, Message message) {
-                broadcastIntent(VisualVoicemail.Intents.EmailReceived.ACTION_EMAIL_DELETED, account, folder, message);
+                broadcastIntent(Intents.EmailReceived.ACTION_EMAIL_DELETED, account, folder, message);
                 updateUnreadWidget();
             }
 
             @Override
             public void synchronizeMailboxNewMessage(Account account, String folder, Message message) {
-                broadcastIntent(VisualVoicemail.Intents.EmailReceived.ACTION_EMAIL_RECEIVED, account, folder, message);
+                broadcastIntent(Intents.EmailReceived.ACTION_EMAIL_RECEIVED, account, folder, message);
                 updateUnreadWidget();
             }
 
@@ -645,9 +646,9 @@ public class VisualVoicemail extends Application {
                 updateUnreadWidget();
 
                 // let observers know a change occurred
-                Intent intent = new Intent(VisualVoicemail.Intents.EmailReceived.ACTION_REFRESH_OBSERVER, null);
-                intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_ACCOUNT, account.getDescription());
-                intent.putExtra(VisualVoicemail.Intents.EmailReceived.EXTRA_FOLDER, folderName);
+                Intent intent = new Intent(Intents.EmailReceived.ACTION_REFRESH_OBSERVER, null);
+                intent.putExtra(Intents.EmailReceived.EXTRA_ACCOUNT, account.getDescription());
+                intent.putExtra(Intents.EmailReceived.EXTRA_FOLDER, folderName);
                 VisualVoicemail.this.sendBroadcast(intent);
 
             }
@@ -772,7 +773,9 @@ public class VisualVoicemail extends Application {
             sSplitViewMode = SplitViewMode.valueOf(splitViewMode);
         }
 
-        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath",  Environment.getExternalStorageDirectory().toString());
+        // CSM Modofied to default to the Downloads directory
+        //mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath",  Environment.getExternalStorageDirectory().toString());
+        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
         sUseBackgroundAsUnreadIndicator = sprefs.getBoolean("useBackgroundAsUnreadIndicator", true);
         sThreadedViewEnabled = sprefs.getBoolean("threadedView", true);
         fontSizes.load(sprefs);

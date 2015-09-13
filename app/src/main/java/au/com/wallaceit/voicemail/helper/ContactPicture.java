@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.TypedValue;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
 
 public class ContactPicture {

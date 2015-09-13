@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.helper.SizeFormatter;
 import com.fsck.k9.mail.MessagingException;
 import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;

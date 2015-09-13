@@ -67,8 +67,8 @@ public class AccountSetupNames extends K9Activity implements OnClickListener {
          * just leave the saved value alone.
          */
         // mDescription.setText(mAccount.getDescription());
-        if (mAccount.getName() != null) {
-            mName.setText(mAccount.getName());
+        if (mAccount.getPhoneNumber() != null) {
+            mName.setText(mAccount.getPhoneNumber());
         }
         if (!Utility.requiredFieldValid(mName)) {
             mDoneButton.setEnabled(false);
@@ -84,7 +84,7 @@ public class AccountSetupNames extends K9Activity implements OnClickListener {
         if (Utility.requiredFieldValid(mDescription)) {
             mAccount.setDescription(mDescription.getText().toString());
         }
-        mAccount.setName(mName.getText().toString());
+        mAccount.setDescription(mName.getText().toString());
         mAccount.save(Preferences.getPreferences(this));
         Accounts.listAccounts(this);
         finish();

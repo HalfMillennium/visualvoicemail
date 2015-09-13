@@ -28,7 +28,7 @@ import android.widget.Toast;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.FontSizes;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
 import au.com.wallaceit.voicemail.helper.ContactPicture;
 import au.com.wallaceit.voicemail.helper.Contacts;

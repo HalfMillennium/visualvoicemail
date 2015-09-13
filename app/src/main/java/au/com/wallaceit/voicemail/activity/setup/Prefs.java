@@ -26,7 +26,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
 import au.com.wallaceit.voicemail.activity.setup.*;

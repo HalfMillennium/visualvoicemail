@@ -26,19 +26,12 @@ import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.Account.FolderMode;
-import au.com.wallaceit.voicemail.Account.MessageFormat;
-import au.com.wallaceit.voicemail.Account.QuoteStyle;
 import au.com.wallaceit.voicemail.Account.Searchable;
 import au.com.wallaceit.voicemail.Account.ShowPictures;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
-import au.com.wallaceit.voicemail.activity.ChooseIdentity;
 import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
-import au.com.wallaceit.voicemail.activity.ManageIdentities;
-import au.com.wallaceit.voicemail.activity.setup.*;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupOutgoing;
 import au.com.wallaceit.voicemail.crypto.OpenPgpApiHelper;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Store;
@@ -240,7 +233,7 @@ public class AccountSettings extends K9PreferenceActivity {
         mMarkMessageAsReadOnView = (CheckBoxPreference) findPreference(PREFERENCE_MARK_MESSAGE_AS_READ_ON_VIEW);
         mMarkMessageAsReadOnView.setChecked(mAccount.isMarkMessageAsReadOnView());
 
-        mMessageFormat = (ListPreference) findPreference(PREFERENCE_MESSAGE_FORMAT);
+        /*mMessageFormat = (ListPreference) findPreference(PREFERENCE_MESSAGE_FORMAT);
         mMessageFormat.setValue(mAccount.getMessageFormat().name());
         mMessageFormat.setSummary(mMessageFormat.getEntry());
         mMessageFormat.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -305,7 +298,7 @@ public class AccountSettings extends K9PreferenceActivity {
         mQuoteStyle.setOnPreferenceChangeListener(quoteStyleListener);
         // Call the onPreferenceChange() handler on startup to update the Preference dialogue based
         // upon the existing quote style setting.
-        quoteStyleListener.onPreferenceChange(mQuoteStyle, mAccount.getQuoteStyle().name());
+        quoteStyleListener.onPreferenceChange(mQuoteStyle, mAccount.getQuoteStyle().name());*/
 
         mCheckFrequency = (ListPreference) findPreference(PREFERENCE_FREQUENCY);
         mCheckFrequency.setValue(String.valueOf(mAccount.getAutomaticCheckIntervalMinutes()));
@@ -587,8 +580,8 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         });
 
-        mAccountNotifySelf = (CheckBoxPreference) findPreference(PREFERENCE_NOTIFY_SELF);
-        mAccountNotifySelf.setChecked(mAccount.isNotifySelfNewMail());
+        /*mAccountNotifySelf = (CheckBoxPreference) findPreference(PREFERENCE_NOTIFY_SELF);
+        mAccountNotifySelf.setChecked(mAccount.isNotifySelfNewMail());*/
 
         mAccountNotifySync = (CheckBoxPreference) findPreference(PREFERENCE_NOTIFY_SYNC);
         mAccountNotifySync.setChecked(mAccount.isShowOngoing());
@@ -656,22 +649,6 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         });
 
-        findPreference(PREFERENCE_COMPOSITION).setOnPreferenceClickListener(
-        new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                onCompositionSettings();
-                return true;
-            }
-        });
-
-        findPreference(PREFERENCE_MANAGE_IDENTITIES).setOnPreferenceClickListener(
-        new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                onManageIdentities();
-                return true;
-            }
-        });
-
         findPreference(PREFERENCE_INCOMING).setOnPreferenceClickListener(
         new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -681,15 +658,7 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         });
 
-        findPreference(PREFERENCE_OUTGOING).setOnPreferenceClickListener(
-        new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                onOutgoingSettings();
-                return true;
-            }
-        });
-
-        mHasCrypto = OpenPgpUtils.isAvailable(this);
+        /*mHasCrypto = OpenPgpUtils.isAvailable(this);
         if (mHasCrypto) {
             mCryptoApp = (OpenPgpAppPreference) findPreference(PREFERENCE_CRYPTO_APP);
             mCryptoKey = (OpenPgpKeyPreference) findPreference(PREFERENCE_CRYPTO_KEY);
@@ -720,7 +689,7 @@ public class AccountSettings extends K9PreferenceActivity {
             final Preference mCryptoMenu = findPreference(PREFERENCE_CRYPTO);
             mCryptoMenu.setEnabled(false);
             mCryptoMenu.setSummary(R.string.account_settings_no_openpgp_provider_installed);
-        }
+        }*/
     }
 
     private void removeListEntry(ListPreference listPreference, String remove) {
@@ -752,7 +721,7 @@ public class AccountSettings extends K9PreferenceActivity {
         mAccount.setMarkMessageAsReadOnView(mMarkMessageAsReadOnView.isChecked());
         mAccount.setNotifyNewMail(mAccountNotify.isChecked());
         mAccount.setFolderNotifyNewMailMode(FolderMode.valueOf(mAccountNotifyNewMailMode.getValue()));
-        mAccount.setNotifySelfNewMail(mAccountNotifySelf.isChecked());
+        //mAccount.setNotifySelfNewMail(mAccountNotifySelf.isChecked());
         mAccount.setShowOngoing(mAccountNotifySync.isChecked());
         mAccount.setDisplayCount(Integer.parseInt(mDisplayCount.getValue()));
         mAccount.setMaximumAutoDownloadMessageSize(Integer.parseInt(mMessageSize.getValue()));
@@ -771,19 +740,19 @@ public class AccountSettings extends K9PreferenceActivity {
         }
         mAccount.setSyncRemoteDeletions(mSyncRemoteDeletions.isChecked());
         mAccount.setSearchableFolders(Searchable.valueOf(mSearchableFolders.getValue()));
-        mAccount.setMessageFormat(MessageFormat.valueOf(mMessageFormat.getValue()));
+        /*mAccount.setMessageFormat(MessageFormat.valueOf(mMessageFormat.getValue()));
         mAccount.setAlwaysShowCcBcc(mAlwaysShowCcBcc.isChecked());
         mAccount.setMessageReadReceipt(mMessageReadReceipt.isChecked());
         mAccount.setQuoteStyle(QuoteStyle.valueOf(mQuoteStyle.getValue()));
         mAccount.setQuotePrefix(mAccountQuotePrefix.getText());
         mAccount.setDefaultQuotedTextShown(mAccountDefaultQuotedTextShown.isChecked());
         mAccount.setReplyAfterQuote(mReplyAfterQuote.isChecked());
-        mAccount.setStripSignature(mStripSignature.isChecked());
+        mAccount.setStripSignature(mStripSignature.isChecked());*/
         mAccount.setLocalStorageProviderId(mLocalStorageProvider.getValue());
-        if (mHasCrypto) {
+        /*if (mHasCrypto) {
             mAccount.setCryptoApp(mCryptoApp.getValue());
             mAccount.setCryptoKey(mCryptoKey.getValue());
-        }
+        }*/
 
         // In webdav account we use the exact folder name also for inbox,
         // since it varies because of internationalization
@@ -869,22 +838,8 @@ public class AccountSettings extends K9PreferenceActivity {
         super.onPause();
     }
 
-    private void onCompositionSettings() {
-        AccountSetupComposition.actionEditCompositionSettings(this, mAccount);
-    }
-
-    private void onManageIdentities() {
-        Intent intent = new Intent(this, ManageIdentities.class);
-        intent.putExtra(ChooseIdentity.EXTRA_ACCOUNT, mAccount.getUuid());
-        startActivityForResult(intent, ACTIVITY_MANAGE_IDENTITIES);
-    }
-
     private void onIncomingSettings() {
         AccountSetupIncoming.actionEditIncomingSettings(this, mAccount);
-    }
-
-    private void onOutgoingSettings() {
-        AccountSetupOutgoing.actionEditOutgoingSettings(this, mAccount);
     }
 
     public void onChooseChipColor() {

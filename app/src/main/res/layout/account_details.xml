@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:windowSoftInputMode="stateHidden">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="54dip"
+        android:fadingEdge="none"
+        android:scrollbarStyle="outsideInset">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:orientation="vertical"
+            android:padding="6dip" >
+
+            <TextView
+                android:id="@+id/setup_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_voicemail_provider"
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/account_provider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:prompt="@string/account_provider_hint"
+                android:spinnerMode="dropdown"
+                tools:listitem="@android:layout/simple_spinner_item"
+                android:layout_marginBottom="8dip" />
+
+            <Button android:id="@+id/activate_call_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:text="@string/activate_visual_voicemail"/>
+
+            <TextView
+                android:id="@+id/setup_instructions"
+                android:paddingTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_instructions_1"
+                android:paddingBottom="8dip" />
+
+            <EditText
+                android:id="@+id/account_mobile_phone_number"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:hint="@string/account_phone_number_hint"
+                android:inputType="phone"
+                android:digits="1234567890"
+                android:nextFocusForward="@+id/account_password"
+                android:nextFocusDown="@+id/account_password"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/account_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:hint="@string/account_password_hint"
+                android:inputType="numberPassword"
+                android:nextFocusForward="@+id/next"
+                android:nextFocusDown="@+id/next"
+                android:singleLine="true" />
+
+            <Button android:id="@+id/setup_help_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/setup_help_label"
+                android:layout_marginTop="8dip" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0dip" />
+            
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/wizard_next" />
+
+<!--     <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="-45dip"
+        android:background="@android:drawable/bottom_bar"
+        android:gravity="bottom|right"
+        android:padding="0dip" >
+
+        <Button
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="false"
+            android:layout_marginBottom="-4dip"
+            android:drawableRight="@drawable/button_indicator_next"
+            android:minWidth="@dimen/button_minWidth"
+            android:text="@string/next_action" />
+        
+    </RelativeLayout>
+-->
+</LinearLayout>

@@ -23,7 +23,7 @@ import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
 
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import com.fsck.k9.mail.AuthenticationFailedException;
 import com.fsck.k9.mail.CertificateValidationException;
 import com.fsck.k9.mail.MessagingException;

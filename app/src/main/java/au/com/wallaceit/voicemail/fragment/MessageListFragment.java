@@ -67,7 +67,7 @@ import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.SortType;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.ActivityListener;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
@@ -684,7 +684,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
             String operation = mListener.getOperation(activity);
             if (operation.length() < 1) {
-                mFragmentListener.setMessageListSubTitle(mAccount.getEmail());
+                mFragmentListener.setMessageListSubTitle(mAccount.getPhoneNumber());
             } else {
                 mFragmentListener.setMessageListSubTitle(operation);
             }
@@ -1170,34 +1170,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         registerForContextMenu(mListView);
     }
 
-    public void onCompose() {
-        if (!mSingleAccountMode) {
-            /*
-             * If we have a query string, we don't have an account to let
-             * compose start the default action.
-             */
-            mFragmentListener.onCompose(null);
-        } else {
-            mFragmentListener.onCompose(mAccount);
-        }
-    }
-
-    public void onReply(LocalMessage message) {
-        mFragmentListener.onReply(message);
-    }
-
-    public void onReplyAll(LocalMessage message) {
-        mFragmentListener.onReplyAll(message);
-    }
-
-    public void onForward(LocalMessage message) {
-        mFragmentListener.onForward(message);
-    }
-
-    public void onResendMessage(LocalMessage message) {
-        mFragmentListener.onResendMessage(message);
-    }
-
     public void changeSort(SortType sortType) {
         Boolean sortAscending = (mSortType == sortType) ? !mSortAscending : null;
         changeSort(sortType, sortAscending);
@@ -1499,23 +1471,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             case R.id.deselect:
             case R.id.select: {
                 toggleMessageSelectWithAdapterPosition(adapterPosition);
-                break;
-            }
-            case R.id.reply: {
-                onReply(getMessageAtPosition(adapterPosition));
-                break;
-            }
-            case R.id.reply_all: {
-                onReplyAll(getMessageAtPosition(adapterPosition));
-                break;
-            }
-            case R.id.forward: {
-                onForward(getMessageAtPosition(adapterPosition));
-                break;
-            }
-            case R.id.send_again: {
-                onResendMessage(getMessageAtPosition(adapterPosition));
-                mSelectedCount = 0;
                 break;
             }
             case R.id.same_sender: {
@@ -3097,15 +3052,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         void setMessageListProgress(int level);
         void showThread(Account account, String folderName, long rootId);
         void showMoreFromSameSender(String senderAddress);
-        void onResendMessage(LocalMessage message);
-        void onForward(LocalMessage message);
-        void onReply(LocalMessage message);
-        void onReplyAll(LocalMessage message);
         void openMessage(MessageReference messageReference);
         void setMessageListTitle(String title);
         void setMessageListSubTitle(String subTitle);
         void setUnreadCount(int unread);
-        void onCompose(Account account);
         boolean startSearch(Account account, String folderName);
         void remoteSearchStarted();
         void goBack();

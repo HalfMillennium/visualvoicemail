@@ -3,9 +3,7 @@ package au.com.wallaceit.voicemail.search;
 import android.content.Context;
 
 import au.com.wallaceit.voicemail.BaseAccount;
-import com.fsck.k9.R;
-import au.com.wallaceit.voicemail.search.*;
-import au.com.wallaceit.voicemail.search.LocalSearch;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 
@@ -41,7 +39,7 @@ public class SearchAccount implements BaseAccount {
     }
 
     private String mId;
-    private String mEmail;
+    private String mPhoneNumber;
     private String mDescription;
     private au.com.wallaceit.voicemail.search.LocalSearch mSearch;
 
@@ -55,7 +53,7 @@ public class SearchAccount implements BaseAccount {
         mId = id;
         mSearch = search;
         mDescription = description;
-        mEmail = email;
+        mPhoneNumber = email;
     }
 
     public String getId() {
@@ -63,13 +61,13 @@ public class SearchAccount implements BaseAccount {
     }
 
     @Override
-    public synchronized String getEmail() {
-        return mEmail;
+    public String getPhoneNumber() {
+        return mPhoneNumber;
     }
 
     @Override
-    public synchronized void setEmail(String email) {
-        this.mEmail = email;
+    public void setPhoneNumber(String phoneNumber) {
+        mPhoneNumber = phoneNumber;
     }
 
     @Override

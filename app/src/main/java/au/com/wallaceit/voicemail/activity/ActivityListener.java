@@ -8,7 +8,7 @@ import android.text.format.DateUtils;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.AccountStats;
-import com.fsck.k9.R;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
 import au.com.wallaceit.voicemail.service.MailService;
 
