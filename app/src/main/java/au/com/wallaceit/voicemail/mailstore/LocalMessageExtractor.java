@@ -4,30 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.crypto.DecryptedTempFileBody;
 import com.fsck.k9.mail.Address;
-import com.fsck.k9.mail.Body;
-import com.fsck.k9.mail.BodyPart;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
 import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.Viewable;
-import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
-import au.com.wallaceit.voicemail.mailstore.LocalPart;
-import au.com.wallaceit.voicemail.mailstore.MessageViewInfo;
-import au.com.wallaceit.voicemail.mailstore.MessageViewInfo.MessageViewContainer;
-import au.com.wallaceit.voicemail.mailstore.OpenPgpResultAnnotation;
-import au.com.wallaceit.voicemail.mailstore.ViewableContainer;
 import au.com.wallaceit.voicemail.provider.AttachmentProvider;
-import au.com.wallaceit.voicemail.provider.K9FileProvider;
-import au.com.wallaceit.voicemail.ui.crypto.MessageCryptoAnnotations;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -426,81 +413,6 @@ public class LocalMessageExtractor {
         html.append("</td></tr>");
     }
 
-    public static MessageViewInfo decodeMessageForView(Context context,
-            Message message, MessageCryptoAnnotations annotations) throws MessagingException {
-
-        // 1. break mime structure on encryption/signature boundaries
-        List<Part> parts = getCryptPieces(message, annotations);
-
-        // 2. extract viewables/attachments of parts
-        ArrayList<MessageViewContainer> containers = new ArrayList<MessageViewContainer>();
-        for (Part part : parts) {
-            OpenPgpResultAnnotation pgpAnnotation = annotations.get(part);
-
-            // TODO properly handle decrypted data part - this just replaces the part
-            if (pgpAnnotation != NO_ANNOTATIONS && pgpAnnotation.hasOutputData()) {
-                part = pgpAnnotation.getOutputData();
-            }
-
-            ArrayList<Part> attachments = new ArrayList<Part>();
-            List<Viewable> viewables = MessageExtractor.getViewables(part, attachments);
-
-            // 3. parse viewables into html string
-            ViewableContainer viewable = au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor.extractTextAndAttachments(context, viewables,
-                    attachments);
-            List<AttachmentViewInfo> attachmentInfos = extractAttachmentInfos(context, attachments);
-
-            MessageViewContainer messageViewContainer =
-                    new MessageViewContainer(viewable.html, part, attachmentInfos, pgpAnnotation);
-
-            containers.add(messageViewContainer);
-        }
-
-        return new MessageViewInfo(containers, message);
-    }
-
-    public static List<Part> getCryptPieces(Message message, MessageCryptoAnnotations annotations) throws MessagingException {
-
-        // TODO make sure this method does what it is supposed to
-        /* This method returns a list of mime parts which are to be parsed into
-         * individual MessageViewContainers for display, which each have their
-         * own crypto header. This means parts should be individual for each
-         * multipart/encrypted, multipart/signed, or a multipart/* which does
-         * not contain children of the former types.
-         */
-
-
-        ArrayList<Part> parts = new ArrayList<Part>();
-        if (!getCryptSubPieces(message, parts, annotations)) {
-            parts.add(message);
-        }
-
-        return parts;
-    }
-
-    public static boolean getCryptSubPieces(Part part, ArrayList<Part> parts,
-            MessageCryptoAnnotations annotations) throws MessagingException {
-
-        Body body = part.getBody();
-        if (body instanceof Multipart) {
-            Multipart multi = (Multipart) body;
-            if (MimeUtility.isSameMimeType(part.getMimeType(), "multipart/mixed")) {
-                boolean foundSome = false;
-                for (BodyPart sub : multi.getBodyParts()) {
-                    foundSome |= getCryptSubPieces(sub, parts, annotations);
-                }
-                if (!foundSome) {
-                    parts.add(part);
-                    return true;
-                }
-            } else if (annotations.has(part)) {
-                parts.add(part);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static List<AttachmentViewInfo> extractAttachmentInfos(Context context, List<Part> attachmentParts)
             throws MessagingException {
 
@@ -525,6 +437,9 @@ public class LocalMessageExtractor {
 
             return new AttachmentViewInfo(mimeType, displayName, size, uri, firstClassAttachment, part);
         } else {
+            throw new RuntimeException("Not supported");
+        }
+        /*else {
             Body body = part.getBody();
             if (body instanceof DecryptedTempFileBody) {
                 DecryptedTempFileBody decryptedTempFileBody = (DecryptedTempFileBody) body;
@@ -535,7 +450,7 @@ public class LocalMessageExtractor {
             } else {
                 throw new RuntimeException("Not supported");
             }
-        }
+        }*/
     }
 
     public static AttachmentViewInfo extractAttachmentInfo(Part part) throws MessagingException {

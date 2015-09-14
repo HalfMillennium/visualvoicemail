@@ -104,7 +104,7 @@ public class AccountSettings {
                 new V(1, new StorageProviderSetting())
         ));
         s.put("markMessageAsReadOnView", au.com.wallaceit.voicemail.preferences.Settings.versions(
-                new V(7, new BooleanSetting(true))
+                new V(1, new BooleanSetting(true))
         ));
         s.put("maxPushFolders", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new IntegerRangeSetting(0, 100, 10))
@@ -134,7 +134,7 @@ public class AccountSettings {
                 new V(1, new BooleanSetting(false))
         ));
         s.put("folderNotifyNewMailMode", au.com.wallaceit.voicemail.preferences.Settings.versions(
-                new V(34, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.ALL))
+                new V(1, new EnumSetting<FolderMode>(FolderMode.class, FolderMode.ALL))
         ));
         s.put("notifySelfNewMail", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(true))
@@ -166,10 +166,10 @@ public class AccountSettings {
                 new V(1, new StringSetting("Sent"))
         ));
         s.put("sortTypeEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
-                new V(9, new EnumSetting<SortType>(SortType.class, Account.DEFAULT_SORT_TYPE))
+                new V(1, new EnumSetting<SortType>(SortType.class, Account.DEFAULT_SORT_TYPE))
         ));
         s.put("sortAscending", au.com.wallaceit.voicemail.preferences.Settings.versions(
-                new V(9, new BooleanSetting(Account.DEFAULT_SORT_ASCENDING))
+                new V(1, new BooleanSetting(Account.DEFAULT_SORT_ASCENDING))
         ));
         s.put("showPicturesEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<ShowPictures>(
@@ -213,16 +213,19 @@ public class AccountSettings {
                 new V(1, new IntegerResourceSetting(5,
                         R.array.account_settings_vibrate_times_label))
         ));
-        s.put("allowRemoteSearch", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("allowRemoteSearch", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(true))
+        ));*/
+        s.put("requiresCellular", au.com.wallaceit.voicemail.preferences.Settings.versions(
+                new V(1, new BooleanSetting(false))
         ));
         /*s.put("remoteSearchNumResults", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new IntegerResourceSetting(Account.DEFAULT_REMOTE_SEARCH_NUM_RESULTS,
                         R.array.account_settings_remote_search_num_results_values))
-        ));*/
+        ));
         s.put("remoteSearchFullText", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(18, new BooleanSetting(false))
-        ));
+        ));*/
 
         SETTINGS = Collections.unmodifiableMap(s);
 

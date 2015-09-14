@@ -754,4 +754,11 @@
         <item>NEVER</item>
         <item>WHEN_IN_LANDSCAPE</item>
     </string-array>
+
+    <string-array name="date_formats">
+        <item>SHORT</item> <!-- Hardcoded in DateFormatter -->
+        <item>MEDIUM</item> <!-- Hardcoded in DateFormatter -->
+        <item>dd-MMM-yyyy</item>
+        <item>yyyy-MM-dd</item> <!-- ISO8601 date format -->
+    </string-array>
 </resources>

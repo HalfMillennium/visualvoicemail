@@ -56,7 +56,7 @@ public class Preferences {
         if ((accountUuids != null) && (accountUuids.length() != 0)) {
             String[] uuids = accountUuids.split(",");
             for (String uuid : uuids) {
-                Account newAccount = new Account(this, uuid);
+                Account newAccount = new Account(mContext, this, uuid);
                 accounts.put(uuid, newAccount);
                 accountsInOrder.add(newAccount);
             }

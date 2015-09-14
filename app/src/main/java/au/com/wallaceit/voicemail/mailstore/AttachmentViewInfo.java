@@ -5,6 +5,8 @@ import android.net.Uri;
 
 import com.fsck.k9.mail.Part;
 
+import au.com.wallaceit.voicemail.controller.AttachmentController;
+
 
 public class AttachmentViewInfo {
     public static final long UNKNOWN_SIZE = -1;
@@ -18,7 +20,7 @@ public class AttachmentViewInfo {
      * <p/>
      * Note: All content providers must support an alternative MIME type appended as last URI segment.
      *
-     * @see au.com.wallaceit.voicemail.ui.messageview.AttachmentController#getAttachmentUriForMimeType(au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo, String)
+     * @see AttachmentController#getAttachmentUriForMimeType(au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo, String)
      */
     public final Uri uri;
     public final boolean firstClassAttachment;

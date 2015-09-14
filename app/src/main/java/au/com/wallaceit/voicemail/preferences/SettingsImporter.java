@@ -25,11 +25,6 @@ import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
-import au.com.wallaceit.voicemail.preferences.*;
-import au.com.wallaceit.voicemail.preferences.FolderSettings;
-import au.com.wallaceit.voicemail.preferences.GlobalSettings;
-import au.com.wallaceit.voicemail.preferences.IdentitySettings;
-import au.com.wallaceit.voicemail.preferences.Settings;
 import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
 
 public class SettingsImporter {
@@ -506,104 +501,6 @@ public class SettingsImporter {
             putString(editor, key, value);
         }
     }
-
-    /*private static void importIdentities(SharedPreferences.Editor editor, int contentVersion,
-            String uuid, ImportedAccount account, boolean overwrite, Account existingAccount,
-            Preferences prefs) throws InvalidSettingValueException {
-
-        String accountKeyPrefix = uuid + ".";
-
-        // Gather information about existing identities for this account (if any)
-        int nextIdentityIndex = 0;
-        final List<Identity> existingIdentities;
-        if (overwrite && existingAccount != null) {
-            existingIdentities = existingAccount.getIdentities();
-            nextIdentityIndex = existingIdentities.size();
-        } else {
-            existingIdentities = new ArrayList<Identity>();
-        }
-
-        // Write identities
-        for (ImportedIdentity identity : account.identities) {
-            int writeIdentityIndex = nextIdentityIndex;
-            boolean mergeSettings = false;
-            if (overwrite && existingIdentities.size() > 0) {
-                int identityIndex = findIdentity(identity, existingIdentities);
-                if (identityIndex != -1) {
-                    writeIdentityIndex = identityIndex;
-                    mergeSettings = true;
-                }
-            }
-            if (!mergeSettings) {
-                nextIdentityIndex++;
-            }
-
-            String identityDescription = (identity.description == null) ?
-                    "Imported" : identity.description;
-            if (isIdentityDescriptionUsed(identityDescription, existingIdentities)) {
-                // Identity description is already in use. So generate a new one by appending
-                // " (x)", where x is the first number >= 1 that results in an unused identity
-                // description.
-                for (int i = 1; i <= existingIdentities.size(); i++) {
-                    identityDescription = identity.description + " (" + i + ")";
-                    if (!isIdentityDescriptionUsed(identityDescription, existingIdentities)) {
-                        break;
-                    }
-                }
-            }
-
-            String identitySuffix = "." + writeIdentityIndex;
-
-            // Write name used in identity
-            String identityName = (identity.name == null) ? "" : identity.name;
-            putString(editor, accountKeyPrefix + Account.IDENTITY_NAME_KEY + identitySuffix,
-                    identityName);
-
-            // Validate email address
-            if (!IdentitySettings.isEmailAddressValid(identity.email)) {
-                throw new InvalidSettingValueException();
-            }
-
-            // Write email address
-            putString(editor, accountKeyPrefix + Account.IDENTITY_EMAIL_KEY + identitySuffix,
-                    identity.email);
-
-            // Write identity description
-            putString(editor, accountKeyPrefix + Account.IDENTITY_DESCRIPTION_KEY + identitySuffix,
-                    identityDescription);
-
-            if (identity.settings != null) {
-                // Validate identity settings
-                Map<String, Object> validatedSettings = IdentitySettings.validate(
-                        contentVersion, identity.settings.settings, !mergeSettings);
-
-                // Upgrade identity settings to current content version
-                if (contentVersion != Settings.VERSION) {
-                    IdentitySettings.upgrade(contentVersion, validatedSettings);
-                }
-
-                // Convert identity settings to the representation used in preference storage
-                Map<String, String> stringSettings = IdentitySettings.convert(validatedSettings);
-
-                // Merge identity settings if necessary
-                Map<String, String> writeSettings;
-                if (mergeSettings) {
-                    writeSettings = new HashMap<String, String>(IdentitySettings.getIdentitySettings(
-                            prefs.getPreferences(), uuid, writeIdentityIndex));
-                    writeSettings.putAll(stringSettings);
-                } else {
-                    writeSettings = stringSettings;
-                }
-
-                // Write identity settings
-                for (Map.Entry<String, String> setting : writeSettings.entrySet()) {
-                    String key = accountKeyPrefix + setting.getKey() + identitySuffix;
-                    String value = setting.getValue();
-                    putString(editor, key, value);
-                }
-            }
-        }
-    }*/
 
     private static boolean isAccountNameUsed(String name, List<Account> accounts) {
         for (Account account : accounts) {

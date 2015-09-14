@@ -12,8 +12,8 @@
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginBottom="54dip"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fadingEdge="none"
         android:scrollbarStyle="outsideInset">
 
@@ -95,27 +95,8 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/wizard_next" />
-
-<!--     <RelativeLayout
+    <include layout="@layout/wizard_setup"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="-45dip"
-        android:background="@android:drawable/bottom_bar"
-        android:gravity="bottom|right"
-        android:padding="0dip" >
+        android:layout_height="54dp" />
 
-        <Button
-            android:id="@+id/next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="false"
-            android:layout_marginBottom="-4dip"
-            android:drawableRight="@drawable/button_indicator_next"
-            android:minWidth="@dimen/button_minWidth"
-            android:text="@string/next_action" />
-        
-    </RelativeLayout>
--->
 </LinearLayout>

@@ -32,16 +32,11 @@ import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
 import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
-import au.com.wallaceit.voicemail.crypto.OpenPgpApiHelper;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Store;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.service.MailService;
-
-import org.openintents.openpgp.util.OpenPgpAppPreference;
-import org.openintents.openpgp.util.OpenPgpKeyPreference;
-import org.openintents.openpgp.util.OpenPgpUtils;
 
 
 public class AccountSettings extends K9PreferenceActivity {
@@ -55,22 +50,18 @@ public class AccountSettings extends K9PreferenceActivity {
     private static final int ACTIVITY_MANAGE_IDENTITIES = 2;
 
     private static final String PREFERENCE_SCREEN_MAIN = "main";
-    private static final String PREFERENCE_SCREEN_COMPOSING = "composing";
     private static final String PREFERENCE_SCREEN_INCOMING = "incoming_prefs";
     private static final String PREFERENCE_SCREEN_PUSH_ADVANCED = "push_advanced";
     private static final String PREFERENCE_SCREEN_SEARCH = "search";
 
     private static final String PREFERENCE_DESCRIPTION = "account_description";
     private static final String PREFERENCE_MARK_MESSAGE_AS_READ_ON_VIEW = "mark_message_as_read_on_view";
-    private static final String PREFERENCE_COMPOSITION = "composition";
-    private static final String PREFERENCE_MANAGE_IDENTITIES = "manage_identities";
     private static final String PREFERENCE_FREQUENCY = "account_check_frequency";
     private static final String PREFERENCE_DISPLAY_COUNT = "account_display_count";
     private static final String PREFERENCE_DEFAULT = "account_default";
     private static final String PREFERENCE_SHOW_PICTURES = "show_pictures_enum";
     private static final String PREFERENCE_NOTIFY = "account_notify";
     private static final String PREFERENCE_NOTIFY_NEW_MAIL_MODE = "folder_notify_new_mail_mode";
-    private static final String PREFERENCE_NOTIFY_SELF = "account_notify_self";
     private static final String PREFERENCE_NOTIFY_SYNC = "account_notify_sync";
     private static final String PREFERENCE_VIBRATE = "account_vibrate";
     private static final String PREFERENCE_VIBRATE_PATTERN = "account_vibrate_pattern";
@@ -78,7 +69,6 @@ public class AccountSettings extends K9PreferenceActivity {
     private static final String PREFERENCE_RINGTONE = "account_ringtone";
     private static final String PREFERENCE_NOTIFICATION_LED = "account_led";
     private static final String PREFERENCE_INCOMING = "incoming";
-    private static final String PREFERENCE_OUTGOING = "outgoing";
     private static final String PREFERENCE_DISPLAY_MODE = "folder_display_mode";
     private static final String PREFERENCE_SYNC_MODE = "folder_sync_mode";
     private static final String PREFERENCE_PUSH_MODE = "folder_push_mode";
@@ -95,20 +85,9 @@ public class AccountSettings extends K9PreferenceActivity {
     private static final String PREFERENCE_NOTIFICATION_OPENS_UNREAD = "notification_opens_unread";
     private static final String PREFERENCE_MESSAGE_AGE = "account_message_age";
     private static final String PREFERENCE_MESSAGE_SIZE = "account_autodownload_size";
-    private static final String PREFERENCE_MESSAGE_FORMAT = "message_format";
-    private static final String PREFERENCE_MESSAGE_READ_RECEIPT = "message_read_receipt";
-    private static final String PREFERENCE_QUOTE_PREFIX = "account_quote_prefix";
-    private static final String PREFERENCE_QUOTE_STYLE = "quote_style";
-    private static final String PREFERENCE_DEFAULT_QUOTED_TEXT_SHOWN = "default_quoted_text_shown";
-    private static final String PREFERENCE_REPLY_AFTER_QUOTE = "reply_after_quote";
-    private static final String PREFERENCE_STRIP_SIGNATURE = "strip_signature";
     private static final String PREFERENCE_SYNC_REMOTE_DELETIONS = "account_sync_remote_deletetions";
-    private static final String PREFERENCE_CRYPTO = "crypto";
-    private static final String PREFERENCE_CRYPTO_APP = "crypto_app";
-    private static final String PREFERENCE_CRYPTO_KEY = "crypto_key";
     private static final String PREFERENCE_CLOUD_SEARCH_ENABLED = "remote_search_enabled";
     private static final String PREFERENCE_REMOTE_SEARCH_NUM_RESULTS = "account_remote_search_num_results";
-    private static final String PREFERENCE_REMOTE_SEARCH_FULL_TEXT = "account_remote_search_full_text";
 
     private static final String PREFERENCE_LOCAL_STORAGE_PROVIDER = "local_storage_provider";
     private static final String PREFERENCE_CATEGORY_FOLDERS = "folders";
@@ -117,8 +96,12 @@ public class AccountSettings extends K9PreferenceActivity {
     private static final String PREFERENCE_SENT_FOLDER = "sent_folder";
     private static final String PREFERENCE_SPAM_FOLDER = "spam_folder";
     private static final String PREFERENCE_TRASH_FOLDER = "trash_folder";
-    private static final String PREFERENCE_ALWAYS_SHOW_CC_BCC = "always_show_cc_bcc";
 
+    public static final String PREFERENCE_AUTO_CHECK = "account_auto_check";
+    public static final int PREFERENCE_AUTO_CHECK_NONE = 0;
+    public static final int PREFERENCE_AUTO_CHECK_MISSED_CALL = 1;
+    public static final int PREFERENCE_AUTO_CHECK_SMS = 2;
+    public static final int PREFERENCE_AUTO_CHECK_PUSH = 3;
 
     private Account mAccount;
     private boolean mIsMoveCapable = false;
@@ -127,7 +110,6 @@ public class AccountSettings extends K9PreferenceActivity {
     private boolean mIsSeenFlagSupported = false;
 
     private PreferenceScreen mMainScreen;
-    private PreferenceScreen mComposingScreen;
 
     private EditTextPreference mAccountDescription;
     private CheckBoxPreference mMarkMessageAsReadOnView;
@@ -170,8 +152,8 @@ public class AccountSettings extends K9PreferenceActivity {
     private ListPreference mIdleRefreshPeriod;
     private ListPreference mMaxPushFolders;
     private boolean mHasCrypto = false;
-    private OpenPgpAppPreference mCryptoApp;
-    private OpenPgpKeyPreference mCryptoKey;
+    //private OpenPgpAppPreference mCryptoApp;
+    //private OpenPgpKeyPreference mCryptoKey;
 
     private PreferenceScreen mSearchScreen;
     private CheckBoxPreference mCloudSearchEnabled;
@@ -819,9 +801,9 @@ public class AccountSettings extends K9PreferenceActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (mCryptoKey != null && mCryptoKey.handleOnActivityResult(requestCode, resultCode, data)) {
+        /*if (mCryptoKey != null && mCryptoKey.handleOnActivityResult(requestCode, resultCode, data)) {
             return;
-        }
+        }*/
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
             case SELECT_AUTO_EXPAND_FOLDER:

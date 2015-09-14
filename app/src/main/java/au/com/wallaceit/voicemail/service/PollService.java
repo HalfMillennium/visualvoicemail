@@ -20,13 +20,16 @@ import java.util.Map;
 public class PollService extends CoreService {
     private static String START_SERVICE = "au.com.wallaceit.voicemail.service.PollService.startService";
     private static String STOP_SERVICE = "au.com.wallaceit.voicemail.service.PollService.stopService";
+    private static int FLAG_FORCE_CHECK = 666;
 
     private Listener mListener = new Listener();
 
-    public static void startService(Context context) {
+    public static void startService(Context context, boolean forceCheckMail) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.PollService.class);
         i.setAction(au.com.wallaceit.voicemail.service.PollService.START_SERVICE);
+        if (forceCheckMail)
+            i.addFlags(FLAG_FORCE_CHECK);
         addWakeLock(context, i);
         context.startService(i);
     }
@@ -59,7 +62,7 @@ public class PollService extends CoreService {
                 mListener.setStartId(startId);
                 mListener.wakeLockAcquire();
                 controller.setCheckMailListener(mListener);
-                controller.checkMail(this, null, false, false, mListener);
+                controller.checkMail(this, null, (intent.getFlags()==FLAG_FORCE_CHECK), false, mListener);
             } else {
                 if (VisualVoicemail.DEBUG)
                     Log.i(VisualVoicemail.LOG_TAG, "***** PollService *****: renewing WakeLock");

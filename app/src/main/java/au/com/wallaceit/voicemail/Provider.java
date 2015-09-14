@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class Provider
 {
     private static final String TAG = Provider.class.getSimpleName();
-    private Context mContext;
+    //private Context mContext;
 
     public String   id;             // used to track the configuration - allows the label to change. - should not be shown to the user
     public String   displayName;    // This is shown to the user
@@ -29,7 +29,7 @@ public class Provider
 
     public Provider(Context context, XmlResourceParser xml) throws URISyntaxException
     {
-        mContext = context;
+        //mContext = context;
         id                     = getXmlAttribute(context, xml, "id");
         displayName            = getXmlAttribute(context, xml, "displayName");
         networkOperatorName    = getXmlAttribute(context, xml, "networkOperatorName");

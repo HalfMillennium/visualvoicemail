@@ -1,6 +1,8 @@
 
 package au.com.wallaceit.voicemail;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
 
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings;
+import au.com.wallaceit.voicemail.helper.HipriController;
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
@@ -234,9 +237,10 @@ public class Account implements BaseAccount, StoreConfig {
     private ColorChip mFlaggedReadColorChip;
 
     private Context mContext;
-    private Provider mAccountProvider;
+    private String mAccountProviderId;
     private String    mNetworkOperatorName;
     private String    mPhoneNumber;
+    private boolean    mRequiresCellular;
     private int mAutomaticCheckMethod;
     public boolean validated = false;
 
@@ -303,7 +307,7 @@ public class Account implements BaseAccount, StoreConfig {
         mFolderTargetMode = FolderMode.NOT_SECOND_CLASS;
         mSortType = DEFAULT_SORT_TYPE;
         mSortAscending.put(DEFAULT_SORT_TYPE, DEFAULT_SORT_ASCENDING);
-        mShowPictures = ShowPictures.NEVER;
+        mShowPictures = ShowPictures.ALWAYS;
         mIsSignatureBeforeQuotedText = false;
         mExpungePolicy = Expunge.EXPUNGE_IMMEDIATELY;
         mAutoExpandFolderName = INBOX;
@@ -331,9 +335,9 @@ public class Account implements BaseAccount, StoreConfig {
         mEnabled = true;
         mMarkMessageAsReadOnView = true;
         //mAlwaysShowCcBcc = false;
-
         searchableFolders = Searchable.ALL;
 
+        mRequiresCellular = false;
         //identities = new ArrayList<Identity>();
 
         /*Identity identity = new Identity();
@@ -375,7 +379,8 @@ public class Account implements BaseAccount, StoreConfig {
         return (availableColors.isEmpty()) ? ColorPicker.getRandomColor() : availableColors.get(0);
     }
 
-    protected Account(Preferences preferences, String uuid) {
+    protected Account(Context context, Preferences preferences, String uuid) {
+        mContext = context;
         this.mUuid = uuid;
         loadAccount(preferences);
     }
@@ -393,8 +398,6 @@ public class Account implements BaseAccount, StoreConfig {
         mDescription = prefs.getString(mUuid + ".description", null);
         //mAlwaysBcc = prefs.getString(mUuid + ".alwaysBcc", mAlwaysBcc);
         mAutomaticCheckIntervalMinutes = prefs.getInt(mUuid + ".automaticCheckIntervalMinutes", 60);
-        // VVM specific
-        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 1);
 
         mIdleRefreshMinutes = prefs.getInt(mUuid + ".idleRefreshMinutes", 24);
         mPushPollOnConnect = prefs.getBoolean(mUuid + ".pushPollOnConnect", true);
@@ -486,10 +489,12 @@ public class Account implements BaseAccount, StoreConfig {
         mMarkMessageAsReadOnView = prefs.getBoolean(mUuid + ".markMessageAsReadOnView", true);
         //mAlwaysShowCcBcc = prefs.getBoolean(mUuid + ".alwaysShowCcBcc", false);
 
-        mNetworkOperatorName = prefs.getString( mUuid + ".networkOperatorName", "");
+        // VVM specific
+        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 1);
+        mNetworkOperatorName = prefs.getString(mUuid + ".networkOperatorName", "");
         mPhoneNumber = prefs.getString( mUuid + ".phoneNumber", "");
-        String providerId    = prefs.getString( mUuid + ".accountProviderId",   "1");
-        mAccountProvider = Provider.findProviderById(mContext, providerId);
+        mRequiresCellular = prefs.getBoolean(mUuid + ".requiresCellular", false);
+        mAccountProviderId = prefs.getString(mUuid + ".accountProviderId", "-1");
 
         cacheChips();
 
@@ -593,6 +598,8 @@ public class Account implements BaseAccount, StoreConfig {
         editor.remove(mUuid + ".networkOperatorName");
         editor.remove(mUuid + ".accountProviderId");
         editor.remove(mUuid + ".phoneNumber");
+        editor.remove(mUuid + ".requiresCellular");
+        editor.remove(mUuid + ".automaticCheckMethod");
         //deleteIdentities(preferences.getPreferences(), editor);
         // TODO: Remove preference settings that may exist for individual
         // folders in the account.
@@ -773,21 +780,23 @@ public class Account implements BaseAccount, StoreConfig {
         }
         //saveIdentities(preferences.getPreferences(), editor);
 
+        editor.putInt(mUuid + ".automaticCheckMethod", mAutomaticCheckMethod);
         editor.putString(mUuid + ".networkOperatorName", mNetworkOperatorName);
         editor.putString(mUuid + ".phoneNumber", mPhoneNumber);
-        editor.putString(mUuid + ".accountProviderId", mAccountProvider.id);
+        editor.putBoolean(mUuid + ".requiresCellular", mRequiresCellular);
+        editor.putString(mUuid + ".accountProviderId", mAccountProviderId);
 
         editor.commit();
-
     }
 
     public synchronized Provider getProvider() {
-        return this.mAccountProvider;
+        if (mAccountProviderId.equals("-1"))
+            return null;
+        return Provider.findProviderById(mContext, mAccountProviderId);
     }
 
     public synchronized void setProvider(Provider provider) {
-
-        this.mAccountProvider = provider;
+        this.mAccountProviderId = provider.id;
     }
 
     public synchronized String getNetworkOperatorName()
@@ -949,6 +958,14 @@ public class Account implements BaseAccount, StoreConfig {
         this.mDescription = description;
     }
 
+    public synchronized Boolean getRequiresCellular() {
+        return mRequiresCellular;
+    }
+
+    public synchronized void setRequiresCellular(boolean requiresCellular) {
+        mRequiresCellular = requiresCellular;
+    }
+
     /*public synchronized String getName() {
         return identities.get(0).getName();
     }
@@ -1042,6 +1059,23 @@ public class Account implements BaseAccount, StoreConfig {
         this.mAutomaticCheckIntervalMinutes = automaticCheckIntervalMinutes;
 
         return (oldInterval != automaticCheckIntervalMinutes);
+    }
+
+    /**
+     * Returns 0 for off (fetch only).
+     */
+    public synchronized int getAutomaticCheckMethod() {
+        return mAutomaticCheckMethod;
+    }
+
+    /**
+     * @param automaticCheckMethod or -1 for never.
+     */
+    public synchronized boolean setAutomaticCheckMethod(int automaticCheckMethod) {
+        int oldInterval = this.mAutomaticCheckMethod;
+        this.mAutomaticCheckMethod = automaticCheckMethod;
+
+        return (oldInterval != automaticCheckMethod);
     }
 
     public synchronized int getDisplayCount() {
@@ -1329,6 +1363,15 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public Store getRemoteStore() throws MessagingException {
+        if (mRequiresCellular) {
+            try {
+                URL url = new URL(getStoreUri());
+                HipriController.start(mContext, url.getHost());
+                // TODO: Handle failure; at the moment the socket will just time out
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
         return RemoteStore.getInstance(VisualVoicemail.app, this);
     }
 

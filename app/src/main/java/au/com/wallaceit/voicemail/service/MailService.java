@@ -30,11 +30,22 @@ public class MailService extends CoreService {
     private static final String ACTION_RESTART_PUSHERS = "com.fsck.k9.intent.action.MAIL_SERVICE_RESTART_PUSHERS";
     private static final String CONNECTIVITY_CHANGE = "com.fsck.k9.intent.action.MAIL_SERVICE_CONNECTIVITY_CHANGE";
     private static final String CANCEL_CONNECTIVITY_NOTICE = "com.fsck.k9.intent.action.MAIL_SERVICE_CANCEL_CONNECTIVITY_NOTICE";
+    private static final int FLAG_FORCE_CHECK = 666;
 
     private static long nextCheck = -1;
     private static boolean pushingRequested = false;
     private static boolean pollingRequested = false;
     private static boolean syncBlocked = false;
+
+    public static void actionCheck(Context context, Integer wakeLockId, boolean forceCheckMail) {
+        Intent i = new Intent();
+        i.setClass(context, MailService.class);
+        i.setAction(MailService.ACTION_CHECK_MAIL);
+        if (forceCheckMail)
+            i.addFlags(FLAG_FORCE_CHECK);
+        addWakeLockId(context, i, wakeLockId, true);
+        context.startService(i);
+    }
 
     public static void actionReset(Context context, Integer wakeLockId) {
         Intent i = new Intent();
@@ -117,7 +128,7 @@ public class MailService extends CoreService {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "***** MailService *****: checking mail");
             if (hasConnectivity && doBackground) {
-                PollService.startService(this);
+                PollService.startService(this, intent.getFlags()==FLAG_FORCE_CHECK);
             }
             reschedulePollInBackground(hasConnectivity, doBackground, startId, false);
         } else if (ACTION_CANCEL.equals(intent.getAction())) {

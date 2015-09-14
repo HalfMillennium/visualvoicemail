@@ -5,6 +5,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
@@ -19,6 +20,10 @@ import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Message.RecipientType;
+
+import java.text.DateFormat;
+import java.util.Date;
+
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 public class MessageHelper {
@@ -46,8 +51,13 @@ public class MessageHelper {
 
     private Context mContext;
 
+    private DateFormat mDateFormat;
+    private DateFormat mTimeFormat;
+
     private MessageHelper(final Context context) {
         mContext = context;
+        mDateFormat = DateFormatter.getDateFormat(mContext);
+        mTimeFormat = android.text.format.DateFormat.getTimeFormat(mContext);
     }
 
     public void populate(final MessageInfoHolder target,
@@ -101,7 +111,7 @@ public class MessageHelper {
             displayName = new SpannableStringBuilder(
                     mContext.getString(R.string.message_to_label)).append(to);
         } else {*/
-            displayName = toFriendly(fromAddrs, contactHelper);
+            displayName = toFriendly(fromAddrs[0], contactHelper);
         //}
 
         return displayName;
@@ -134,7 +144,7 @@ public class MessageHelper {
                 VisualVoicemail.getContactNameColor());
     }
 
-    public static CharSequence toFriendly(Address[] addresses, au.com.wallaceit.voicemail.helper.Contacts contacts) {
+    public static CharSequence toFriendly(Address[] addresses, Contacts contacts) {
         if (addresses == null) {
             return null;
         }
@@ -179,5 +189,29 @@ public class MessageHelper {
         }
 
         return (!TextUtils.isEmpty(address.getPersonal())) ? address.getPersonal() : address.getAddress();
+    }
+
+    public String formatRelativeDate(Date date)
+    {
+        if (date == null)
+            return "";
+
+        return (String) DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+    }
+
+    public String formatDate(Date date)
+    {
+        if (date == null)
+            return "";
+
+        return mDateFormat.format(date);
+    }
+
+    public String formatTime(Date date)
+    {
+        if (date == null)
+            return "";
+
+        return mTimeFormat.format(date);
     }
 }

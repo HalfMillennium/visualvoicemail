@@ -28,15 +28,8 @@ import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.store.RemoteStore;
-import au.com.wallaceit.voicemail.preferences.*;
-import au.com.wallaceit.voicemail.preferences.AccountSettings;
-import au.com.wallaceit.voicemail.preferences.FolderSettings;
-import au.com.wallaceit.voicemail.preferences.GlobalSettings;
-import au.com.wallaceit.voicemail.preferences.IdentitySettings;
-import au.com.wallaceit.voicemail.preferences.Settings;
 import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
 import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
-import au.com.wallaceit.voicemail.preferences.SettingsImporter;
 
 
 public class SettingsExporter {
@@ -362,19 +355,6 @@ public class SettingsExporter {
         }
         serializer.endTag(null, SETTINGS_ELEMENT);
 
-        if (identities.size() > 0) {
-            serializer.startTag(null, IDENTITIES_ELEMENT);
-
-            // Sort identity indices (that's why we store them as Integers)
-            List<Integer> sortedIdentities = new ArrayList<Integer>(identities);
-            Collections.sort(sortedIdentities);
-
-            for (Integer identityIndex : sortedIdentities) {
-                writeIdentity(serializer, accountUuid, identityIndex.toString(), prefs);
-            }
-            serializer.endTag(null, IDENTITIES_ELEMENT);
-        }
-
         if (folders.size() > 0) {
             serializer.startTag(null, FOLDERS_ELEMENT);
             for (String folder : folders) {
@@ -384,80 +364,6 @@ public class SettingsExporter {
         }
 
         serializer.endTag(null, ACCOUNT_ELEMENT);
-    }
-
-    private static void writeIdentity(XmlSerializer serializer, String accountUuid,
-            String identity, Map<String, Object> prefs) throws IOException {
-
-        serializer.startTag(null, IDENTITY_ELEMENT);
-
-        String prefix = accountUuid + ".";
-        String suffix = "." + identity;
-
-        // Write name belonging to the identity
-        /*String name = (String) prefs.get(prefix + Account.IDENTITY_NAME_KEY + suffix);
-        serializer.startTag(null, NAME_ELEMENT);
-        serializer.text(name);
-        serializer.endTag(null, NAME_ELEMENT);*/
-
-        // Write email address belonging to the identity
-        /*String email = (String) prefs.get(prefix + Account.IDENTITY_EMAIL_KEY + suffix);
-        serializer.startTag(null, EMAIL_ELEMENT);
-        serializer.text(email);
-        serializer.endTag(null, EMAIL_ELEMENT);*/
-
-        // Write identity description
-        /*String description = (String) prefs.get(prefix + Account.IDENTITY_DESCRIPTION_KEY + suffix);
-        if (description != null) {
-            serializer.startTag(null, DESCRIPTION_ELEMENT);
-            serializer.text(description);
-            serializer.endTag(null, DESCRIPTION_ELEMENT);
-        }*/
-
-        // Write identity settings
-        serializer.startTag(null, SETTINGS_ELEMENT);
-        for (Entry<String, Object> entry : prefs.entrySet()) {
-            String key = entry.getKey();
-            String valueString = entry.getValue().toString();
-            String[] comps = key.split("\\.");
-
-            if (comps.length < 3) {
-                // Skip non-identity config entries
-                continue;
-            }
-
-            String keyUuid = comps[0];
-            String identityKey = comps[1];
-            String identityIndex = comps[2];
-            if (!keyUuid.equals(accountUuid) || !identityIndex.equals(identity)) {
-                // Skip entries that belong to another identity
-                continue;
-            }
-
-            TreeMap<Integer, SettingsDescription> versionedSetting =
-                IdentitySettings.SETTINGS.get(identityKey);
-
-            if (versionedSetting != null) {
-                Integer highestVersion = versionedSetting.lastKey();
-                SettingsDescription setting = versionedSetting.get(highestVersion);
-
-                if (setting != null) {
-                    // Only write settings that have an entry in IdentitySettings.SETTINGS
-                    try {
-                        Object value = setting.fromString(valueString);
-                        String outputValue = setting.toPrettyString(value);
-                        writeKeyValue(serializer, identityKey, outputValue);
-                    } catch (InvalidSettingValueException e) {
-                        Log.w(VisualVoicemail.LOG_TAG, "Identity setting \"" + identityKey +
-                                "\" has invalid value \"" + valueString +
-                                "\" in preference storage. This shouldn't happen!");
-                    }
-                }
-            }
-        }
-        serializer.endTag(null, SETTINGS_ELEMENT);
-
-        serializer.endTag(null, IDENTITY_ELEMENT);
     }
 
     private static void writeFolder(XmlSerializer serializer, String accountUuid,

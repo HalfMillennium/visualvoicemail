@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +87,8 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
+
+import au.com.wallaceit.voicemail.helper.VvmContacts;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
@@ -128,7 +131,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         SpecialColumns.ACCOUNT_UUID,
         SpecialColumns.FOLDER_NAME,
 
-        SpecialColumns.THREAD_COUNT,
+        //SpecialColumns.THREAD_COUNT,
     };
 
     private static final int ID_COLUMN = 0;
@@ -149,19 +152,18 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private static final int THREAD_ROOT_COLUMN = 15;
     private static final int ACCOUNT_UUID_COLUMN = 16;
     private static final int FOLDER_NAME_COLUMN = 17;
-    private static final int THREAD_COUNT_COLUMN = 18;
+    //private static final int THREAD_COUNT_COLUMN = 18;
 
-    private static final String[] PROJECTION = Arrays.copyOf(THREADED_PROJECTION,
-            THREAD_COUNT_COLUMN);
-
+    private static final String[] PROJECTION = Arrays.copyOf(THREADED_PROJECTION, THREADED_PROJECTION.length);
 
 
-    public static au.com.wallaceit.voicemail.fragment.MessageListFragment newInstance(LocalSearch search, boolean isThreadDisplay, boolean threadedList) {
-        au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = new au.com.wallaceit.voicemail.fragment.MessageListFragment();
+
+    public static MessageListFragment newInstance(LocalSearch search, boolean isThreadDisplay, boolean threadedList) {
+        MessageListFragment fragment = new MessageListFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_SEARCH, search);
-        args.putBoolean(ARG_IS_THREAD_DISPLAY, isThreadDisplay);
-        args.putBoolean(ARG_THREADED_LIST, threadedList);
+        //args.putBoolean(ARG_IS_THREAD_DISPLAY, isThreadDisplay);
+        //args.putBoolean(ARG_THREADED_LIST, threadedList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -278,39 +280,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
     }
 
-    public static class ArrivalComparator implements Comparator<Cursor> {
-
-        @Override
-        public int compare(Cursor cursor1, Cursor cursor2) {
-            long o1Date = cursor1.getLong(INTERNAL_DATE_COLUMN);
-            long o2Date = cursor2.getLong(INTERNAL_DATE_COLUMN);
-            if (o1Date == o2Date) {
-                return 0;
-            } else if (o1Date < o2Date) {
-                return -1;
-            } else {
-                return 1;
-            }
-        }
-    }
-
-    public static class SubjectComparator implements Comparator<Cursor> {
-
-        @Override
-        public int compare(Cursor cursor1, Cursor cursor2) {
-            String subject1 = cursor1.getString(SUBJECT_COLUMN);
-            String subject2 = cursor2.getString(SUBJECT_COLUMN);
-
-            if (subject1 == null) {
-                return (subject2 == null) ? 0 : -1;
-            } else if (subject2 == null) {
-                return 1;
-            }
-
-            return subject1.compareToIgnoreCase(subject2);
-        }
-    }
-
     public static class SenderComparator implements Comparator<Cursor> {
 
         @Override
@@ -335,8 +304,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private static final int ACTIVITY_CHOOSE_FOLDER_COPY = 2;
 
     private static final String ARG_SEARCH = "searchObject";
-    private static final String ARG_THREADED_LIST = "threadedList";
-    private static final String ARG_IS_THREAD_DISPLAY = "isThreadedDisplay";
+    //private static final String ARG_THREADED_LIST = "threadedList";
+    //private static final String ARG_IS_THREAD_DISPLAY = "isThreadedDisplay";
 
     private static final String STATE_SELECTED_MESSAGES = "selectedMessages";
     private static final String STATE_ACTIVE_MESSAGE = "activeMessage";
@@ -355,9 +324,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 new EnumMap<SortType, Comparator<Cursor>>(SortType.class);
         map.put(SortType.SORT_ATTACHMENT, new AttachmentComparator());
         map.put(SortType.SORT_DATE, new DateComparator());
-        map.put(SortType.SORT_ARRIVAL, new ArrivalComparator());
         map.put(SortType.SORT_FLAGGED, new FlaggedComparator());
-        map.put(SortType.SORT_SUBJECT, new SubjectComparator());
         map.put(SortType.SORT_SENDER, new SenderComparator());
         map.put(SortType.SORT_UNREAD, new UnreadComparator());
 
@@ -394,8 +361,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
      */
     private String mFolderName;
 
-    private boolean mRemoteSearchPerformed = false;
-    private Future<?> mRemoteSearchFuture = null;
+    //private boolean mRemoteSearchPerformed = false;
+    //private Future<?> mRemoteSearchFuture = null;
     public List<Message> mExtraSearchResults;
 
     private String mTitle;
@@ -523,7 +490,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             post(new Runnable() {
                 @Override
                 public void run() {
-                    au.com.wallaceit.voicemail.fragment.MessageListFragment fragment = mFragment.get();
+                    MessageListFragment fragment = mFragment.get();
                     if (fragment != null) {
                         fragment.updateFooter(message);
                     }
@@ -560,12 +527,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }
 
             // The following messages don't need an attached activity.
-            switch (msg.what) {
+            /*switch (msg.what) {
                 case ACTION_REMOTE_SEARCH_FINISHED: {
                     fragment.remoteSearchFinished();
                     return;
                 }
-            }
+            }*/
 
             // Discard messages if the fragment isn't attached to an activity anymore.
             Activity activity = fragment.getActivity();
@@ -589,7 +556,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     fragment.progress(progress);
                     break;
                 }
-                case ACTION_GO_BACK: {
+                /*case ACTION_GO_BACK: {
                     fragment.mFragmentListener.goBack();
                     break;
                 }
@@ -601,7 +568,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     MessageReference messageReference = (MessageReference) msg.obj;
                     fragment.mFragmentListener.openMessage(messageReference);
                     break;
-                }
+                }*/
             }
         }
     }
@@ -682,12 +649,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
             mFragmentListener.setMessageListTitle(displayName);
 
-            String operation = mListener.getOperation(activity);
+            /*String operation = mListener.getOperation(activity);
             if (operation.length() < 1) {
                 mFragmentListener.setMessageListSubTitle(mAccount.getPhoneNumber());
             } else {
                 mFragmentListener.setMessageListSubTitle(operation);
-            }
+            }*/
         } else {
             // query result display.  This may be for a search folder as opposed to a user-initiated search.
             if (mTitle != null) {
@@ -729,7 +696,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
                 mController.loadMoreMessages(mAccount, mFolderName, null);
 
-            } else if (mCurrentFolder != null && isRemoteSearch() &&
+            } /*else if (mCurrentFolder != null && isRemoteSearch() &&
                     mExtraSearchResults != null && mExtraSearchResults.size() > 0) {
 
                 int numResults = mExtraSearchResults.size();
@@ -747,7 +714,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 }
 
                 mController.loadSearchResults(mAccount, mCurrentFolder.name, toProcess, mListener);
-            }
+            }*/
 
             return;
         }
@@ -760,7 +727,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         if (mSelectedCount > 0) {
             toggleMessageSelect(position);
         } else {
-            if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
+            /*if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
                 Account account = getAccountFromCursor(cursor);
                 long folderId = cursor.getLong(FOLDER_ID_COLUMN);
                 String folderName = getFolderNameById(account, folderId);
@@ -771,6 +738,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             } else {
                 // This item represents a message; just display the message.
                 openMessageAtPosition(listViewToAdapterPosition(position));
+            }*/
+            MessageReference reference = getReferenceForPosition(position);
+            mFragmentListener.playMessage(reference);
+            if (mPreferences.getPreferences().getBoolean("mark_message_as_read_on_view", true)) {
+                setFlag(position, Flag.SEEN, true);
             }
         }
     }
@@ -865,7 +837,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         saveSelectedMessages(outState);
         saveListState(outState);
 
-        outState.putBoolean(STATE_REMOTE_SEARCH_PERFORMED, mRemoteSearchPerformed);
+        //outState.putBoolean(STATE_REMOTE_SEARCH_PERFORMED, mRemoteSearchPerformed);
         outState.putParcelable(STATE_ACTIVE_MESSAGE, mActiveMessage);
     }
 
@@ -881,7 +853,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         restoreSelectedMessages(savedInstanceState);
 
-        mRemoteSearchPerformed = savedInstanceState.getBoolean(STATE_REMOTE_SEARCH_PERFORMED);
+        //mRemoteSearchPerformed = savedInstanceState.getBoolean(STATE_REMOTE_SEARCH_PERFORMED);
         mSavedListState = savedInstanceState.getParcelable(STATE_MESSAGE_LIST);
         mActiveMessage = savedInstanceState.getParcelable(STATE_ACTIVE_MESSAGE);
     }
@@ -932,8 +904,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private void decodeArguments() {
         Bundle args = getArguments();
 
-        mThreadedList = args.getBoolean(ARG_THREADED_LIST, false);
-        mIsThreadDisplay = args.getBoolean(ARG_IS_THREAD_DISPLAY, false);
+        //mThreadedList = args.getBoolean(ARG_THREADED_LIST, false);
+        //mIsThreadDisplay = args.getBoolean(ARG_IS_THREAD_DISPLAY, false);
         mSearch = args.getParcelable(ARG_SEARCH);
         mTitle = mSearch.getName();
 
@@ -1118,7 +1090,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         View loadingView = inflater.inflate(R.layout.message_list_loading, null);
         mPullToRefreshView.setEmptyView(loadingView);
 
-        if (isRemoteSearchAllowed()) {
+        /*if (isRemoteSearchAllowed()) {
             // "Pull to search server"
             mPullToRefreshView.setOnRefreshListener(
                     new PullToRefreshBase.OnRefreshListener<ListView>() {
@@ -1133,7 +1105,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     R.string.pull_to_refresh_remote_search_from_local_search_pull));
             proxy.setReleaseLabel(getString(
                     R.string.pull_to_refresh_remote_search_from_local_search_release));
-        } else if (isCheckMailSupported()) {
+        } else*/
+        if (isCheckMailSupported()) {
             // "Pull to refresh"
             mPullToRefreshView.setOnRefreshListener(
                     new PullToRefreshBase.OnRefreshListener<ListView>() {
@@ -1178,7 +1151,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     /**
      * User has requested a remote search.  Setup the bundle and start the intent.
      */
-    public void onRemoteSearchRequested() {
+    /*public void onRemoteSearchRequested() {
         String searchAccount;
         String searchFolder;
 
@@ -1194,7 +1167,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         setPullToRefreshEnabled(false);
 
         mFragmentListener.remoteSearchStarted();
-    }
+    }*/
 
     /**
      * Change the sort type and sort order used for the message list.
@@ -1761,27 +1734,19 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
     class MessageListAdapter extends CursorAdapter {
 
-        private Drawable mAttachmentIcon;
-        private Drawable mForwardedIcon;
-        private Drawable mAnsweredIcon;
-        private Drawable mForwardedAnsweredIcon;
+        //private Drawable mAttachmentIcon;
+        //private Drawable mForwardedIcon;
+        //private Drawable mAnsweredIcon;
+        //private Drawable mForwardedAnsweredIcon;
+        private VvmContacts vvmContacts;
 
         MessageListAdapter() {
             super(getActivity(), null, 0);
-            mAttachmentIcon = getResources().getDrawable(R.drawable.ic_email_attachment_small);
-            mAnsweredIcon = getResources().getDrawable(R.drawable.ic_email_answered_small);
-            mForwardedIcon = getResources().getDrawable(R.drawable.ic_email_forwarded_small);
-            mForwardedAnsweredIcon = getResources().getDrawable(R.drawable.ic_email_forwarded_answered_small);
-        }
-
-        private String recipientSigil(boolean toMe, boolean ccMe) {
-            if (toMe) {
-                return getString(R.string.messagelist_sent_to_me_sigil);
-            } else if (ccMe) {
-                return getString(R.string.messagelist_sent_cc_me_sigil);
-            } else {
-                return "";
-            }
+            vvmContacts = new VvmContacts(getActivity());
+            //mAttachmentIcon = getResources().getDrawable(R.drawable.ic_email_attachment_small);
+            //mAnsweredIcon = getResources().getDrawable(R.drawable.ic_email_answered_small);
+            //mForwardedIcon = getResources().getDrawable(R.drawable.ic_email_forwarded_small);
+            //mForwardedAnsweredIcon = getResources().getDrawable(R.drawable.ic_email_forwarded_answered_small);
         }
 
         @Override
@@ -1790,25 +1755,25 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             view.setId(R.layout.message_list_item);
 
             MessageViewHolder holder = new MessageViewHolder();
+            holder.from = (TextView) view.findViewById(R.id.from);
+            holder.from_number = (TextView) view.findViewById(R.id.from_number);
             holder.date = (TextView) view.findViewById(R.id.date);
+            holder.time = (TextView) view.findViewById(R.id.time);
+            holder.relative_date = (TextView) view.findViewById(R.id.relative_date);
             holder.chip = view.findViewById(R.id.chip);
 
-
-            if (mPreviewLines == 0 && mContactsPictureLoader == null) {
+            /*if (mPreviewLines == 0 && mContactsPictureLoader == null) {
                 view.findViewById(R.id.preview).setVisibility(View.GONE);
-                holder.preview = (TextView) view.findViewById(R.id.sender_compact);
-                holder.flagged = (CheckBox) view.findViewById(R.id.flagged_center_right);
+                //holder.preview = (TextView) view.findViewById(R.id.sender_compact);
+                //holder.flagged = (CheckBox) view.findViewById(R.id.flagged_center_right);
                 view.findViewById(R.id.flagged_bottom_right).setVisibility(View.GONE);
-
-
 
             } else {
                 view.findViewById(R.id.sender_compact).setVisibility(View.GONE);
-                holder.preview = (TextView) view.findViewById(R.id.preview);
-                holder.flagged = (CheckBox) view.findViewById(R.id.flagged_bottom_right);
+                //holder.preview = (TextView) view.findViewById(R.id.preview);
+                //holder.flagged = (CheckBox) view.findViewById(R.id.flagged_bottom_right);
                 view.findViewById(R.id.flagged_center_right).setVisibility(View.GONE);
-
-            }
+            }*/
 
             QuickContactBadge contactBadge =
                     (QuickContactBadge) view.findViewById(R.id.contact_badge);
@@ -1818,7 +1783,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 contactBadge.setVisibility(View.GONE);
             }
 
-            if (mSenderAboveSubject) {
+            /*if (mSenderAboveSubject) {
                 holder.from = (TextView) view.findViewById(R.id.subject);
                 mFontSizes.setViewTextSize(holder.from, mFontSizes.getMessageListSender());
 
@@ -1826,20 +1791,20 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 holder.subject = (TextView) view.findViewById(R.id.subject);
                 mFontSizes.setViewTextSize(holder.subject, mFontSizes.getMessageListSubject());
 
-            }
+            }*/
 
             mFontSizes.setViewTextSize(holder.date, mFontSizes.getMessageListDate());
 
 
             // 1 preview line is needed even if it is set to 0, because subject is part of the same text view
-            holder.preview.setLines(Math.max(mPreviewLines,1));
-            mFontSizes.setViewTextSize(holder.preview, mFontSizes.getMessageListPreview());
-            holder.threadCount = (TextView) view.findViewById(R.id.thread_count);
-            mFontSizes.setViewTextSize(holder.threadCount, mFontSizes.getMessageListSubject()); // thread count is next to subject
+            //holder.preview.setLines(Math.max(mPreviewLines,1));
+            //mFontSizes.setViewTextSize(holder.preview, mFontSizes.getMessageListPreview());
+            //holder.threadCount = (TextView) view.findViewById(R.id.thread_count);
+            //mFontSizes.setViewTextSize(holder.threadCount, mFontSizes.getMessageListSubject()); // thread count is next to subject
             view.findViewById(R.id.selected_checkbox_wrapper).setVisibility((mCheckboxes) ? View.VISIBLE : View.GONE);
 
-            holder.flagged.setVisibility(mStars ? View.VISIBLE : View.GONE);
-            holder.flagged.setOnClickListener(holder);
+            //holder.flagged.setVisibility(mStars ? View.VISIBLE : View.GONE);
+            //holder.flagged.setOnClickListener(holder);
 
 
             holder.selected = (CheckBox) view.findViewById(R.id.selected_checkbox);
@@ -1853,49 +1818,58 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            boolean read = (cursor.getInt(READ_COLUMN) == 1);
+            //boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
+            //boolean answered = (cursor.getInt(ANSWERED_COLUMN) == 1);
+            //boolean forwarded = (cursor.getInt(FORWARDED_COLUMN) == 1);
+
             Account account = getAccountFromCursor(cursor);
 
             String fromList = cursor.getString(SENDER_LIST_COLUMN);
-            String toList = cursor.getString(TO_LIST_COLUMN);
-            String ccList = cursor.getString(CC_LIST_COLUMN);
+            //String toList = cursor.getString(TO_LIST_COLUMN);
+            //String ccList = cursor.getString(CC_LIST_COLUMN);
             Address[] fromAddrs = Address.unpack(fromList);
-            Address[] toAddrs = Address.unpack(toList);
-            Address[] ccAddrs = Address.unpack(ccList);
+            //Address[] toAddrs = Address.unpack(toList);
+            //Address[] ccAddrs = Address.unpack(ccList);
 
             boolean fromMe = mMessageHelper.toMe(account, fromAddrs);
-            boolean toMe = mMessageHelper.toMe(account, toAddrs);
-            boolean ccMe = mMessageHelper.toMe(account, ccAddrs);
+            //boolean toMe = mMessageHelper.toMe(account, toAddrs);
+            //boolean ccMe = mMessageHelper.toMe(account, ccAddrs);
 
-            CharSequence displayName = mMessageHelper.getDisplayName(account, fromAddrs, toAddrs);
-            CharSequence displayDate = DateUtils.getRelativeTimeSpanString(context, cursor.getLong(DATE_COLUMN));
+            // try to extract phone number from voicemail address
+            String fromNumber = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
+
+            CharSequence displayNumber = vvmContacts.getFormattedPhone(fromNumber, !read);
+            CharSequence displayName = vvmContacts.getFormattedDisplayName(fromNumber, !read);
+            //CharSequence displayDate = DateUtils.getRelativeTimeSpanString(context, cursor.getLong(DATE_COLUMN));
+            Date sentDate = new Date(cursor.getLong(DATE_COLUMN));
+            CharSequence displayRelativeDate = mMessageHelper.formatRelativeDate(sentDate);
+            CharSequence displayDate = mMessageHelper.formatDate(sentDate);
+            CharSequence displayTime = mMessageHelper.formatTime(sentDate);
 
             Address counterpartyAddress = null;
-            if (fromMe) {
+            /*if (fromMe) {
                 if (toAddrs.length > 0) {
                     counterpartyAddress = toAddrs[0];
                 } else if (ccAddrs.length > 0) {
                     counterpartyAddress = ccAddrs[0];
                 }
-            } else if (fromAddrs.length > 0) {
+            } else*/
+            if (fromAddrs.length > 0) {
                 counterpartyAddress = fromAddrs[0];
             }
 
-            int threadCount = (mThreadedList) ? cursor.getInt(THREAD_COUNT_COLUMN) : 0;
+            //int threadCount = (mThreadedList) ? cursor.getInt(THREAD_COUNT_COLUMN) : 0;
 
-            String subject = cursor.getString(SUBJECT_COLUMN);
+            /*String subject = cursor.getString(SUBJECT_COLUMN);
             if (TextUtils.isEmpty(subject)) {
                 subject = getString(R.string.general_no_subject);
             } else if (threadCount > 1) {
                 // If this is a thread, strip the RE/FW from the subject.  "Be like Outlook."
                 subject = Utility.stripSubject(subject);
-            }
+            }*/
 
-            boolean read = (cursor.getInt(READ_COLUMN) == 1);
-            boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
-            boolean answered = (cursor.getInt(ANSWERED_COLUMN) == 1);
-            boolean forwarded = (cursor.getInt(FORWARDED_COLUMN) == 1);
-
-            boolean hasAttachments = (cursor.getInt(ATTACHMENT_COUNT_COLUMN) > 0);
+            //boolean hasAttachments = (cursor.getInt(ATTACHMENT_COUNT_COLUMN) > 0);
 
             MessageViewHolder holder = (MessageViewHolder) view.getTag();
 
@@ -1904,16 +1878,15 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             long uniqueId = cursor.getLong(mUniqueIdColumn);
             boolean selected = mSelected.contains(uniqueId);
 
-
             holder.chip.setBackgroundColor(account.getChipColor());
 
             if (mCheckboxes) {
                 holder.selected.setChecked(selected);
             }
 
-            if (mStars) {
+            /*if (mStars) {
                 holder.flagged.setChecked(flagged);
-            }
+            }*/
             holder.position = cursor.getPosition();
 
             if (holder.contactBadge != null) {
@@ -1966,14 +1939,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }
 
             // Thread count
-            if (threadCount > 1) {
+            /*if (threadCount > 1) {
                 holder.threadCount.setText(Integer.toString(threadCount));
                 holder.threadCount.setVisibility(View.VISIBLE);
             } else {
                 holder.threadCount.setVisibility(View.GONE);
-            }
+            }*/
 
-            CharSequence beforePreviewText = (mSenderAboveSubject) ? subject : displayName;
+            /*CharSequence beforePreviewText = displayName;
 
             String sigil = recipientSigil(toMe, ccMe);
 
@@ -2016,11 +1989,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 statusHolder = mAnsweredIcon;
             } else if (forwarded) {
                 statusHolder = mForwardedIcon;
-            }
+            }*/
 
             if (holder.from != null ) {
                 holder.from.setTypeface(Typeface.create(holder.from.getTypeface(), maybeBoldTypeface));
-                if (mSenderAboveSubject) {
+                /*if (mSenderAboveSubject) {
                     holder.from.setCompoundDrawablesWithIntrinsicBounds(
                             statusHolder, // left
                             null, // top
@@ -2030,10 +2003,16 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     holder.from.setText(displayName);
                 } else {
                     holder.from.setText(new SpannableStringBuilder(sigil).append(displayName));
-                }
+                }*/
+                holder.from.setText(displayName);
             }
 
-            if (holder.subject != null ) {
+            if (holder.from_number != null ) {
+                holder.from_number.setTypeface(Typeface.create(holder.from_number.getTypeface(), maybeBoldTypeface));
+                holder.from_number.setText(displayNumber);
+            }
+
+            /*if (holder.subject != null ) {
                 if (!mSenderAboveSubject) {
                     holder.subject.setCompoundDrawablesWithIntrinsicBounds(
                             statusHolder, // left
@@ -2044,21 +2023,25 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
                 holder.subject.setTypeface(Typeface.create(holder.subject.getTypeface(), maybeBoldTypeface));
                 holder.subject.setText(subject);
-            }
+            }*/
 
             holder.date.setText(displayDate);
+            holder.relative_date.setText(displayRelativeDate);
+            holder.time.setText(displayTime);
         }
     }
 
     class MessageViewHolder implements View.OnClickListener {
-        public TextView subject;
-        public TextView preview;
+        //public TextView subject;
+        //public TextView preview;
         public TextView from;
-        public TextView time;
+        public TextView from_number;
+        public TextView relative_date;
         public TextView date;
+        public TextView time;
         public View chip;
         public TextView threadCount;
-        public CheckBox flagged;
+        //public CheckBox flagged;
         public CheckBox selected;
         public int position = -1;
         public QuickContactBadge contactBadge;
@@ -2070,10 +2053,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     case R.id.selected_checkbox:
                         toggleMessageSelectWithAdapterPosition(position);
                         break;
-                    case R.id.flagged_bottom_right:
+                    /*case R.id.flagged_bottom_right:
                     case R.id.flagged_center_right:
                         toggleMessageFlagWithAdapterPosition(position);
-                        break;
+                        break;*/
                 }
             }
         }
@@ -2155,12 +2138,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 long uniqueId = cursor.getLong(mUniqueIdColumn);
                 mSelected.add(uniqueId);
 
-                if (mThreadedList) {
+                /*if (mThreadedList) {
                     int threadCount = cursor.getInt(THREAD_COUNT_COLUMN);
                     mSelectedCount += (threadCount > 1) ? threadCount : 1;
-                } else {
+                } else {*/
                     mSelectedCount++;
-                }
+                //}
             }
 
             if (mActionMode == null) {
@@ -2209,12 +2192,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
 
         int selectedCountDelta = 1;
-        if (mThreadedList) {
+        /*if (mThreadedList) {
             int threadCount = cursor.getInt(THREAD_COUNT_COLUMN);
             if (threadCount > 1) {
                 selectedCountDelta = threadCount;
             }
-        }
+        }*/
 
         if (mActionMode != null) {
             if (mSelectedCount == selectedCountDelta && selected) {
@@ -2285,15 +2268,15 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         Cursor cursor = (Cursor) mAdapter.getItem(adapterPosition);
         Account account = mPreferences.getAccount(cursor.getString(ACCOUNT_UUID_COLUMN));
 
-        if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
+        /*if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
             long threadRootId = cursor.getLong(THREAD_ROOT_COLUMN);
             mController.setFlagForThreads(account,
                     Collections.singletonList(Long.valueOf(threadRootId)), flag, newState);
-        } else {
+        } else {*/
             long id = cursor.getLong(ID_COLUMN);
             mController.setFlag(account, Collections.singletonList(Long.valueOf(id)), flag,
                     newState);
-        }
+        //}
 
         computeBatchDirection();
     }
@@ -2316,7 +2299,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 Account account = mPreferences.getAccount(uuid);
                 accounts.add(account);
 
-                if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
+                /*if (mThreadedList && cursor.getInt(THREAD_COUNT_COLUMN) > 1) {
                     List<Long> threadRootIdList = threadMap.get(account);
                     if (threadRootIdList == null) {
                         threadRootIdList = new ArrayList<Long>();
@@ -2324,7 +2307,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     }
 
                     threadRootIdList.add(cursor.getLong(THREAD_ROOT_COLUMN));
-                } else {
+                } else {*/
                     List<Long> messageIdList = messageMap.get(account);
                     if (messageIdList == null) {
                         messageIdList = new ArrayList<Long>();
@@ -2332,7 +2315,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     }
 
                     messageIdList.add(cursor.getLong(ID_COLUMN));
-                }
+                //}
             }
         }
 
@@ -2911,7 +2894,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     @Override
     public void onStop() {
         // If we represent a remote search, then kill that before going back.
-        if (isRemoteSearch() && mRemoteSearchFuture != null) {
+        /*if (isRemoteSearch() && mRemoteSearchFuture != null) {
             try {
                 Log.i(VisualVoicemail.LOG_TAG, "Remote search in progress, attempting to abort...");
                 // Canceling the future stops any message fetches in progress.
@@ -2929,7 +2912,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 // Since the user is going back, log and squash any exceptions.
                 Log.e(VisualVoicemail.LOG_TAG, "Could not abort remote search before going back", e);
             }
-        }
+        }*/
         super.onStop();
     }
 
@@ -2975,7 +2958,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
     }
 
-    public boolean openPrevious(MessageReference messageReference) {
+    /*public boolean openPrevious(MessageReference messageReference) {
         int position = getPosition(messageReference);
         if (position <= 0) {
             return false;
@@ -2993,7 +2976,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         openMessageAtPosition(position + 1);
         return true;
-    }
+    }*/
 
     public boolean isFirst(MessageReference messageReference) {
         return mAdapter.isEmpty() || messageReference.equals(getReferenceForPosition(0));
@@ -3012,7 +2995,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         return new MessageReference(accountUuid, folderName, messageUid, null);
     }
 
-    private void openMessageAtPosition(int position) {
+    /*private void openMessageAtPosition(int position) {
         // Scroll message into view if necessary
         int listViewPosition = adapterToListViewPosition(position);
         if (listViewPosition != AdapterView.INVALID_POSITION &&
@@ -3027,7 +3010,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         // onOpenMessage() (and consequently mAdapter.notifyDataSetChanged()) right away. So we
         // defer the call using MessageListHandler.
         mHandler.openMessage(ref);
-    }
+    }*/
 
     private int getPosition(MessageReference messageReference) {
         for (int i = 0, len = mAdapter.getCount(); i < len; i++) {
@@ -3050,8 +3033,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     public interface MessageListFragmentListener {
         void enableActionBarProgress(boolean enable);
         void setMessageListProgress(int level);
-        void showThread(Account account, String folderName, long rootId);
+        //void showThread(Account account, String folderName, long rootId);
         void showMoreFromSameSender(String senderAddress);
+        void playMessage(MessageReference messageReference);
         void openMessage(MessageReference messageReference);
         void setMessageListTitle(String title);
         void setMessageListSubTitle(String subTitle);
@@ -3209,7 +3193,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
     }
 
-    public void onRemoteSearch() {
+    /*public void onRemoteSearch() {
         // Remote search is useless without the network.
         if (mHasConnectivity) {
             onRemoteSearchRequested();
@@ -3217,14 +3201,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             Toast.makeText(getActivity(), getText(R.string.remote_search_unavailable_no_network),
                     Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
-    public boolean isRemoteSearch() {
+    /*public boolean isRemoteSearch() {
         return mRemoteSearchPerformed;
-    }
+    }*/
 
     public boolean isRemoteSearchAllowed() {
-        if (!mSearch.isManualSearch() || mRemoteSearchPerformed || !mSingleFolderMode) {
+        if (!mSearch.isManualSearch() || !mSingleFolderMode) {
             return false;
         }
 
@@ -3307,10 +3291,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private String buildSortOrder() {
         String sortColumn = MessageColumns.ID;
         switch (mSortType) {
-            case SORT_ARRIVAL: {
+            /*case SORT_ARRIVAL: {
                 sortColumn = MessageColumns.INTERNAL_DATE;
                 break;
-            }
+            }*/
             case SORT_ATTACHMENT: {
                 sortColumn = "(" + MessageColumns.ATTACHMENT_COUNT + " < 1)";
                 break;
@@ -3322,10 +3306,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             case SORT_SENDER: {
                 //FIXME
                 sortColumn = MessageColumns.SENDER_LIST;
-                break;
-            }
-            case SORT_SUBJECT: {
-                sortColumn = MessageColumns.SUBJECT + " COLLATE NOCASE";
                 break;
             }
             case SORT_UNREAD: {
@@ -3340,7 +3320,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         String sortDirection = (mSortAscending) ? " ASC" : " DESC";
         String secondarySort;
-        if (mSortType == SortType.SORT_DATE || mSortType == SortType.SORT_ARRIVAL) {
+        //if (mSortType == SortType.SORT_DATE || mSortType == SortType.SORT_ARRIVAL) {
+        if (mSortType == SortType.SORT_DATE){
             secondarySort = "";
         } else {
             secondarySort = MessageColumns.DATE + ((mSortDateAscending) ? " ASC, " : " DESC, ");
@@ -3504,8 +3485,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             long uniqueId = cursor.getLong(mUniqueIdColumn);
 
             if (mSelected.contains(uniqueId)) {
-                int threadCount = cursor.getInt(THREAD_COUNT_COLUMN);
-                mSelectedCount += (threadCount > 1) ? threadCount : 1;
+                //int threadCount = cursor.getInt(THREAD_COUNT_COLUMN);
+                //mSelectedCount += (threadCount > 1) ? threadCount : 1;
+                mSelectedCount += 1;
             }
         }
     }
@@ -3521,9 +3503,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         return mPreferences.getAccount(accountUuid);
     }
 
-    private void remoteSearchFinished() {
+    /*private void remoteSearchFinished() {
         mRemoteSearchFuture = null;
-    }
+    }*/
 
     /**
      * Mark a message as 'active'.

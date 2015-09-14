@@ -1,20 +1,27 @@
 package au.com.wallaceit.voicemail.activity;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.app.FragmentTransaction;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,9 +30,19 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.fsck.k9.mail.BodyPart;
+import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.MessagingException;
+import com.fsck.k9.mail.Multipart;
+import com.fsck.k9.mail.Part;
+import com.fsck.k9.mail.internet.MessageExtractor;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.SortType;
@@ -33,21 +50,22 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.Accounts;
-import au.com.wallaceit.voicemail.activity.FolderList;
-import au.com.wallaceit.voicemail.activity.K9Activity;
-import au.com.wallaceit.voicemail.activity.Search;
-import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.activity.setup.FolderSettings;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
-import au.com.wallaceit.voicemail.crypto.PgpData;
+import au.com.wallaceit.voicemail.controller.AttachmentController;
+import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragmentListener;
-import au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment;
-import au.com.wallaceit.voicemail.ui.messageview.MessageViewFragment.MessageViewFragmentListener;
+import au.com.wallaceit.voicemail.helper.MessageHelper;
+import au.com.wallaceit.voicemail.helper.PlayerUtilities;
+import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.LocalBodyPart;
+import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
+import au.com.wallaceit.voicemail.mailstore.LocalPart;
+import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.provider.AttachmentProvider;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.search.LocalSearch;
@@ -56,8 +74,6 @@ import au.com.wallaceit.voicemail.search.SearchSpecification;
 import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
-import au.com.wallaceit.voicemail.view.MessageHeader;
-import au.com.wallaceit.voicemail.view.MessageTitleView;
 import au.com.wallaceit.voicemail.view.ViewSwitcher;
 import au.com.wallaceit.voicemail.view.ViewSwitcher.OnSwitchCompleteListener;
 
@@ -70,8 +86,7 @@ import de.cketti.library.changelog.ChangeLog;
  * From this Activity the user can perform all standard message operations.
  */
 public class MessageList extends K9Activity implements MessageListFragmentListener,
-        MessageViewFragmentListener, OnBackStackChangedListener, OnSwipeGestureListener,
-        OnSwitchCompleteListener {
+        OnBackStackChangedListener, OnSwipeGestureListener, OnSwitchCompleteListener {
 
     // for this activity
     private static final String EXTRA_SEARCH = "search";
@@ -151,8 +166,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     private ActionBar mActionBar;
     private View mActionBarMessageList;
-    private View mActionBarMessageView;
-    private MessageTitleView mActionBarSubject;
+    //private View mActionBarMessageView;
+    //private MessageTitleView mActionBarSubject;
     private TextView mActionBarTitle;
     private TextView mActionBarSubTitle;
     private TextView mActionBarUnread;
@@ -162,7 +177,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     private View mMessageViewPlaceHolder;
 
     private MessageListFragment mMessageListFragment;
-    private MessageViewFragment mMessageViewFragment;
+    //private MessageViewFragment mMessageViewFragment;
     private int mFirstBackStackId = -1;
 
     private Account mAccount;
@@ -194,6 +209,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     private boolean mMessageListWasDisplayed = false;
     private ViewSwitcher mViewSwitcher;
 
+    private MediaPlayer mMediaPlayer;
+    private AudioManager mAudioManager;
+    private boolean mSpeakerphone = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -235,6 +253,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         if (cl.isFirstRun()) {
             cl.getLogDialog().show();
         }
+
+        mMediaPlayer = new MediaPlayer();
+        mAudioManager = (AudioManager) this.getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        mSpeakerphone = Preferences.getPreferences(getApplicationContext()).getPreferences().getBoolean("playerSpeaker", true);
     }
 
     @Override
@@ -249,7 +271,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             mFirstBackStackId = -1;
         }
         removeMessageListFragment();
-        removeMessageViewFragment();
+        //removeMessageViewFragment();
 
         mMessageReference = null;
         mSearch = null;
@@ -271,8 +293,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         FragmentManager fragmentManager = getFragmentManager();
         mMessageListFragment = (MessageListFragment) fragmentManager.findFragmentById(
                 R.id.message_list_container);
-        mMessageViewFragment = (MessageViewFragment) fragmentManager.findFragmentById(
-                R.id.message_view_container);
+        //mMessageViewFragment = (MessageViewFragment) fragmentManager.findFragmentById(R.id.message_view_container);
     }
 
     /**
@@ -296,10 +317,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
         // Check if the fragment wasn't restarted and has a MessageReference in the arguments. If
         // so, open the referenced message.
-        if (!hasMessageListFragment && mMessageViewFragment == null &&
+        /*if (!hasMessageListFragment && mMessageViewFragment == null &&
                 mMessageReference != null) {
             openMessage(mMessageReference);
-        }
+        }*/
     }
 
     /**
@@ -307,7 +328,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
      *
      * <p><strong>Note:</strong>
      * This method has to be called after {@link #findFragments()} because the result depends on
-     * the availability of a {@link MessageViewFragment} instance.
+     * the availability of a {@link //MessageViewFragment} instance.
      * </p>
      *
      * @param savedInstanceState
@@ -315,7 +336,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
      *         {@link #onCreate(Bundle)}. May be {@code null}.
      */
     private void initializeDisplayMode(Bundle savedInstanceState) {
-        if (useSplitView()) {
+        /*if (useSplitView()) {
             mDisplayMode = DisplayMode.SPLIT_VIEW;
             return;
         }
@@ -327,13 +348,13 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 mDisplayMode = savedDisplayMode;
                 return;
             }
-        }
+        }*/
 
-        if (mMessageViewFragment != null || mMessageReference != null) {
+        /*if (mMessageViewFragment != null || mMessageReference != null) {
             mDisplayMode = DisplayMode.MESSAGE_VIEW;
-        } else {
+        } else {*/
             mDisplayMode = DisplayMode.MESSAGE_LIST;
-        }
+        //}
     }
 
     private boolean useSplitView() {
@@ -351,7 +372,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     }
 
     private void displayViews() {
-        switch (mDisplayMode) {
+        showMessageList();
+        /*switch (mDisplayMode) {
             case MESSAGE_LIST: {
                 showMessageList();
                 break;
@@ -372,7 +394,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 }
                 break;
             }
-        }
+        }*/
     }
 
     private boolean decodeExtras(Intent intent) {
@@ -490,6 +512,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         super.onPause();
 
         StorageManager.getInstance(getApplication()).removeListener(mStorageListener);
+
+        mMediaPlayer.setAudioStreamType(AudioManager.MODE_NORMAL); // clear audio settings, this effects other applications WTF android.
+        mAudioManager.setMode(AudioManager.MODE_NORMAL);
+        mAudioManager.setSpeakerphoneOn(true);
     }
 
     @Override
@@ -507,6 +533,27 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             return;
         }
         StorageManager.getInstance(getApplication()).addListener(mStorageListener);
+
+        setSpeakerphone(mSpeakerphone);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        Preferences.getPreferences(this).getPreferences().edit().putBoolean("playerSpeaker", mSpeakerphone).apply();
+    }
+
+    public void setSpeakerphone(boolean on){
+        if (on){
+            mMediaPlayer.setAudioStreamType(AudioManager.MODE_NORMAL);
+            mAudioManager.setMode(AudioManager.MODE_NORMAL);
+            mAudioManager.setSpeakerphoneOn(true);
+        } else {
+            mMediaPlayer.setAudioStreamType(AudioManager.MODE_IN_CALL);
+            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+            mAudioManager.setSpeakerphoneOn(false);
+        }
     }
 
     @Override
@@ -530,8 +577,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
         View customView = mActionBar.getCustomView();
         mActionBarMessageList = customView.findViewById(R.id.actionbar_message_list);
-        mActionBarMessageView = customView.findViewById(R.id.actionbar_message_view);
-        mActionBarSubject = (MessageTitleView) customView.findViewById(R.id.message_title_view);
+        //mActionBarMessageView = customView.findViewById(R.id.actionbar_message_view);
+        //mActionBarSubject = (MessageTitleView) customView.findViewById(R.id.message_title_view);
         mActionBarTitle = (TextView) customView.findViewById(R.id.actionbar_title_first);
         mActionBarSubTitle = (TextView) customView.findViewById(R.id.actionbar_title_sub);
         mActionBarUnread = (TextView) customView.findViewById(R.id.actionbar_unread_count);
@@ -580,7 +627,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
      */
     public boolean onCustomKeyDown(final int keyCode, final KeyEvent event) {
         switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP: {
+            /*case KeyEvent.KEYCODE_VOLUME_UP: {
                 if (mMessageViewFragment != null && mDisplayMode != DisplayMode.MESSAGE_LIST &&
                         VisualVoicemail.useVolumeKeysForNavigationEnabled()) {
                     showPreviousMessage();
@@ -605,7 +652,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 }
 
                 break;
-            }
+            }*/
             case KeyEvent.KEYCODE_Q: {
                 if (mMessageListFragment != null && mMessageListFragment.isSingleAccountMode()) {
                     onShowFolderList();
@@ -624,9 +671,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             case KeyEvent.KEYCODE_D: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onDelete();
-                } else if (mMessageViewFragment != null) {
+                } /*else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onDelete();
-                }
+                }*/
                 return true;
             }
             case KeyEvent.KEYCODE_S: {
@@ -636,44 +683,44 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             case KeyEvent.KEYCODE_G: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onToggleFlagged();
-                } else if (mMessageViewFragment != null) {
+                } /*else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onToggleFlagged();
-                }
+                }*/
                 return true;
             }
             case KeyEvent.KEYCODE_M: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onMove();
-                } else if (mMessageViewFragment != null) {
+                } /*else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onMove();
-                }
+                }*/
                 return true;
             }
             case KeyEvent.KEYCODE_V: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onArchive();
-                } else if (mMessageViewFragment != null) {
+                } /*else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onArchive();
-                }
+                }*/
                 return true;
             }
-            case KeyEvent.KEYCODE_Y: {
+            /*case KeyEvent.KEYCODE_Y: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onCopy();
                 } else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onCopy();
                 }
                 return true;
-            }
+            }*/
             case KeyEvent.KEYCODE_Z: {
                 if (mDisplayMode == DisplayMode.MESSAGE_LIST) {
                     mMessageListFragment.onToggleRead();
-                } else if (mMessageViewFragment != null) {
+                } /*else if (mMessageViewFragment != null) {
                     mMessageViewFragment.onToggleRead();
-                }
+                }*/
                 return true;
             }
-            case KeyEvent.KEYCODE_J:
+            /*case KeyEvent.KEYCODE_J:
             case KeyEvent.KEYCODE_P: {
                 if (mMessageViewFragment != null) {
                     showPreviousMessage();
@@ -686,7 +733,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     showNextMessage();
                 }
                 return true;
-            }
+            }*/
             /* FIXME
             case KeyEvent.KEYCODE_Z: {
                 mMessageViewFragment.zoom(event);
@@ -760,14 +807,14 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 mMessageListFragment.changeSort(SortType.SORT_DATE);
                 return true;
             }
-            case R.id.set_sort_arrival: {
+            /*case R.id.set_sort_arrival: {
                 mMessageListFragment.changeSort(SortType.SORT_ARRIVAL);
                 return true;
             }
             case R.id.set_sort_subject: {
                 mMessageListFragment.changeSort(SortType.SORT_SUBJECT);
                 return true;
-            }
+            }*/
             case R.id.set_sort_sender: {
                 mMessageListFragment.changeSort(SortType.SORT_SENDER);
                 return true;
@@ -780,10 +827,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 mMessageListFragment.changeSort(SortType.SORT_UNREAD);
                 return true;
             }
-            case R.id.set_sort_attach: {
+            /*case R.id.set_sort_attach: {
                 mMessageListFragment.changeSort(SortType.SORT_ATTACHMENT);
                 return true;
-            }
+            }*/
             case R.id.select_all: {
                 mMessageListFragment.selectAll();
                 return true;
@@ -800,10 +847,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 mMessageListFragment.onSearchRequested();
                 return true;
             }
-            case R.id.search_remote: {
+            /*case R.id.search_remote: {
                 mMessageListFragment.onRemoteSearch();
                 return true;
-            }
+            }*/
             case R.id.mark_all_as_read: {
                 mMessageListFragment.markAllAsRead();
                 return true;
@@ -813,15 +860,15 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 return true;
             }
             // MessageView
-            case R.id.next_message: {
+            /*case R.id.next_message: {
                 showNextMessage();
                 return true;
             }
             case R.id.previous_message: {
                 showPreviousMessage();
                 return true;
-            }
-            case R.id.delete: {
+            }*/
+            /*case R.id.delete: {
                 mMessageViewFragment.onDelete();
                 return true;
             }
@@ -837,8 +884,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             case R.id.refile_archive: {
                 mMessageViewFragment.onArchive();
                 return true;
-            }
-            case R.id.spam:
+            }*/
+            /*case R.id.spam:
             case R.id.refile_spam: {
                 mMessageViewFragment.onSpam();
                 return true;
@@ -847,8 +894,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             case R.id.refile_move: {
                 mMessageViewFragment.onMove();
                 return true;
-            }
-            case R.id.copy:
+            }*/
+            /*case R.id.copy:
             case R.id.refile_copy: {
                 mMessageViewFragment.onCopy();
                 return true;
@@ -862,7 +909,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 mMessageViewFragment.onToggleAllHeadersView();
                 updateMenu();
                 return true;
-            }
+            }*/
         }
 
         if (!mSingleFolderMode) {
@@ -937,10 +984,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         /*
          * Set visibility of menu items related to the message view
          */
-
-        if (mDisplayMode == DisplayMode.MESSAGE_LIST
-                || mMessageViewFragment == null
-                || !mMessageViewFragment.isInitialized()) {
+        //if (mDisplayMode == DisplayMode.MESSAGE_LIST || mMessageViewFragment == null || !mMessageViewFragment.isInitialized()) {
             menu.findItem(R.id.next_message).setVisible(false);
             menu.findItem(R.id.previous_message).setVisible(false);
             menu.findItem(R.id.single_message_options).setVisible(false);
@@ -956,7 +1000,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             menu.findItem(R.id.toggle_message_view_theme).setVisible(false);
             menu.findItem(R.id.show_headers).setVisible(false);
             menu.findItem(R.id.hide_headers).setVisible(false);
-        } else {
+        /*} else {
             // hide prev/next buttons in split mode
             if (mDisplayMode != DisplayMode.MESSAGE_VIEW) {
                 menu.findItem(R.id.next_message).setVisible(false);
@@ -1000,12 +1044,12 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             // Jellybean has built-in long press selection support
             menu.findItem(R.id.select_text).setVisible(Build.VERSION.SDK_INT < 16);
 
-            menu.findItem(R.id.delete).setVisible(VisualVoicemail.isMessageViewDeleteActionVisible());
+            menu.findItem(R.id.delete).setVisible(VisualVoicemail.isMessageViewDeleteActionVisible());*/
 
             /*
              * Set visibility of copy, move, archive, spam in action bar and refile submenu
              */
-            if (mMessageViewFragment.isCopyCapable()) {
+            /*if (mMessageViewFragment.isCopyCapable()) {
                 menu.findItem(R.id.copy).setVisible(VisualVoicemail.isMessageViewCopyActionVisible());
                 menu.findItem(R.id.refile_copy).setVisible(true);
             } else {
@@ -1039,7 +1083,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             } else {
                 menu.findItem(R.id.hide_headers).setVisible(false);
             }
-        }
+        }*/
 
 
         /*
@@ -1080,10 +1124,11 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             menu.findItem(R.id.check_mail).setVisible(mMessageListFragment.isCheckMailSupported());
 
             // If this is an explicit local search, show the option to search on the server
-            if (!mMessageListFragment.isRemoteSearch() &&
+            /*if (!mMessageListFragment.isRemoteSearch() &&
                     mMessageListFragment.isRemoteSearchAllowed()) {
                 menu.findItem(R.id.search_remote).setVisible(true);
-            } else if (!mMessageListFragment.isManualSearch()) {
+            } else*/
+            if (!mMessageListFragment.isManualSearch()) {
                 menu.findItem(R.id.search).setVisible(true);
             }
         }
@@ -1134,7 +1179,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void openMessage(MessageReference messageReference) {
-        Preferences prefs = Preferences.getPreferences(getApplicationContext());
+        /*Preferences prefs = Preferences.getPreferences(getApplicationContext());
         Account account = prefs.getAccount(messageReference.getAccountUuid());
         String folderName = messageReference.getFolderName();
 
@@ -1152,7 +1197,211 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
         if (mDisplayMode != DisplayMode.SPLIT_VIEW) {
             showMessageView();
+        }*/
+    }
+
+    @Override
+    public void playMessage(MessageReference messageReference) {
+        //Part part = getVoicemailAttachment(messageReference);
+        AttachmentViewInfo attachmentViewInfo = getVoicemailAttachment(messageReference);
+        if (attachmentViewInfo != null) {
+            Log.i(VisualVoicemail.LOG_TAG, "MessageList displaying message " + messageReference.getUid());
+            //Uri uri = AttachmentProvider.getAttachmentUri(messageReference.getAccountUuid(), ((LocalMessage) part).getId());
+            AttachmentController controller = new AttachmentController(MessagingController.getInstance(MessageList.this), this, attachmentViewInfo);
+            controller.viewAttachment();
+
+            //playMessage(attachmentViewInfo.uri);
+        } else {
+            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail, please try refreshing");
+            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+            toast.show();
         }
+    }
+
+    public AttachmentViewInfo getVoicemailAttachment(MessageReference messageReference) {
+        //Message message = messageReference.restoreToLocalMessage(MessageList.this);
+        try {
+            Account account = Preferences.getPreferences(this).getAccount(messageReference.getAccountUuid());
+            LocalStore localStore = account.getLocalStore();
+            Folder folder = localStore.getFolder(messageReference.getFolderName());
+            folder.open(Folder.OPEN_MODE_RO);
+            Message message = folder.getMessage(messageReference.getUid());
+            //Part part = walkMessagePartsForRecording(message);
+            List<Part> attachments = MessageExtractor.collectAttachments(message);
+            Part part = attachments.get(0);
+            Log.i(VisualVoicemail.LOG_TAG, "Attachment Returned " + (part == null ? "null" : "Valid Part"));
+            AttachmentViewInfo attachmentInfo = LocalMessageExtractor.extractAttachmentInfo(part);
+
+            return attachmentInfo;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*public AttachmentViewInfo loadVoicemailAttachment(MessageReference messageReference) {
+        LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
+        try {
+            message.
+            AttachmentViewInfo attachmentInfo = LocalMessageExtractor.extractAttachmentInfo(message);
+            //AttachmentController controller = new AttachmentController(MessagingController.getInstance(MessageList.this), this, attachmentInfo);
+            //controller.viewAttachment();
+            Log.w(VisualVoicemail.LOG_TAG, "attachment: "+attachmentInfo.displayName);
+            return attachmentInfo;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+    private Part walkMessagePartsForRecording(Part part) throws MessagingException
+    {
+
+        if (part.getBody() instanceof Multipart)
+        {
+            Multipart mp = (Multipart) part.getBody();
+            for (int i = 0; i < mp.getCount(); i++)
+            {
+                Log.i(VisualVoicemail.LOG_TAG, "multiPartCount = " + mp.getCount());
+                Part rtn = walkMessagePartsForRecording(mp.getBodyPart(i));
+                if (rtn != null)
+                    return rtn;
+            }
+        }
+        else
+        {
+            if (part instanceof BodyPart)
+                return part;
+        }
+        Log.w(VisualVoicemail.LOG_TAG, part.getClass().toString());
+        return null;
+    }
+
+    public void playMessage(Uri uri){
+
+        try {
+            mMediaPlayer.setDataSource(this, uri);
+            mMediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(1); // we need to set this flag manually due to sherlock import
+        dialog.setContentView(R.layout.audio_player);
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mMediaPlayer.stop();
+                mMediaPlayer.reset();
+            }
+        });
+
+        ((TextView) dialog.findViewById(R.id.player_time_text)).setText(PlayerUtilities.milliSecondsToTimer(mMediaPlayer.getDuration()));
+        final TextView progressText = (TextView) dialog.findViewById(R.id.player_progress_text);
+
+        dialog.findViewById(R.id.player_close_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        final ImageButton playButton = (ImageButton) dialog.findViewById(R.id.player_play_button);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMediaPlayer.isPlaying()){
+                    mMediaPlayer.pause();
+                    ((ImageButton) v).setImageResource(android.R.drawable.ic_media_play);
+                } else {
+                    mMediaPlayer.start();
+                    ((ImageButton) v).setImageResource(android.R.drawable.ic_media_pause);
+                }
+            }
+        });
+
+        final ImageButton speakerButton = (ImageButton) dialog.findViewById(R.id.player_speaker_button);
+        if (mSpeakerphone) {
+            speakerButton.setColorFilter(0xff99cc00, PorterDuff.Mode.MULTIPLY);
+        } else {
+            speakerButton.setColorFilter(null);
+        }
+
+        speakerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSpeakerphone){
+                    ((ImageButton) v).setColorFilter(null);
+                    setSpeakerphone(false);
+                } else {
+                    ((ImageButton) v).setColorFilter(0xff99cc00, PorterDuff.Mode.MULTIPLY);
+                    setSpeakerphone(true);
+                }
+                mSpeakerphone = !mSpeakerphone;
+            }
+        });
+
+        final Handler handler = new Handler();
+        final SeekBar seekBar = (SeekBar) dialog.findViewById(R.id.player_seekbar);
+        seekBar.setMax(mMediaPlayer.getDuration());
+        /**
+         * Background Runnable thread
+         * */
+        final Runnable seekUpdateTask = new Runnable() {
+            public void run() {
+                int currentDuration = mMediaPlayer.getCurrentPosition();
+
+                // Displaying time completed playing
+                progressText.setText(PlayerUtilities.milliSecondsToTimer(currentDuration));
+
+                // Updating progress bar
+                seekBar.setProgress(currentDuration);
+
+                // Running this thread after 100 milliseconds
+                handler.postDelayed(this, 100);
+            }
+        };
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // remove message Handler from updating progress bar
+                handler.removeCallbacks(seekUpdateTask);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                handler.removeCallbacks(seekUpdateTask);
+
+                // forward or backward to certain seconds
+                mMediaPlayer.seekTo(seekBar.getProgress());
+
+                if (!mMediaPlayer.isPlaying()) {
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    mMediaPlayer.start();
+                }
+
+                // update timer progress again
+                handler.postDelayed(seekUpdateTask, 100);
+            }
+        });
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                playButton.setImageResource(android.R.drawable.ic_media_play);
+            }
+        });
+
+        dialog.show();
+        mMediaPlayer.start();
+        handler.postDelayed(seekUpdateTask, 100);
     }
 
     @Override
@@ -1242,7 +1491,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         return true;
     }
 
-    @Override
+    /*@Override
     public void showThread(Account account, String folderName, long threadRootId) {
         showMessageViewPlaceHolder();
 
@@ -1252,10 +1501,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
         MessageListFragment fragment = MessageListFragment.newInstance(tmpSearch, true, false);
         addMessageListFragment(fragment, true);
-    }
+    }*/
 
     private void showMessageViewPlaceHolder() {
-        removeMessageViewFragment();
+        //removeMessageViewFragment();
 
         // Add placeholder view if necessary
         if (mMessageViewPlaceHolder.getParent() == null) {
@@ -1268,7 +1517,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     /**
      * Remove MessageViewFragment if necessary.
      */
-    private void removeMessageViewFragment() {
+    /*private void removeMessageViewFragment() {
         if (mMessageViewFragment != null) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.remove(mMessageViewFragment);
@@ -1277,7 +1526,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
             showDefaultTitleView();
         }
-    }
+    }*/
 
     private void removeMessageListFragment() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -1329,14 +1578,14 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         }
     }
 
-    @Override
+    /*@Override
     public void displayMessageSubject(String subject) {
         if (mDisplayMode == DisplayMode.MESSAGE_VIEW) {
             mActionBarSubject.setText(subject);
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void showNextMessageOrReturn() {
         if (VisualVoicemail.messageViewReturnToList() || !showLogicalNextMessage()) {
             if (mDisplayMode == DisplayMode.SPLIT_VIEW) {
@@ -1345,14 +1594,14 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 showMessageList();
             }
         }
-    }
+    }*/
 
     /**
      * Shows the next message in the direction the user was displaying messages.
      *
      * @return {@code true}
      */
-    private boolean showLogicalNextMessage() {
+    /*private boolean showLogicalNextMessage() {
         boolean result = false;
         if (mLastDirection == NEXT) {
             result = showNextMessage();
@@ -1365,9 +1614,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         }
 
         return result;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void setProgress(boolean enable) {
         setProgressBarIndeterminateVisibility(enable);
     }
@@ -1375,9 +1624,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     @Override
     public void messageHeaderViewAvailable(MessageHeader header) {
         mActionBarSubject.setMessageHeader(header);
-    }
+    }*/
 
-    private boolean showNextMessage() {
+    /*private boolean showNextMessage() {
         MessageReference ref = mMessageViewFragment.getMessageReference();
         if (ref != null) {
             if (mMessageListFragment.openNext(ref)) {
@@ -1397,7 +1646,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             }
         }
         return false;
-    }
+    }*/
 
     private void showMessageList() {
         mMessageListWasDisplayed = true;
@@ -1427,10 +1676,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         invalidateOptionsMenu();
     }
 
-    @Override
+    /*@Override
     public void disableDeleteAction() {
         mMenu.findItem(R.id.delete).setEnabled(false);
-    }
+    }*/
 
     private void onToggleTheme() {
         if (VisualVoicemail.getK9MessageViewTheme() == VisualVoicemail.Theme.DARK) {
@@ -1454,31 +1703,31 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     }
 
     private void showDefaultTitleView() {
-        mActionBarMessageView.setVisibility(View.GONE);
+        //mActionBarMessageView.setVisibility(View.GONE);
         mActionBarMessageList.setVisibility(View.VISIBLE);
 
         if (mMessageListFragment != null) {
             mMessageListFragment.updateTitle();
         }
 
-        mActionBarSubject.setMessageHeader(null);
+        //mActionBarSubject.setMessageHeader(null);
     }
 
     private void showMessageTitleView() {
         mActionBarMessageList.setVisibility(View.GONE);
-        mActionBarMessageView.setVisibility(View.VISIBLE);
+        //mActionBarMessageView.setVisibility(View.VISIBLE);
 
-        if (mMessageViewFragment != null) {
+        /*if (mMessageViewFragment != null) {
             displayMessageSubject(null);
             mMessageViewFragment.updateTitle();
-        }
+        }*/
     }
 
     @Override
     public void onSwitchComplete(int displayedChild) {
-        if (displayedChild == 0) {
+        /*if (displayedChild == 0) {
             removeMessageViewFragment();
-        }
+        }*/
     }
 
     @Override

@@ -20,6 +20,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.fsck.k9.mail.AuthType;
+import com.fsck.k9.mail.ConnectionSecurity;
+import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.store.RemoteStore;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,6 +36,7 @@ import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.Provider;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.helper.Utility;
 
@@ -87,8 +93,8 @@ public class AccountSetup extends K9Activity
         mPhoneNumberView.setInputType(Configuration.KEYBOARD_12KEY);
         mPasswordView = (EditText)findViewById(R.id.account_password);
         mNextButton = (Button)findViewById(R.id.next);
-
         mNextButton.setOnClickListener(this);
+        findViewById(R.id.manual_setup).setOnClickListener(this);
 
         mPhoneNumberView.addTextChangedListener(this);
         mPasswordView.addTextChangedListener(this);
@@ -201,7 +207,7 @@ public class AccountSetup extends K9Activity
         if (selectedProvider == null)
         {
             // We don't have default settings for this account
-        	Log.e(TAG, "No Providor Selected");
+        	Log.e(TAG, "No Provider Selected");
             return;
         }
 
@@ -250,7 +256,7 @@ public class AccountSetup extends K9Activity
             mAccount = Preferences.getPreferences(this).newAccount();
             mAccount.setDescription(selectedProvider.toString());
             mAccount.setNetworkOperatorName(selectedProvider.networkOperatorName);
-            
+            mAccount.setRequiresCellular(selectedProvider.requiresCellular);
             mAccount.setProvider(selectedProvider);
             mAccount.setStoreUri(uri.toString());
             mAccount.setDraftsFolderName(getString(R.string.special_mailbox_name_drafts));
@@ -320,9 +326,9 @@ public class AccountSetup extends K9Activity
         {
             mAccount.save(Preferences.getPreferences(this));
             VisualVoicemail.setServicesEnabled(this);
-            // CSM can I get rid of this ??????;
-            // CSM AccountSetupNames.actionSetNames(this, mAccount);
-            setResult(RESULT_OK);
+            Intent intent = new Intent(AccountSetup.this, Accounts.class);
+            startActivity(intent);
+            //setResult(RESULT_OK);
             finish();
        	}
         else
@@ -338,6 +344,15 @@ public class AccountSetup extends K9Activity
     {
         switch (v.getId())
         {
+        case R.id.manual_setup:
+            Log.d(TAG, "ManualSetup");
+            mAccount = Preferences.getPreferences(this).newAccount();
+            ServerSettings storeServer = new ServerSettings(ServerSettings.Type.IMAP, "voicemail.example.com", -1,
+                    ConnectionSecurity.SSL_TLS_REQUIRED, AuthType.PLAIN, "username", "password", "");
+            String storeUri = RemoteStore.createStoreUri(storeServer);
+            mAccount.setStoreUri(storeUri);
+            AccountSetupIncoming.actionIncomingSettings(AccountSetup.this, mAccount, true);
+            break;
         case R.id.next:
             Log.d(TAG, "OnNext: next");
             onNext();
