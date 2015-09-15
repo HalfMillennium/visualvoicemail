@@ -40,10 +40,7 @@ import android.widget.Toast;
 import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.FolderMode;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
-import au.com.wallaceit.voicemail.activity.setup.FolderSettings;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
@@ -632,9 +629,9 @@ public class FolderList extends K9ListActivity {
         case R.id.refresh_folder:
             checkMail(folder);
             break;
-        case R.id.folder_settings:
+        /*case R.id.folder_settings:
             FolderSettings.actionSettings(this, mAccount, folder.name);
-            break;
+            break;*/
         }
 
         return super.onContextItemSelected(item);

@@ -59,7 +59,7 @@
         android:allowBackup="true">
         <meta-data
             android:name="android.app.default_searchable"
-            android:value="com.fsck.k9.activity.Search" />
+            android:value="au.com.wallaceit.voicemail.activity.Search"/>
 
         <activity
             android:name=".activity.Accounts"
@@ -135,12 +135,6 @@
             android:name=".activity.setup.AccountSettings"
             android:configChanges="locale"
             android:label="@string/account_settings_title_fmt"/>
-
-        <activity
-            android:name=".activity.setup.FolderSettings"
-            android:configChanges="locale"
-            android:label="@string/folder_settings_title"
-            android:theme="@android:style/Theme.Dialog"/>
 
         <activity
             android:name=".activity.FolderList"

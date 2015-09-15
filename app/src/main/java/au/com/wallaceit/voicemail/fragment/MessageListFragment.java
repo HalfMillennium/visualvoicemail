@@ -136,20 +136,20 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
     private static final int ID_COLUMN = 0;
     private static final int UID_COLUMN = 1;
-    private static final int INTERNAL_DATE_COLUMN = 2;
+    //private static final int INTERNAL_DATE_COLUMN = 2;
     private static final int SUBJECT_COLUMN = 3;
     private static final int DATE_COLUMN = 4;
     private static final int SENDER_LIST_COLUMN = 5;
-    private static final int TO_LIST_COLUMN = 6;
-    private static final int CC_LIST_COLUMN = 7;
+    //private static final int TO_LIST_COLUMN = 6;
+    //private static final int CC_LIST_COLUMN = 7;
     private static final int READ_COLUMN = 8;
     private static final int FLAGGED_COLUMN = 9;
-    private static final int ANSWERED_COLUMN = 10;
-    private static final int FORWARDED_COLUMN = 11;
+    //private static final int ANSWERED_COLUMN = 10;
+    //private static final int FORWARDED_COLUMN = 11;
     private static final int ATTACHMENT_COUNT_COLUMN = 12;
     private static final int FOLDER_ID_COLUMN = 13;
-    private static final int PREVIEW_COLUMN = 14;
-    private static final int THREAD_ROOT_COLUMN = 15;
+    //private static final int PREVIEW_COLUMN = 14;
+    //private static final int THREAD_ROOT_COLUMN = 15;
     private static final int ACCOUNT_UUID_COLUMN = 16;
     private static final int FOLDER_NAME_COLUMN = 17;
     //private static final int THREAD_COUNT_COLUMN = 18;
@@ -739,10 +739,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 // This item represents a message; just display the message.
                 openMessageAtPosition(listViewToAdapterPosition(position));
             }*/
-            MessageReference reference = getReferenceForPosition(position);
+            int adaptorPosition = listViewToAdapterPosition(position);
+            MessageReference reference = getReferenceForPosition(adaptorPosition);
             mFragmentListener.playMessage(reference);
             if (mPreferences.getPreferences().getBoolean("mark_message_as_read_on_view", true)) {
-                setFlag(position, Flag.SEEN, true);
+                setFlag(adaptorPosition, Flag.SEEN, true);
+                Log.w(VisualVoicemail.LOG_TAG, "Marking read");
             }
         }
     }
@@ -1372,14 +1374,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             changeSort(SortType.SORT_DATE);
             return true;
         }
-        case R.id.set_sort_arrival: {
+        /*case R.id.set_sort_arrival: {
             changeSort(SortType.SORT_ARRIVAL);
             return true;
         }
         case R.id.set_sort_subject: {
             changeSort(SortType.SORT_SUBJECT);
             return true;
-        }
+        }*/
         case R.id.set_sort_sender: {
             changeSort(SortType.SORT_SENDER);
             return true;
@@ -1392,10 +1394,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             changeSort(SortType.SORT_UNREAD);
             return true;
         }
-        case R.id.set_sort_attach: {
+        /*case R.id.set_sort_attach: {
             changeSort(SortType.SORT_ATTACHMENT);
             return true;
-        }
+        }*/
         case R.id.select_all: {
             selectAll();
             return true;
@@ -1413,12 +1415,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             onSendPendingMessages();
             return true;
         }
-        case R.id.expunge: {
+        /*case R.id.expunge: {
             if (mCurrentFolder != null) {
                 onExpunge(mAccount, mCurrentFolder.name);
             }
             return true;
-        }
+        }*/
         default: {
             return super.onOptionsItemSelected(item);
         }
@@ -1477,14 +1479,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }
 
             // only if the account supports this
-            case R.id.archive: {
+            /*case R.id.archive: {
                 onArchive(getMessageAtPosition(adapterPosition));
                 break;
             }
             case R.id.spam: {
                 onSpam(getMessageAtPosition(adapterPosition));
                 break;
-            }
+            }*/
             case R.id.move: {
                 onMove(getMessageAtPosition(adapterPosition));
                 break;
@@ -1552,17 +1554,17 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         if (!mController.isMoveCapable(account)) {
             menu.findItem(R.id.move).setVisible(false);
-            menu.findItem(R.id.archive).setVisible(false);
-            menu.findItem(R.id.spam).setVisible(false);
+            //menu.findItem(R.id.archive).setVisible(false);
+            //menu.findItem(R.id.spam).setVisible(false);
         }
 
-        if (!account.hasArchiveFolder()) {
+        /*if (!account.hasArchiveFolder()) {
             menu.findItem(R.id.archive).setVisible(false);
         }
 
         if (!account.hasSpamFolder()) {
             menu.findItem(R.id.spam).setVisible(false);
-        }
+        }*/
 
     }
 
@@ -1760,6 +1762,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             holder.date = (TextView) view.findViewById(R.id.date);
             holder.time = (TextView) view.findViewById(R.id.time);
             holder.relative_date = (TextView) view.findViewById(R.id.relative_date);
+            holder.flagged = (CheckBox) view.findViewById(R.id.flagged);
             holder.chip = view.findViewById(R.id.chip);
 
             /*if (mPreviewLines == 0 && mContactsPictureLoader == null) {
@@ -1803,8 +1806,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //mFontSizes.setViewTextSize(holder.threadCount, mFontSizes.getMessageListSubject()); // thread count is next to subject
             view.findViewById(R.id.selected_checkbox_wrapper).setVisibility((mCheckboxes) ? View.VISIBLE : View.GONE);
 
-            //holder.flagged.setVisibility(mStars ? View.VISIBLE : View.GONE);
-            //holder.flagged.setOnClickListener(holder);
+            holder.flagged.setVisibility(mStars ? View.VISIBLE : View.GONE);
+            holder.flagged.setOnClickListener(holder);
 
 
             holder.selected = (CheckBox) view.findViewById(R.id.selected_checkbox);
@@ -2040,9 +2043,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         public TextView date;
         public TextView time;
         public View chip;
-        public TextView threadCount;
+        //public TextView threadCount;
         //public CheckBox flagged;
         public CheckBox selected;
+        public CheckBox flagged;
         public int position = -1;
         public QuickContactBadge contactBadge;
         @Override
@@ -2177,7 +2181,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         Cursor cursor = (Cursor) mAdapter.getItem(adapterPosition);
         boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
 
-        setFlag(adapterPosition,Flag.FLAGGED, !flagged);
+        setFlag(adapterPosition, Flag.FLAGGED, !flagged);
     }
 
     private void toggleMessageSelectWithAdapterPosition(int adapterPosition) {
@@ -2274,8 +2278,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     Collections.singletonList(Long.valueOf(threadRootId)), flag, newState);
         } else {*/
             long id = cursor.getLong(ID_COLUMN);
-            mController.setFlag(account, Collections.singletonList(Long.valueOf(id)), flag,
-                    newState);
+            mController.setFlag(account, Collections.singletonList(id), flag, newState);
         //}
 
         computeBatchDirection();
@@ -2648,8 +2651,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             if (!mSingleAccountMode) {
                 // show all
                 menu.findItem(R.id.move).setVisible(true);
-                menu.findItem(R.id.archive).setVisible(true);
-                menu.findItem(R.id.spam).setVisible(true);
+                //menu.findItem(R.id.archive).setVisible(true);
+                //menu.findItem(R.id.spam).setVisible(true);
                 menu.findItem(R.id.copy).setVisible(true);
 
                 Set<String> accountUuids = getAccountUuidsForSelected();
@@ -2727,8 +2730,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
                 //TODO: we could support the archive and spam operations if all selected messages
                 // belong to non-POP3 accounts
-                menu.findItem(R.id.archive).setVisible(false);
-                menu.findItem(R.id.spam).setVisible(false);
+                //menu.findItem(R.id.archive).setVisible(false);
+                //menu.findItem(R.id.spam).setVisible(false);
 
             } else {
                 // hide unsupported
@@ -2738,17 +2741,17 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
                 if (!mController.isMoveCapable(account)) {
                     menu.findItem(R.id.move).setVisible(false);
-                    menu.findItem(R.id.archive).setVisible(false);
-                    menu.findItem(R.id.spam).setVisible(false);
+                    //menu.findItem(R.id.archive).setVisible(false);
+                    //menu.findItem(R.id.spam).setVisible(false);
                 }
 
-                if (!account.hasArchiveFolder()) {
+                /*if (!account.hasArchiveFolder()) {
                     menu.findItem(R.id.archive).setVisible(false);
                 }
 
                 if (!account.hasSpamFolder()) {
                     menu.findItem(R.id.spam).setVisible(false);
-                }
+                }*/
             }
         }
 
@@ -2810,7 +2813,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }
 
             // only if the account supports this
-            case R.id.archive: {
+            /*case R.id.archive: {
                 onArchive(getCheckedMessages());
                 mSelectedCount = 0;
                 break;
@@ -2819,7 +2822,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 onSpam(getCheckedMessages());
                 mSelectedCount = 0;
                 break;
-            }
+            }*/
             case R.id.move: {
                 onMove(getCheckedMessages());
                 mSelectedCount = 0;
@@ -2937,7 +2940,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         setSelectionState(true);
     }
 
-    public void onMoveUp() {
+    /*public void onMoveUp() {
         int currentPosition = mListView.getSelectedItemPosition();
         if (currentPosition == AdapterView.INVALID_POSITION || mListView.isInTouchMode()) {
             currentPosition = mListView.getFirstVisiblePosition();
@@ -2958,7 +2961,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
     }
 
-    /*public boolean openPrevious(MessageReference messageReference) {
+    public boolean openPrevious(MessageReference messageReference) {
         int position = getPosition(messageReference);
         if (position <= 0) {
             return false;

@@ -1158,5 +1158,9 @@
     <string name="activate_visual_voicemail">Activate Visual Voicemail</string>
     <string name="setup_help_label">Setup Help</string>
     <string name="open_external_action">Open In External Player</string>
+    <string name="add_to_contacts_action">Add to Contacts</string>
+    <string name="call_action">Call</string>
+    <string name="share_action">Share</string>
+    <string name="save_action">Save</string>
 
 </resources>

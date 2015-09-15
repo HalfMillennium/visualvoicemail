@@ -6,17 +6,25 @@
     <item android:id="@+id/deselect"
           android:title="@string/deselect_action"/>
     <item
-         android:id="@+id/reply_all"
-         android:title="@string/reply_all_action"/>
-     <item
-         android:id="@+id/reply"
-         android:title="@string/reply_action"/>
-     <item
-         android:id="@+id/send_again"
-         android:title="@string/send_again_action"/>
-     <item
-         android:id="@+id/forward"
-         android:title="@string/forward_action"/>
+        android:id="@+id/open_external_player"
+        android:title="@string/open_external_action"
+        />
+    <item
+        android:id="@+id/add_to_contacts"
+        android:title="@string/add_to_contacts_action"
+        />
+    <item
+        android:id="@+id/call"
+        android:title="@string/call_action"
+        />
+    <item
+        android:id="@+id/share"
+        android:title="@string/share_action"
+        />
+    <item
+        android:id="@+id/save"
+        android:title="@string/save_action"
+        />
     <item
         android:id="@+id/delete"
         android:title="@string/delete_action"
@@ -28,10 +36,6 @@
     <item
         android:id="@+id/mark_as_unread"
         android:title="@string/mark_as_unread_action"
-    />
-    <item
-        android:id="@+id/archive"
-        android:title="@string/archive_action"
     />
     <item
         android:id="@+id/move"
@@ -48,10 +52,6 @@
     <item
         android:id="@+id/unflag"
         android:title="@string/unflag_action"
-    />
-    <item
-        android:id="@+id/spam"
-        android:title="@string/spam_action"
     />
     <item
         android:id="@+id/same_sender"
