@@ -515,7 +515,7 @@ public class SettingsImporter {
         return false;
     }
 
-    private static boolean isIdentityDescriptionUsed(String description, List<Identity> identities) {
+    /*private static boolean isIdentityDescriptionUsed(String description, List<Identity> identities) {
         for (Identity identity : identities) {
             if (identity.getDescription().equals(description)) {
                 return true;
@@ -534,7 +534,7 @@ public class SettingsImporter {
             }
         }
         return -1;
-    }
+    }*/
 
     /**
      * Write to an {@link SharedPreferences.Editor} while logging what is written if debug logging

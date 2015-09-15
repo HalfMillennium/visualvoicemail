@@ -42,8 +42,7 @@ public class AttachmentController {
     private final MessagingController controller;
     private final AttachmentViewInfo attachment;
 
-    public AttachmentController(MessagingController controller, MessageList messageViewFragment,
-                                AttachmentViewInfo attachment) {
+    public AttachmentController(MessagingController controller, MessageList messageViewFragment, AttachmentViewInfo attachment) {
         this.context = messageViewFragment;
         this.controller = controller;
         //this.messageViewFragment = messageViewFragment;
@@ -97,11 +96,11 @@ public class AttachmentController {
         });
     }
 
-    private void downloadAttachment(LocalPart localPart, final Runnable attachmentDownloadedCallback) {
+    public void downloadAttachment(LocalPart localPart, final Runnable attachmentDownloadedCallback) {
         String accountUuid = localPart.getAccountUuid();
         Account account = Preferences.getPreferences(context).getAccount(accountUuid);
         LocalMessage message = localPart.getMessage();
-
+        Log.w(VisualVoicemail.LOG_TAG, "Downloading attachment part");
         //messageViewFragment.showAttachmentLoadingDialog();
         controller.loadAttachment(account, message, attachment.part, new MessagingListener() {
             @Override

@@ -1,7 +1,16 @@
 package au.com.wallaceit.voicemail.activity;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.ActionBar;
@@ -21,6 +30,7 @@ import android.os.Bundle;
 import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.app.FragmentTransaction;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,12 +47,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fsck.k9.mail.BodyPart;
+import com.fsck.k9.mail.FetchProfile;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
+import com.fsck.k9.mail.internet.MimeBodyPart;
+import com.fsck.k9.mail.internet.MimeMessage;
+import com.fsck.k9.mail.internet.MimeMessageHelper;
+import com.fsck.k9.mail.internet.MimeMultipart;
+import com.fsck.k9.mail.internet.MimeUtility;
+
+import org.apache.james.mime4j.util.MimeUtil;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.SortType;
@@ -60,8 +78,12 @@ import au.com.wallaceit.voicemail.fragment.MessageListFragment;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragmentListener;
 import au.com.wallaceit.voicemail.helper.MessageHelper;
 import au.com.wallaceit.voicemail.helper.PlayerUtilities;
+import au.com.wallaceit.voicemail.helper.VoicemailAttachmentHelper;
 import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
+import au.com.wallaceit.voicemail.mailstore.BinaryMemoryBody;
+import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalBodyPart;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
 import au.com.wallaceit.voicemail.mailstore.LocalPart;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
@@ -1202,15 +1224,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void playMessage(MessageReference messageReference) {
-        //Part part = getVoicemailAttachment(messageReference);
-        AttachmentViewInfo attachmentViewInfo = getVoicemailAttachment(messageReference);
-        if (attachmentViewInfo != null) {
-            Log.i(VisualVoicemail.LOG_TAG, "MessageList displaying message " + messageReference.getUid());
-            //Uri uri = AttachmentProvider.getAttachmentUri(messageReference.getAccountUuid(), ((LocalMessage) part).getId());
-            AttachmentController controller = new AttachmentController(MessagingController.getInstance(MessageList.this), this, attachmentViewInfo);
-            controller.viewAttachment();
-
-            //playMessage(attachmentViewInfo.uri);
+        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        if (attachmentHelper.loadVoicemailAttachment()) {
+            openAudioPlayer(attachmentHelper.getCacheUri());
         } else {
             Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail, please try refreshing");
             Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
@@ -1218,69 +1234,11 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         }
     }
 
-    public AttachmentViewInfo getVoicemailAttachment(MessageReference messageReference) {
-        //Message message = messageReference.restoreToLocalMessage(MessageList.this);
+    public void openAudioPlayer(Uri uri){
+        mMediaPlayer.getClass().getPackage().getName();
+        grantUriPermission("android.media", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
-            Account account = Preferences.getPreferences(this).getAccount(messageReference.getAccountUuid());
-            LocalStore localStore = account.getLocalStore();
-            Folder folder = localStore.getFolder(messageReference.getFolderName());
-            folder.open(Folder.OPEN_MODE_RO);
-            Message message = folder.getMessage(messageReference.getUid());
-            //Part part = walkMessagePartsForRecording(message);
-            List<Part> attachments = MessageExtractor.collectAttachments(message);
-            Part part = attachments.get(0);
-            Log.i(VisualVoicemail.LOG_TAG, "Attachment Returned " + (part == null ? "null" : "Valid Part"));
-            AttachmentViewInfo attachmentInfo = LocalMessageExtractor.extractAttachmentInfo(part);
-
-            return attachmentInfo;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /*public AttachmentViewInfo loadVoicemailAttachment(MessageReference messageReference) {
-        LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
-        try {
-            message.
-            AttachmentViewInfo attachmentInfo = LocalMessageExtractor.extractAttachmentInfo(message);
-            //AttachmentController controller = new AttachmentController(MessagingController.getInstance(MessageList.this), this, attachmentInfo);
-            //controller.viewAttachment();
-            Log.w(VisualVoicemail.LOG_TAG, "attachment: "+attachmentInfo.displayName);
-            return attachmentInfo;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
-    private Part walkMessagePartsForRecording(Part part) throws MessagingException
-    {
-
-        if (part.getBody() instanceof Multipart)
-        {
-            Multipart mp = (Multipart) part.getBody();
-            for (int i = 0; i < mp.getCount(); i++)
-            {
-                Log.i(VisualVoicemail.LOG_TAG, "multiPartCount = " + mp.getCount());
-                Part rtn = walkMessagePartsForRecording(mp.getBodyPart(i));
-                if (rtn != null)
-                    return rtn;
-            }
-        }
-        else
-        {
-            if (part instanceof BodyPart)
-                return part;
-        }
-        Log.w(VisualVoicemail.LOG_TAG, part.getClass().toString());
-        return null;
-    }
-
-    public void playMessage(Uri uri){
-
-        try {
-            mMediaPlayer.setDataSource(this, uri);
+            mMediaPlayer.setDataSource(this.getApplicationContext(), uri);
             mMediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
