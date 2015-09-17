@@ -21,12 +21,12 @@ import au.com.wallaceit.voicemail.preferences.Storage;
 
 public class Preferences {
 
-    private static au.com.wallaceit.voicemail.Preferences preferences;
+    private static Preferences preferences;
 
-    public static synchronized au.com.wallaceit.voicemail.Preferences getPreferences(Context context) {
+    public static synchronized Preferences getPreferences(Context context) {
         Context appContext = context.getApplicationContext();
         if (preferences == null) {
-            preferences = new au.com.wallaceit.voicemail.Preferences(appContext);
+            preferences = new Preferences(appContext);
         }
         return preferences;
     }

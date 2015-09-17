@@ -38,6 +38,7 @@ import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.activity.misc.AudioPlayerDialog;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
@@ -128,14 +129,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         return intent;
     }
 
-
-    private enum DisplayMode {
-        MESSAGE_LIST,
-        MESSAGE_VIEW,
-        SPLIT_VIEW
-    }
-
-
     private StorageManager.StorageListener mStorageListener = new StorageListenerImplementation();
 
     private ActionBar mActionBar;
@@ -178,10 +171,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     private boolean mMessageListWasDisplayed = false;
     private ViewSwitcher mViewSwitcher;
 
-    private MediaPlayer mMediaPlayer;
-    private AudioManager mAudioManager;
-    private boolean mSpeakerphone = true;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -218,10 +207,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         if (cl.isFirstRun()) {
             cl.getLogDialog().show();
         }
-
-        mMediaPlayer = new MediaPlayer();
-        mAudioManager = (AudioManager) this.getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-        mSpeakerphone = Preferences.getPreferences(getApplicationContext()).getPreferences().getBoolean("playerSpeaker", true);
     }
 
     @Override
@@ -418,10 +403,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         super.onPause();
 
         StorageManager.getInstance(getApplication()).removeListener(mStorageListener);
-
-        mMediaPlayer.setAudioStreamType(AudioManager.MODE_NORMAL); // clear audio settings, this effects other applications WTF android.
-        mAudioManager.setMode(AudioManager.MODE_NORMAL);
-        mAudioManager.setSpeakerphoneOn(true);
     }
 
     @Override
@@ -439,27 +420,11 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             return;
         }
         StorageManager.getInstance(getApplication()).addListener(mStorageListener);
-
-        setSpeakerphone(mSpeakerphone);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-
-        Preferences.getPreferences(this).getPreferences().edit().putBoolean("playerSpeaker", mSpeakerphone).apply();
-    }
-
-    public void setSpeakerphone(boolean on){
-        if (on){
-            mMediaPlayer.setAudioStreamType(AudioManager.MODE_NORMAL);
-            mAudioManager.setMode(AudioManager.MODE_NORMAL);
-            mAudioManager.setSpeakerphoneOn(true);
-        } else {
-            mMediaPlayer.setAudioStreamType(AudioManager.MODE_IN_CALL);
-            mAudioManager.setMode(AudioManager.MODE_IN_CALL);
-            mAudioManager.setSpeakerphoneOn(false);
-        }
     }
 
     @Override
@@ -939,140 +904,13 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     public void playMessage(MessageReference messageReference) {
         VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
         if (attachmentHelper.loadVoicemailAttachment()) {
-            openAudioPlayer(attachmentHelper.getCacheUri());
+            AudioPlayerDialog dialog = new AudioPlayerDialog(MessageList.this, attachmentHelper.getCacheUri());
+            dialog.show();
         } else {
             Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail, please try refreshing");
             Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
             toast.show();
         }
-    }
-
-    public void openAudioPlayer(Uri uri){
-        mMediaPlayer.getClass().getPackage().getName();
-        grantUriPermission("android.media", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        try {
-            mMediaPlayer.setDataSource(this.getApplicationContext(), uri);
-            mMediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(1); // we need to set this flag manually due to sherlock import
-        dialog.setContentView(R.layout.audio_player);
-
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mMediaPlayer.stop();
-                mMediaPlayer.reset();
-            }
-        });
-
-        ((TextView) dialog.findViewById(R.id.player_time_text)).setText(PlayerUtilities.milliSecondsToTimer(mMediaPlayer.getDuration()));
-        final TextView progressText = (TextView) dialog.findViewById(R.id.player_progress_text);
-
-        dialog.findViewById(R.id.player_close_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        final ImageButton playButton = (ImageButton) dialog.findViewById(R.id.player_play_button);
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mMediaPlayer.isPlaying()){
-                    mMediaPlayer.pause();
-                    ((ImageButton) v).setImageResource(android.R.drawable.ic_media_play);
-                } else {
-                    mMediaPlayer.start();
-                    ((ImageButton) v).setImageResource(android.R.drawable.ic_media_pause);
-                }
-            }
-        });
-
-        final ImageButton speakerButton = (ImageButton) dialog.findViewById(R.id.player_speaker_button);
-        if (mSpeakerphone) {
-            speakerButton.setColorFilter(0xff99cc00, PorterDuff.Mode.MULTIPLY);
-        } else {
-            speakerButton.setColorFilter(null);
-        }
-
-        speakerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSpeakerphone){
-                    ((ImageButton) v).setColorFilter(null);
-                    setSpeakerphone(false);
-                } else {
-                    ((ImageButton) v).setColorFilter(0xff99cc00, PorterDuff.Mode.MULTIPLY);
-                    setSpeakerphone(true);
-                }
-                mSpeakerphone = !mSpeakerphone;
-            }
-        });
-
-        final Handler handler = new Handler();
-        final SeekBar seekBar = (SeekBar) dialog.findViewById(R.id.player_seekbar);
-        seekBar.setMax(mMediaPlayer.getDuration());
-        /**
-         * Background Runnable thread
-         * */
-        final Runnable seekUpdateTask = new Runnable() {
-            public void run() {
-                int currentDuration = mMediaPlayer.getCurrentPosition();
-
-                // Displaying time completed playing
-                progressText.setText(PlayerUtilities.milliSecondsToTimer(currentDuration));
-
-                // Updating progress bar
-                seekBar.setProgress(currentDuration);
-
-                // Running this thread after 100 milliseconds
-                handler.postDelayed(this, 100);
-            }
-        };
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // remove message Handler from updating progress bar
-                handler.removeCallbacks(seekUpdateTask);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                handler.removeCallbacks(seekUpdateTask);
-
-                // forward or backward to certain seconds
-                mMediaPlayer.seekTo(seekBar.getProgress());
-
-                if (!mMediaPlayer.isPlaying()) {
-                    playButton.setImageResource(android.R.drawable.ic_media_pause);
-                    mMediaPlayer.start();
-                }
-
-                // update timer progress again
-                handler.postDelayed(seekUpdateTask, 100);
-            }
-        });
-
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                playButton.setImageResource(android.R.drawable.ic_media_play);
-            }
-        });
-
-        dialog.show();
-        mMediaPlayer.start();
-        handler.postDelayed(seekUpdateTask, 100);
     }
 
     @Override
