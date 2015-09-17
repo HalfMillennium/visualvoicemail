@@ -699,14 +699,14 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     private static class PasswordPromptDialog implements NonConfigurationInstance, TextWatcher {
         private AlertDialog mDialog;
         private EditText mIncomingPasswordView;
-        private EditText mOutgoingPasswordView;
+        //private EditText mOutgoingPasswordView;
         private CheckBox mUseIncomingView;
 
         private Account mAccount;
         private List<Account> mRemainingAccounts;
         private String mIncomingPassword;
-        private String mOutgoingPassword;
-        private boolean mUseIncoming;
+        //private String mOutgoingPassword;
+        //private boolean mUseIncoming;
 
         /**
          * Constructor
@@ -734,10 +734,10 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 if (mIncomingPasswordView != null) {
                     mIncomingPassword = mIncomingPasswordView.getText().toString();
                 }
-                if (mOutgoingPasswordView != null) {
+                /*if (mOutgoingPasswordView != null) {
                     mOutgoingPassword = mOutgoingPasswordView.getText().toString();
                     mUseIncoming = mUseIncomingView.isChecked();
-                }
+                }*/
 
                 // Dismiss dialog
                 mDialog.dismiss();
@@ -745,8 +745,8 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 // Clear all references to UI objects
                 mDialog = null;
                 mIncomingPasswordView = null;
-                mOutgoingPasswordView = null;
-                mUseIncomingView = null;
+                //mOutgoingPasswordView = null;
+                //mUseIncomingView = null;
                 return true;
             }
             return false;
@@ -758,7 +758,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
         private void show(final au.com.wallaceit.voicemail.activity.Accounts activity, boolean restore) {
             ServerSettings incoming = RemoteStore.decodeStoreUri(mAccount.getStoreUri());
-            ServerSettings outgoing = Transport.decodeTransportUri(mAccount.getTransportUri());
+            //ServerSettings outgoing = Transport.decodeTransportUri(mAccount.getTransportUri());
 
             /*
              * Don't ask for the password to the outgoing server for WebDAV
@@ -766,16 +766,16 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
              * this account type. Also don't ask when the username is missing.
              * Also don't ask when the AuthType is EXTERNAL.
              */
-            boolean configureOutgoingServer = AuthType.EXTERNAL != outgoing.authenticationType
+            /*boolean configureOutgoingServer = AuthType.EXTERNAL != outgoing.authenticationType
                     && !(ServerSettings.Type.WebDAV == outgoing.type)
                     && outgoing.username != null
                     && !outgoing.username.isEmpty()
                     && (outgoing.password == null || outgoing.password
-                            .isEmpty());
+                            .isEmpty());*/
 
-            boolean configureIncomingServer = AuthType.EXTERNAL != incoming.authenticationType
+            /*boolean configureIncomingServer = AuthType.EXTERNAL != incoming.authenticationType
                     && (incoming.password == null || incoming.password
-                            .isEmpty());
+                            .isEmpty());*/
 
             // Create a ScrollView that will be used as container for the whole layout
             final ScrollView scrollView = new ScrollView(activity);
@@ -793,10 +793,10 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                         incomingPassword = mIncomingPasswordView.getText().toString();
                     }
                     String outgoingPassword = null;
-                    if (mOutgoingPasswordView != null) {
+                    /*if (mOutgoingPasswordView != null) {
                         outgoingPassword = (mUseIncomingView.isChecked()) ?
                                            incomingPassword : mOutgoingPasswordView.getText().toString();
-                    }
+                    }*/
 
                     dialog.dismiss();
 
@@ -824,12 +824,11 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             // Set the intro text that tells the user what to do
             TextView intro = (TextView) layout.findViewById(R.id.password_prompt_intro);
             String serverPasswords = activity.getResources().getQuantityString(
-                    R.plurals.settings_import_server_passwords,
-                    (configureIncomingServer && configureOutgoingServer) ? 2 : 1);
+                    R.plurals.settings_import_server_passwords, 1);
             intro.setText(activity.getString(R.string.settings_import_activate_account_intro,
                                              mAccount.getDescription(), serverPasswords));
 
-            if (configureIncomingServer) {
+            //if (configureIncomingServer) {
                 // Display the hostname of the incoming server
                 TextView incomingText = (TextView) layout.findViewById(
                                             R.id.password_prompt_incoming_server);
@@ -838,11 +837,11 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
 
                 mIncomingPasswordView = (EditText) layout.findViewById(R.id.incoming_server_password);
                 mIncomingPasswordView.addTextChangedListener(this);
-            } else {
+            /*} else {
                 layout.findViewById(R.id.incoming_server_prompt).setVisibility(View.GONE);
-            }
+            }*/
 
-            if (configureOutgoingServer) {
+            /*if (configureOutgoingServer) {
                 // Display the hostname of the outgoing server
                 TextView outgoingText = (TextView) layout.findViewById(
                                             R.id.password_prompt_outgoing_server);
@@ -877,7 +876,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 }
             } else {
                 layout.findViewById(R.id.outgoing_server_prompt).setVisibility(View.GONE);
-            }
+            }*/
 
             // Add the layout to the ScrollView
             scrollView.addView(layout);
@@ -888,21 +887,21 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             // Restore the contents of the password boxes and the checkbox (if the dialog was
             // retained during a configuration change).
             if (restore) {
-                if (configureIncomingServer) {
+                //if (configureIncomingServer) {
                     mIncomingPasswordView.setText(mIncomingPassword);
-                }
-                if (configureOutgoingServer) {
+                //}
+                /*if (configureOutgoingServer) {
                     mOutgoingPasswordView.setText(mOutgoingPassword);
                     mUseIncomingView.setChecked(mUseIncoming);
-                }
+                }*/
             } else {
-                if (configureIncomingServer) {
+                //if (configureIncomingServer) {
                     // Trigger afterTextChanged() being called
                     // Work around this bug: https://code.google.com/p/android/issues/detail?id=6360
                     mIncomingPasswordView.setText(mIncomingPasswordView.getText());
-                } else {
+                /*} else {
                     mOutgoingPasswordView.setText(mOutgoingPasswordView.getText());
-                }
+                }*/
             }
         }
 
@@ -913,19 +912,19 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             if (mIncomingPasswordView != null) {
                 if (mIncomingPasswordView.getText().length() > 0) {
                     // Do we need to check the outgoing server password box?
-                    if (mOutgoingPasswordView == null) {
+                    //if (mOutgoingPasswordView == null) {
                         enable = true;
-                    }
+                    //}
                     // If the checkbox to use the incoming server password is checked we need to make
                     // sure that the password box for the outgoing server isn't empty.
-                    else if (mUseIncomingView.isChecked() ||
+                    /*else if (mUseIncomingView.isChecked() ||
                              mOutgoingPasswordView.getText().length() > 0) {
                         enable = true;
-                    }
+                    }*/
                 }
-            } else {
+            }/* else {
                 enable = mOutgoingPasswordView.getText().length() > 0;
-            }
+            }*/
 
             // Disable "OK" button if the user hasn't specified all necessary passwords.
             mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enable);

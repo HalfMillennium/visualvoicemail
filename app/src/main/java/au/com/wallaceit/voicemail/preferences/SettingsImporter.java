@@ -380,7 +380,7 @@ public class SettingsImporter {
         boolean createAccountDisabled = AuthType.EXTERNAL != incoming.authenticationType &&
                 (incoming.password == null || incoming.password.isEmpty());
 
-        if (account.outgoing == null && !ServerSettings.Type.WebDAV.name().equals(account.incoming.type)) {
+        /*if (account.outgoing == null && !ServerSettings.Type.WebDAV.name().equals(account.incoming.type)) {
             // All account types except WebDAV need to provide outgoing server settings
             throw new InvalidSettingValueException();
         }
@@ -389,7 +389,7 @@ public class SettingsImporter {
             // Write outgoing server settings (transportUri)
             ServerSettings outgoing = new ImportedServerSettings(account.outgoing);
             String transportUri = Transport.createTransportUri(outgoing);
-            putString(editor, accountKeyPrefix + Account.TRANSPORT_URI_KEY, Base64.encode(transportUri));
+            putString(editor, accountKeyPrefix + Account.TRANSPORT_URI_KEY, Base64.encode(transportUri));*/
 
             /*
              * Mark account as disabled if the settings file contained a
@@ -398,13 +398,13 @@ public class SettingsImporter {
              * outgoing servers are identical for this account type. Nor is a
              * password required if the AuthType is EXTERNAL.
              */
-            boolean outgoingPasswordNeeded = AuthType.EXTERNAL != outgoing.authenticationType &&
+            /*boolean outgoingPasswordNeeded = AuthType.EXTERNAL != outgoing.authenticationType &&
                     !(ServerSettings.Type.WebDAV == outgoing.type) &&
                     outgoing.username != null &&
                     !outgoing.username.isEmpty() &&
                     (outgoing.password == null || outgoing.password.isEmpty());
             createAccountDisabled = outgoingPasswordNeeded || createAccountDisabled;
-        }
+        }*/
 
         // Write key to mark account as disabled if necessary
         if (createAccountDisabled) {

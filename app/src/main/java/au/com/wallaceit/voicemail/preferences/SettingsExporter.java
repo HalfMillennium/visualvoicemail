@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import android.util.Xml;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;
 import com.fsck.k9.mail.ServerSettings;
-import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.store.RemoteStore;
 import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
 import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
@@ -207,7 +204,7 @@ public class SettingsExporter {
     private static void writeAccount(XmlSerializer serializer, Account account,
             Map<String, Object> prefs) throws IOException {
 
-        Set<Integer> identities = new HashSet<Integer>();
+        //Set<Integer> identities = new HashSet<Integer>();
         Set<String> folders = new HashSet<String>();
         String accountUuid = account.getUuid();
 
@@ -255,7 +252,7 @@ public class SettingsExporter {
 
 
         // Write outgoing server settings
-        ServerSettings outgoing = Transport.decodeTransportUri(account.getTransportUri());
+        /*ServerSettings outgoing = Transport.decodeTransportUri(account.getTransportUri());
         serializer.startTag(null, OUTGOING_SERVER_ELEMENT);
         serializer.attribute(null, TYPE_ATTRIBUTE, outgoing.type.name());
 
@@ -283,7 +280,7 @@ public class SettingsExporter {
             serializer.endTag(null, EXTRA_ELEMENT);
         }
 
-        serializer.endTag(null, OUTGOING_SERVER_ELEMENT);
+        serializer.endTag(null, OUTGOING_SERVER_ELEMENT);*/
 
 
         // Write account settings

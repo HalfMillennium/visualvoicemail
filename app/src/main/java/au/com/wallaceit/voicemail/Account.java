@@ -111,7 +111,7 @@ public class Account implements BaseAccount, StoreConfig {
 
     public static final String ACCOUNT_DESCRIPTION_KEY = "description";
     public static final String STORE_URI_KEY = "storeUri";
-    public static final String TRANSPORT_URI_KEY = "transportUri";
+    //public static final String TRANSPORT_URI_KEY = "transportUri";
 
     /*public static final String IDENTITY_NAME_KEY = "name";
     public static final String IDENTITY_EMAIL_KEY = "email";
@@ -172,7 +172,7 @@ public class Account implements BaseAccount, StoreConfig {
      * storage
      */
     private String mLocalStorageProviderId;
-    private String mTransportUri;
+    //private String mTransportUri;
     private String mDescription;
     //private String mAlwaysBcc;
     private int mAutomaticCheckIntervalMinutes;
@@ -394,7 +394,7 @@ public class Account implements BaseAccount, StoreConfig {
 
         mStoreUri = Base64.decode(prefs.getString(mUuid + ".storeUri", null));
         mLocalStorageProviderId = prefs.getString(mUuid + ".localStorageProvider", StorageManager.getInstance(VisualVoicemail.app).getDefaultProviderId());
-        mTransportUri = Base64.decode(prefs.getString(mUuid + ".transportUri", null));
+        //mTransportUri = Base64.decode(prefs.getString(mUuid + ".transportUri", null));
         mDescription = prefs.getString(mUuid + ".description", null);
         //mAlwaysBcc = prefs.getString(mUuid + ".alwaysBcc", mAlwaysBcc);
         mAutomaticCheckIntervalMinutes = prefs.getInt(mUuid + ".automaticCheckIntervalMinutes", 60);
@@ -700,7 +700,7 @@ public class Account implements BaseAccount, StoreConfig {
 
         editor.putString(mUuid + ".storeUri", Base64.encode(mStoreUri));
         editor.putString(mUuid + ".localStorageProvider", mLocalStorageProviderId);
-        editor.putString(mUuid + ".transportUri", Base64.encode(mTransportUri));
+        //editor.putString(mUuid + ".transportUri", Base64.encode(mTransportUri));
         editor.putString(mUuid + ".description", mDescription);
         //editor.putString(mUuid + ".alwaysBcc", mAlwaysBcc);
         editor.putInt(mUuid + ".automaticCheckIntervalMinutes", mAutomaticCheckIntervalMinutes);
@@ -931,11 +931,11 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized String getTransportUri() {
-        return mTransportUri;
+        return null;
     }
 
     public synchronized void setTransportUri(String transportUri) {
-        this.mTransportUri = transportUri;
+        //this.mTransportUri = transportUri;
     }
 
     @Override
@@ -1931,11 +1931,11 @@ public class Account implements BaseAccount, StoreConfig {
     public void addCertificate(AccountSetupCheckSettings.CheckDirection direction,
             X509Certificate certificate) throws CertificateException {
         Uri uri;
-        if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
+        //if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
             uri = Uri.parse(getStoreUri());
-        } else {
+        /*} else {
             uri = Uri.parse(getTransportUri());
-        }
+        }*/
         LocalKeyStore localKeyStore = LocalKeyStore.getInstance();
         localKeyStore.addCertificate(uri.getHost(), uri.getPort(), certificate);
     }
@@ -1948,11 +1948,11 @@ public class Account implements BaseAccount, StoreConfig {
     public void deleteCertificate(String newHost, int newPort,
             AccountSetupCheckSettings.CheckDirection direction) {
         Uri uri;
-        if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
+        //if (direction == AccountSetupCheckSettings.CheckDirection.INCOMING) {
             uri = Uri.parse(getStoreUri());
-        } else {
+        /*} else {
             uri = Uri.parse(getTransportUri());
-        }
+        }*/
         String oldHost = uri.getHost();
         int oldPort = uri.getPort();
         if (oldPort == -1) {
@@ -1977,10 +1977,10 @@ public class Account implements BaseAccount, StoreConfig {
             Uri uri = Uri.parse(storeUri);
             localKeyStore.deleteCertificate(uri.getHost(), uri.getPort());
         }
-        String transportUri = getTransportUri();
+        /*String transportUri = getTransportUri();
         if (transportUri != null) {
             Uri uri = Uri.parse(transportUri);
             localKeyStore.deleteCertificate(uri.getHost(), uri.getPort());
-        }
+        }*/
     }
 }

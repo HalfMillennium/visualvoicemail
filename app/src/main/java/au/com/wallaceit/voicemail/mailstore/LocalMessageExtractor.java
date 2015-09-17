@@ -34,7 +34,7 @@ public class LocalMessageExtractor {
     private static final int FILENAME_PREFIX_LENGTH = FILENAME_PREFIX.length();
     private static final String FILENAME_SUFFIX = " ";
     private static final int FILENAME_SUFFIX_LENGTH = FILENAME_SUFFIX.length();
-    private static final OpenPgpResultAnnotation NO_ANNOTATIONS = null;
+    //private static final OpenPgpResultAnnotation NO_ANNOTATIONS = null;
 
     private LocalMessageExtractor() {}
     /**

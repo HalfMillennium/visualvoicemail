@@ -186,7 +186,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
                             // we need these for matching
                             String storeURIHost = (Uri.parse(mAccount.getStoreUri())).getHost();
-                            String transportURIHost = (Uri.parse(mAccount.getTransportUri())).getHost();
+                            //String transportURIHost = (Uri.parse(mAccount.getTransportUri())).getHost();
 
                             for (List<?> subjectAlternativeName : subjectAlternativeNames) {
                                 Integer type = (Integer)subjectAlternativeName.get(0);
@@ -224,12 +224,10 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
                                 // if some of the SubjectAltNames match the store or transport -host,
                                 // display them
-                                if (name.equalsIgnoreCase(storeURIHost) || name.equalsIgnoreCase(transportURIHost)) {
+                                if (name.equalsIgnoreCase(storeURIHost)) {
                                     //TODO: localize this string
                                     altNamesText.append("Subject(alt): ").append(name).append(",...\n");
-                                } else if (name.startsWith("*.") && (
-                                            storeURIHost.endsWith(name.substring(2)) ||
-                                            transportURIHost.endsWith(name.substring(2)))) {
+                                } else if (name.startsWith("*.") && storeURIHost.endsWith(name.substring(2))) {
                                     //TODO: localize this string
                                     altNamesText.append("Subject(alt): ").append(name).append(",...\n");
                                 }

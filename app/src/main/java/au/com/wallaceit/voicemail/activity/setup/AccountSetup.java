@@ -53,9 +53,7 @@ import au.com.wallaceit.voicemail.helper.Utility;
 // It should be renamed appropriately, or it should merged with the class that displays and edits an account.
 
 
-public class AccountSetup extends K9Activity
-    implements OnClickListener, TextWatcher
-{
+public class AccountSetup extends K9Activity implements OnClickListener, TextWatcher {
     private static final String TAG = AccountSetup.class.getSimpleName();
     
 // CSM    private final static String EXTRA_ACCOUNT		= "cc.martin.vv.AccountSetupBasics.account";
@@ -193,11 +191,6 @@ public class AccountSetup extends K9Activity
 
         mNextButton.setEnabled(valid);
     }
-
-    // These are used to to keep track of the WiFi state
-    WifiManager wifiManager;
-    boolean		wifiWasEnabled;
-//    String		requiresCellular;
 
 	protected void onNext()
     {

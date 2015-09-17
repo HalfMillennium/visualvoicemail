@@ -30,8 +30,6 @@ import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 
-import org.apache.james.mime4j.util.MimeUtil;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -44,11 +42,9 @@ import java.util.List;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
-import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
 import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
@@ -75,7 +71,8 @@ public class VoicemailAttachmentHelper {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        File outFile = new File(context.getCacheDir()+"/voicemail/", ((LocalPart) attachment).getMessage().getUid()+filename.substring(filename.lastIndexOf(".")));
+        String fileExt = filename!=null ? filename.substring(filename.lastIndexOf(".")) : ".3gp";
+        File outFile = new File(context.getCacheDir()+"/voicemail/", ((LocalPart) attachment).getMessage().getUid()+fileExt);
         if (!outFile.exists()){
             if (!outFile.getParentFile().exists())
                 outFile.getParentFile().mkdir();
@@ -105,7 +102,7 @@ public class VoicemailAttachmentHelper {
     public boolean loadVoicemailAttachment(){
         attachment = getVoicemailAttachment(reference);
         if (attachment!=null && needsDownloading()){
-            downloadAttachment((LocalPart) attachment, new Runnable() {
+            downloadAttachmentPart((LocalPart) attachment, new Runnable() {
                 @Override
                 public void run() {
 
@@ -128,7 +125,7 @@ public class VoicemailAttachmentHelper {
             folder.fetch(messages, fp, null);
             folder.close();
             Log.i(VisualVoicemail.LOG_TAG, "Message MIME "+message.getMimeType());
-             Part part = walkMessagePartsForRecording(message);;
+            Part part = walkMessagePartsForRecording(message);
             Log.i(VisualVoicemail.LOG_TAG, "Attachment Returned " + (part == null ? "null" : "Valid Part: "+part.getDisposition()+" "+part.getMimeType()));
 
             return part;
@@ -170,7 +167,7 @@ public class VoicemailAttachmentHelper {
         return attachment instanceof LocalPart;
     }
 
-    private void downloadAttachment(LocalPart localPart, final Runnable attachmentDownloadedCallback) {
+    private void downloadAttachmentPart(LocalPart localPart, final Runnable attachmentDownloadedCallback) {
         String accountUuid = localPart.getAccountUuid();
         Account account = Preferences.getPreferences(context).getAccount(accountUuid);
         LocalMessage message = localPart.getMessage();

@@ -507,7 +507,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                  * Set the username and password for the outgoing settings to the username and
                  * password the user just set for incoming.
                  */
-                try {
+                /*try {
                     String username = mUsernameView.getText().toString();
 
                     String password = null;
@@ -519,17 +519,17 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                         password = mPasswordView.getText().toString();
                     }
 
-                    URI oldUri = new URI(mAccount.getTransportUri());
+                    /URI oldUri = new URI(mAccount.getTransportUri());
                     ServerSettings transportServer = new ServerSettings(Type.SMTP, oldUri.getHost(), oldUri.getPort(),
                             ConnectionSecurity.SSL_TLS_REQUIRED, authType, username, password, clientCertificateAlias);
                     String transportUri = Transport.createTransportUri(transportServer);
                     mAccount.setTransportUri(transportUri);
-                } catch (URISyntaxException use) {
+                } catch (URISyntaxException use) {*/
                     /*
                      * If we can't set up the URL we just continue. It's only for
                      * convenience.
                      */
-                }
+                //}
 
 
                 //AccountSetupOutgoing.actionOutgoingSettings(this, mAccount, mMakeDefault);
