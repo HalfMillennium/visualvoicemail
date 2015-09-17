@@ -52,34 +52,34 @@ public class Prefs extends K9PreferenceActivity {
      */
     private static final String PREFERENCE_LANGUAGE = "language";
     private static final String PREFERENCE_THEME = "theme";
-    private static final String PREFERENCE_MESSAGE_VIEW_THEME = "messageViewTheme";
-    private static final String PREFERENCE_FIXED_MESSAGE_THEME = "fixedMessageViewTheme";
-    private static final String PREFERENCE_COMPOSER_THEME = "messageComposeTheme";
+    //private static final String PREFERENCE_MESSAGE_VIEW_THEME = "messageViewTheme";
+    //private static final String PREFERENCE_FIXED_MESSAGE_THEME = "fixedMessageViewTheme";
+    //private static final String PREFERENCE_COMPOSER_THEME = "messageComposeTheme";
     private static final String PREFERENCE_FONT_SIZE = "font_size";
     private static final String PREFERENCE_ANIMATIONS = "animations";
     private static final String PREFERENCE_GESTURES = "gestures";
     private static final String PREFERENCE_VOLUME_NAVIGATION = "volumeNavigation";
-    private static final String PREFERENCE_START_INTEGRATED_INBOX = "start_integrated_inbox";
+    //private static final String PREFERENCE_START_INTEGRATED_INBOX = "start_integrated_inbox";
     private static final String PREFERENCE_CONFIRM_ACTIONS = "confirm_actions";
-    private static final String PREFERENCE_NOTIFICATION_HIDE_SUBJECT = "notification_hide_subject";
+    //private static final String PREFERENCE_NOTIFICATION_HIDE_SUBJECT = "notification_hide_subject";
     private static final String PREFERENCE_MEASURE_ACCOUNTS = "measure_accounts";
     private static final String PREFERENCE_COUNT_SEARCH = "count_search";
-    private static final String PREFERENCE_HIDE_SPECIAL_ACCOUNTS = "hide_special_accounts";
+    //private static final String PREFERENCE_HIDE_SPECIAL_ACCOUNTS = "hide_special_accounts";
     private static final String PREFERENCE_MESSAGELIST_CHECKBOXES = "messagelist_checkboxes";
-    private static final String PREFERENCE_MESSAGELIST_PREVIEW_LINES = "messagelist_preview_lines";
-    private static final String PREFERENCE_MESSAGELIST_SENDER_ABOVE_SUBJECT = "messagelist_sender_above_subject";
+    //private static final String PREFERENCE_MESSAGELIST_PREVIEW_LINES = "messagelist_preview_lines";
+    //private static final String PREFERENCE_MESSAGELIST_SENDER_ABOVE_SUBJECT = "messagelist_sender_above_subject";
     private static final String PREFERENCE_MESSAGELIST_STARS = "messagelist_stars";
-    private static final String PREFERENCE_MESSAGELIST_SHOW_CORRESPONDENT_NAMES = "messagelist_show_correspondent_names";
-    private static final String PREFERENCE_MESSAGELIST_SHOW_CONTACT_NAME = "messagelist_show_contact_name";
-    private static final String PREFERENCE_MESSAGELIST_CONTACT_NAME_COLOR = "messagelist_contact_name_color";
+    //private static final String PREFERENCE_MESSAGELIST_SHOW_CORRESPONDENT_NAMES = "messagelist_show_correspondent_names";
+    //private static final String PREFERENCE_MESSAGELIST_SHOW_CONTACT_NAME = "messagelist_show_contact_name";
+    //private static final String PREFERENCE_MESSAGELIST_CONTACT_NAME_COLOR = "messagelist_contact_name_color";
     private static final String PREFERENCE_MESSAGELIST_SHOW_CONTACT_PICTURE = "messagelist_show_contact_picture";
     private static final String PREFERENCE_MESSAGELIST_COLORIZE_MISSING_CONTACT_PICTURES =
             "messagelist_colorize_missing_contact_pictures";
-    private static final String PREFERENCE_MESSAGEVIEW_FIXEDWIDTH = "messageview_fixedwidth_font";
-    private static final String PREFERENCE_MESSAGEVIEW_VISIBLE_REFILE_ACTIONS = "messageview_visible_refile_actions";
+    //private static final String PREFERENCE_MESSAGEVIEW_FIXEDWIDTH = "messageview_fixedwidth_font";
+    //private static final String PREFERENCE_MESSAGEVIEW_VISIBLE_REFILE_ACTIONS = "messageview_visible_refile_actions";
 
-    private static final String PREFERENCE_MESSAGEVIEW_RETURN_TO_LIST = "messageview_return_to_list";
-    private static final String PREFERENCE_MESSAGEVIEW_SHOW_NEXT = "messageview_show_next";
+    //private static final String PREFERENCE_MESSAGEVIEW_RETURN_TO_LIST = "messageview_return_to_list";
+    //private static final String PREFERENCE_MESSAGEVIEW_SHOW_NEXT = "messageview_show_next";
     private static final String PREFERENCE_QUIET_TIME_ENABLED = "quiet_time_enabled";
     private static final String PREFERENCE_DISABLE_NOTIFICATION_DURING_QUIET_TIME =
             "disable_notifications_during_quiet_time";
@@ -90,60 +90,60 @@ public class Prefs extends K9PreferenceActivity {
     private static final String PREFERENCE_HIDE_USERAGENT = "privacy_hide_useragent";
     private static final String PREFERENCE_HIDE_TIMEZONE = "privacy_hide_timezone";
 
-    private static final String PREFERENCE_AUTOFIT_WIDTH = "messageview_autofit_width";
+    //private static final String PREFERENCE_AUTOFIT_WIDTH = "messageview_autofit_width";
     private static final String PREFERENCE_BACKGROUND_OPS = "background_ops";
     private static final String PREFERENCE_DEBUG_LOGGING = "debug_logging";
     private static final String PREFERENCE_SENSITIVE_LOGGING = "sensitive_logging";
 
     private static final String PREFERENCE_ATTACHMENT_DEF_PATH = "attachment_default_path";
     private static final String PREFERENCE_BACKGROUND_AS_UNREAD_INDICATOR = "messagelist_background_as_unread_indicator";
-    private static final String PREFERENCE_THREADED_VIEW = "threaded_view";
-    private static final String PREFERENCE_FOLDERLIST_WRAP_NAME = "folderlist_wrap_folder_name";
-    private static final String PREFERENCE_SPLITVIEW_MODE = "splitview_mode";
+    //private static final String PREFERENCE_THREADED_VIEW = "threaded_view";
+    //private static final String PREFERENCE_FOLDERLIST_WRAP_NAME = "folderlist_wrap_folder_name";
+    //private static final String PREFERENCE_SPLITVIEW_MODE = "splitview_mode";
 
     private static final int ACTIVITY_CHOOSE_FOLDER = 1;
 
     // Named indices for the mVisibleRefileActions field
-    private static final int VISIBLE_REFILE_ACTIONS_DELETE = 0;
+    /*private static final int VISIBLE_REFILE_ACTIONS_DELETE = 0;
     private static final int VISIBLE_REFILE_ACTIONS_ARCHIVE = 1;
     private static final int VISIBLE_REFILE_ACTIONS_MOVE = 2;
     private static final int VISIBLE_REFILE_ACTIONS_COPY = 3;
-    private static final int VISIBLE_REFILE_ACTIONS_SPAM = 4;
+    private static final int VISIBLE_REFILE_ACTIONS_SPAM = 4;*/
 
     private ListPreference mLanguage;
     private ListPreference mTheme;
-    private CheckBoxPreference mFixedMessageTheme;
+    /*private CheckBoxPreference mFixedMessageTheme;
     private ListPreference mMessageTheme;
-    private ListPreference mComposerTheme;
+    private ListPreference mComposerTheme;*/
     private CheckBoxPreference mAnimations;
     private CheckBoxPreference mGestures;
-    private CheckBoxListPreference mVolumeNavigation;
-    private CheckBoxPreference mStartIntegratedInbox;
+    private CheckBoxPreference mVolumeNavigation;
+    //private CheckBoxPreference mStartIntegratedInbox;
     private CheckBoxListPreference mConfirmActions;
-    private ListPreference mNotificationHideSubject;
+    //private ListPreference mNotificationHideSubject;
     private CheckBoxPreference mMeasureAccounts;
     private CheckBoxPreference mCountSearch;
-    private CheckBoxPreference mHideSpecialAccounts;
+    /*private CheckBoxPreference mHideSpecialAccounts;
     private ListPreference mPreviewLines;
-    private CheckBoxPreference mSenderAboveSubject;
+    private CheckBoxPreference mSenderAboveSubject;*/
     private CheckBoxPreference mCheckboxes;
     private CheckBoxPreference mStars;
-    private CheckBoxPreference mShowCorrespondentNames;
+    /*private CheckBoxPreference mShowCorrespondentNames;
     private CheckBoxPreference mShowContactName;
-    private CheckBoxPreference mChangeContactNameColor;
+    private CheckBoxPreference mChangeContactNameColor;*/
     private CheckBoxPreference mShowContactPicture;
     private CheckBoxPreference mColorizeMissingContactPictures;
-    private CheckBoxPreference mFixedWidth;
+    /*private CheckBoxPreference mFixedWidth;
     private CheckBoxPreference mReturnToList;
     private CheckBoxPreference mShowNext;
-    private CheckBoxPreference mAutofitWidth;
+    private CheckBoxPreference mAutofitWidth;*/
     private ListPreference mBackgroundOps;
     private CheckBoxPreference mDebugLogging;
     private CheckBoxPreference mSensitiveLogging;
     private CheckBoxPreference mHideUserAgent;
     private CheckBoxPreference mHideTimeZone;
-    private CheckBoxPreference mWrapFolderNames;
-    private CheckBoxListPreference mVisibleRefileActions;
+    //private CheckBoxPreference mWrapFolderNames;
+    //private CheckBoxListPreference mVisibleRefileActions;
 
     private CheckBoxPreference mQuietTimeEnabled;
     private CheckBoxPreference mDisableNotificationDuringQuietTime;
@@ -154,8 +154,8 @@ public class Prefs extends K9PreferenceActivity {
     private Preference mAttachmentPathPreference;
 
     private CheckBoxPreference mBackgroundAsUnreadIndicator;
-    private CheckBoxPreference mThreadedView;
-    private ListPreference mSplitViewMode;
+    //private CheckBoxPreference mThreadedView;
+    //private ListPreference mSplitViewMode;
 
 
     public static void actionPrefs(Context context) {
@@ -185,12 +185,12 @@ public class Prefs extends K9PreferenceActivity {
                            entryValueVector.toArray(EMPTY_CHAR_SEQUENCE_ARRAY));
 
         mTheme = setupListPreference(PREFERENCE_THEME, themeIdToName(VisualVoicemail.getK9Theme()));
-        mFixedMessageTheme = (CheckBoxPreference) findPreference(PREFERENCE_FIXED_MESSAGE_THEME);
+        /*mFixedMessageTheme = (CheckBoxPreference) findPreference(PREFERENCE_FIXED_MESSAGE_THEME);
         mFixedMessageTheme.setChecked(VisualVoicemail.useFixedMessageViewTheme());
         mMessageTheme = setupListPreference(PREFERENCE_MESSAGE_VIEW_THEME,
                 themeIdToName(VisualVoicemail.getK9MessageViewThemeSetting()));
         mComposerTheme = setupListPreference(PREFERENCE_COMPOSER_THEME,
-                themeIdToName(VisualVoicemail.getK9ComposerThemeSetting()));
+                themeIdToName(VisualVoicemail.getK9ComposerThemeSetting()));*/
 
         findPreference(PREFERENCE_FONT_SIZE).setOnPreferenceClickListener(
         new OnPreferenceClickListener() {
@@ -206,12 +206,12 @@ public class Prefs extends K9PreferenceActivity {
         mGestures = (CheckBoxPreference)findPreference(PREFERENCE_GESTURES);
         mGestures.setChecked(VisualVoicemail.gesturesEnabled());
 
-        mVolumeNavigation = (CheckBoxListPreference)findPreference(PREFERENCE_VOLUME_NAVIGATION);
-        mVolumeNavigation.setItems(new CharSequence[] {getString(R.string.volume_navigation_message), getString(R.string.volume_navigation_list)});
-        mVolumeNavigation.setCheckedItems(new boolean[] {VisualVoicemail.useVolumeKeysForNavigationEnabled(), VisualVoicemail.useVolumeKeysForListNavigationEnabled()});
+        mVolumeNavigation = (CheckBoxPreference)findPreference(PREFERENCE_VOLUME_NAVIGATION);
+        //mVolumeNavigation.setItems(new CharSequence[] {getString(R.string.volume_navigation_message), getString(R.string.volume_navigation_list)});
+        //mVolumeNavigation.setCheckedItems(new boolean[] {VisualVoicemail.useVolumeKeysForNavigationEnabled(), VisualVoicemail.useVolumeKeysForListNavigationEnabled()});
 
-        mStartIntegratedInbox = (CheckBoxPreference)findPreference(PREFERENCE_START_INTEGRATED_INBOX);
-        mStartIntegratedInbox.setChecked(VisualVoicemail.startIntegratedInbox());
+        /*mStartIntegratedInbox = (CheckBoxPreference)findPreference(PREFERENCE_START_INTEGRATED_INBOX);
+        mStartIntegratedInbox.setChecked(VisualVoicemail.startIntegratedInbox());*/
 
         mConfirmActions = (CheckBoxListPreference) findPreference(PREFERENCE_CONFIRM_ACTIONS);
 
@@ -236,8 +236,7 @@ public class Prefs extends K9PreferenceActivity {
         mConfirmActions.setItems(confirmActionEntries);
         mConfirmActions.setCheckedItems(confirmActionValues);
 
-        mNotificationHideSubject = setupListPreference(PREFERENCE_NOTIFICATION_HIDE_SUBJECT,
-                VisualVoicemail.getNotificationHideSubject().toString());
+        //mNotificationHideSubject = setupListPreference(PREFERENCE_NOTIFICATION_HIDE_SUBJECT, VisualVoicemail.getNotificationHideSubject().toString());
 
         mMeasureAccounts = (CheckBoxPreference)findPreference(PREFERENCE_MEASURE_ACCOUNTS);
         mMeasureAccounts.setChecked(VisualVoicemail.measureAccounts());
@@ -245,26 +244,25 @@ public class Prefs extends K9PreferenceActivity {
         mCountSearch = (CheckBoxPreference)findPreference(PREFERENCE_COUNT_SEARCH);
         mCountSearch.setChecked(VisualVoicemail.countSearchMessages());
 
-        mHideSpecialAccounts = (CheckBoxPreference)findPreference(PREFERENCE_HIDE_SPECIAL_ACCOUNTS);
-        mHideSpecialAccounts.setChecked(VisualVoicemail.isHideSpecialAccounts());
+        //mHideSpecialAccounts = (CheckBoxPreference)findPreference(PREFERENCE_HIDE_SPECIAL_ACCOUNTS);
+        //mHideSpecialAccounts.setChecked(VisualVoicemail.isHideSpecialAccounts());
 
 
-        mPreviewLines = setupListPreference(PREFERENCE_MESSAGELIST_PREVIEW_LINES,
-                                            Integer.toString(VisualVoicemail.messageListPreviewLines()));
+        //mPreviewLines = setupListPreference(PREFERENCE_MESSAGELIST_PREVIEW_LINES, Integer.toString(VisualVoicemail.messageListPreviewLines()));
 
-        mSenderAboveSubject = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SENDER_ABOVE_SUBJECT);
-        mSenderAboveSubject.setChecked(VisualVoicemail.messageListSenderAboveSubject());
+        //mSenderAboveSubject = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SENDER_ABOVE_SUBJECT);
+        //mSenderAboveSubject.setChecked(VisualVoicemail.messageListSenderAboveSubject());
         mCheckboxes = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_CHECKBOXES);
         mCheckboxes.setChecked(VisualVoicemail.messageListCheckboxes());
 
         mStars = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_STARS);
         mStars.setChecked(VisualVoicemail.messageListStars());
 
-        mShowCorrespondentNames = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SHOW_CORRESPONDENT_NAMES);
+        /*mShowCorrespondentNames = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SHOW_CORRESPONDENT_NAMES);
         mShowCorrespondentNames.setChecked(VisualVoicemail.showCorrespondentNames());
 
         mShowContactName = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SHOW_CONTACT_NAME);
-        mShowContactName.setChecked(VisualVoicemail.showContactName());
+        mShowContactName.setChecked(VisualVoicemail.showContactName());*/
 
         mShowContactPicture = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_SHOW_CONTACT_PICTURE);
         mShowContactPicture.setChecked(VisualVoicemail.showContactPicture());
@@ -276,13 +274,13 @@ public class Prefs extends K9PreferenceActivity {
         mBackgroundAsUnreadIndicator = (CheckBoxPreference)findPreference(PREFERENCE_BACKGROUND_AS_UNREAD_INDICATOR);
         mBackgroundAsUnreadIndicator.setChecked(VisualVoicemail.useBackgroundAsUnreadIndicator());
 
-        mChangeContactNameColor = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_CONTACT_NAME_COLOR);
+        /*mChangeContactNameColor = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGELIST_CONTACT_NAME_COLOR);
         mChangeContactNameColor.setChecked(VisualVoicemail.changeContactNameColor());
 
         mThreadedView = (CheckBoxPreference) findPreference(PREFERENCE_THREADED_VIEW);
-        mThreadedView.setChecked(VisualVoicemail.isThreadedViewEnabled());
+        mThreadedView.setChecked(VisualVoicemail.isThreadedViewEnabled());*/
 
-        if (VisualVoicemail.changeContactNameColor()) {
+        /*if (VisualVoicemail.changeContactNameColor()) {
             mChangeContactNameColor.setSummary(R.string.global_settings_registered_name_color_changed);
         } else {
             mChangeContactNameColor.setSummary(R.string.global_settings_registered_name_color_default);
@@ -299,9 +297,9 @@ public class Prefs extends K9PreferenceActivity {
                 mChangeContactNameColor.setChecked(checked);
                 return false;
             }
-        });
+        });*/
 
-        mFixedWidth = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGEVIEW_FIXEDWIDTH);
+        /*mFixedWidth = (CheckBoxPreference)findPreference(PREFERENCE_MESSAGEVIEW_FIXEDWIDTH);
         mFixedWidth.setChecked(VisualVoicemail.messageViewFixedWidthFont());
 
         mReturnToList = (CheckBoxPreference) findPreference(PREFERENCE_MESSAGEVIEW_RETURN_TO_LIST);
@@ -311,7 +309,7 @@ public class Prefs extends K9PreferenceActivity {
         mShowNext.setChecked(VisualVoicemail.messageViewShowNext());
 
         mAutofitWidth = (CheckBoxPreference) findPreference(PREFERENCE_AUTOFIT_WIDTH);
-        mAutofitWidth.setChecked(VisualVoicemail.autofitWidth());
+        mAutofitWidth.setChecked(VisualVoicemail.autofitWidth());*/
 
         mQuietTimeEnabled = (CheckBoxPreference) findPreference(PREFERENCE_QUIET_TIME_ENABLED);
         mQuietTimeEnabled.setChecked(VisualVoicemail.getQuietTimeEnabled());
@@ -399,7 +397,7 @@ public class Prefs extends K9PreferenceActivity {
             };
         });
 
-        mWrapFolderNames = (CheckBoxPreference)findPreference(PREFERENCE_FOLDERLIST_WRAP_NAME);
+        /*mWrapFolderNames = (CheckBoxPreference)findPreference(PREFERENCE_FOLDERLIST_WRAP_NAME);
         mWrapFolderNames.setChecked(VisualVoicemail.wrapFolderNames());
 
         mVisibleRefileActions = (CheckBoxListPreference) findPreference(PREFERENCE_MESSAGEVIEW_VISIBLE_REFILE_ACTIONS);
@@ -422,7 +420,7 @@ public class Prefs extends K9PreferenceActivity {
 
         mSplitViewMode = (ListPreference) findPreference(PREFERENCE_SPLITVIEW_MODE);
         initListPreference(mSplitViewMode, VisualVoicemail.getSplitViewMode().name(),
-                mSplitViewMode.getEntries(), mSplitViewMode.getEntryValues());
+                mSplitViewMode.getEntries(), mSplitViewMode.getEntryValues());*/
     }
 
     private static String themeIdToName(VisualVoicemail.Theme theme) {
@@ -449,16 +447,16 @@ public class Prefs extends K9PreferenceActivity {
         VisualVoicemail.setK9Language(mLanguage.getValue());
 
         VisualVoicemail.setK9Theme(themeNameToId(mTheme.getValue()));
-        VisualVoicemail.setUseFixedMessageViewTheme(mFixedMessageTheme.isChecked());
+        /*VisualVoicemail.setUseFixedMessageViewTheme(mFixedMessageTheme.isChecked());
         VisualVoicemail.setK9MessageViewThemeSetting(themeNameToId(mMessageTheme.getValue()));
-        VisualVoicemail.setK9ComposerThemeSetting(themeNameToId(mComposerTheme.getValue()));
+        VisualVoicemail.setK9ComposerThemeSetting(themeNameToId(mComposerTheme.getValue()));*/
 
         VisualVoicemail.setAnimations(mAnimations.isChecked());
         VisualVoicemail.setGesturesEnabled(mGestures.isChecked());
-        VisualVoicemail.setUseVolumeKeysForNavigation(mVolumeNavigation.getCheckedItems()[0]);
-        VisualVoicemail.setUseVolumeKeysForListNavigation(mVolumeNavigation.getCheckedItems()[1]);
-        VisualVoicemail.setStartIntegratedInbox(!mHideSpecialAccounts.isChecked() && mStartIntegratedInbox.isChecked());
-        VisualVoicemail.setNotificationHideSubject(NotificationHideSubject.valueOf(mNotificationHideSubject.getValue()));
+        //VisualVoicemail.setUseVolumeKeysForNavigation(mVolumeNavigation.getCheckedItems()[0]);
+        VisualVoicemail.setUseVolumeKeysForListNavigation(mVolumeNavigation.isChecked());
+        /*VisualVoicemail.setStartIntegratedInbox(!mHideSpecialAccounts.isChecked() && mStartIntegratedInbox.isChecked());
+        VisualVoicemail.setNotificationHideSubject(NotificationHideSubject.valueOf(mNotificationHideSubject.getValue()));*/
 
         int index = 0;
         VisualVoicemail.setConfirmDelete(mConfirmActions.getCheckedItems()[index++]);
@@ -471,35 +469,35 @@ public class Prefs extends K9PreferenceActivity {
 
         VisualVoicemail.setMeasureAccounts(mMeasureAccounts.isChecked());
         VisualVoicemail.setCountSearchMessages(mCountSearch.isChecked());
-        VisualVoicemail.setHideSpecialAccounts(mHideSpecialAccounts.isChecked());
-        VisualVoicemail.setMessageListPreviewLines(Integer.parseInt(mPreviewLines.getValue()));
+        //VisualVoicemail.setHideSpecialAccounts(mHideSpecialAccounts.isChecked());
+        //VisualVoicemail.setMessageListPreviewLines(Integer.parseInt(mPreviewLines.getValue()));
         VisualVoicemail.setMessageListCheckboxes(mCheckboxes.isChecked());
         VisualVoicemail.setMessageListStars(mStars.isChecked());
-        VisualVoicemail.setShowCorrespondentNames(mShowCorrespondentNames.isChecked());
-        VisualVoicemail.setMessageListSenderAboveSubject(mSenderAboveSubject.isChecked());
-        VisualVoicemail.setShowContactName(mShowContactName.isChecked());
+        //VisualVoicemail.setShowCorrespondentNames(mShowCorrespondentNames.isChecked());
+        //VisualVoicemail.setMessageListSenderAboveSubject(mSenderAboveSubject.isChecked());
+        //VisualVoicemail.setShowContactName(mShowContactName.isChecked());
         VisualVoicemail.setShowContactPicture(mShowContactPicture.isChecked());
         VisualVoicemail.setColorizeMissingContactPictures(mColorizeMissingContactPictures.isChecked());
         VisualVoicemail.setUseBackgroundAsUnreadIndicator(mBackgroundAsUnreadIndicator.isChecked());
-        VisualVoicemail.setThreadedViewEnabled(mThreadedView.isChecked());
+        /*VisualVoicemail.setThreadedViewEnabled(mThreadedView.isChecked());
         VisualVoicemail.setChangeContactNameColor(mChangeContactNameColor.isChecked());
         VisualVoicemail.setMessageViewFixedWidthFont(mFixedWidth.isChecked());
         VisualVoicemail.setMessageViewReturnToList(mReturnToList.isChecked());
         VisualVoicemail.setMessageViewShowNext(mShowNext.isChecked());
-        VisualVoicemail.setAutofitWidth(mAutofitWidth.isChecked());
+        VisualVoicemail.setAutofitWidth(mAutofitWidth.isChecked());*/
         VisualVoicemail.setQuietTimeEnabled(mQuietTimeEnabled.isChecked());
 
-        boolean[] enabledRefileActions = mVisibleRefileActions.getCheckedItems();
+        /*boolean[] enabledRefileActions = mVisibleRefileActions.getCheckedItems();
         VisualVoicemail.setMessageViewDeleteActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_DELETE]);
         VisualVoicemail.setMessageViewArchiveActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_ARCHIVE]);
         VisualVoicemail.setMessageViewMoveActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_MOVE]);
         VisualVoicemail.setMessageViewCopyActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_COPY]);
-        VisualVoicemail.setMessageViewSpamActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_SPAM]);
+        VisualVoicemail.setMessageViewSpamActionVisible(enabledRefileActions[VISIBLE_REFILE_ACTIONS_SPAM]);*/
 
         VisualVoicemail.setNotificationDuringQuietTimeEnabled(!mDisableNotificationDuringQuietTime.isChecked());
         VisualVoicemail.setQuietTimeStarts(mQuietTimeStarts.getTime());
         VisualVoicemail.setQuietTimeEnds(mQuietTimeEnds.getTime());
-        VisualVoicemail.setWrapFolderNames(mWrapFolderNames.isChecked());
+        //VisualVoicemail.setWrapFolderNames(mWrapFolderNames.isChecked());
 
         if (mNotificationQuickDelete != null) {
             VisualVoicemail.setNotificationQuickDeleteBehaviour(
@@ -511,7 +509,7 @@ public class Prefs extends K9PreferenceActivity {
                     VisualVoicemail.LockScreenNotificationVisibility.valueOf(mLockScreenNotificationVisibility.getValue()));
         }
 
-        VisualVoicemail.setSplitViewMode(SplitViewMode.valueOf(mSplitViewMode.getValue()));
+        //VisualVoicemail.setSplitViewMode(SplitViewMode.valueOf(mSplitViewMode.getValue()));
         VisualVoicemail.setAttachmentDefaultPath(mAttachmentPathPreference.getSummary().toString());
         boolean needsRefresh = VisualVoicemail.setBackgroundOps(mBackgroundOps.getValue());
 

@@ -1736,7 +1736,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View view = mInflater.inflate(R.layout.message_list_item, parent, false);
-            view.setId(R.layout.message_list_item);
+            view.setId(R.id.message_list_item);
 
             MessageViewHolder holder = new MessageViewHolder();
             holder.from = (TextView) view.findViewById(R.id.from);
@@ -1855,6 +1855,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }*/
 
             //boolean hasAttachments = (cursor.getInt(ATTACHMENT_COUNT_COLUMN) > 0);
+            boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
 
             MessageViewHolder holder = (MessageViewHolder) view.getTag();
 
@@ -1869,9 +1870,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 holder.selected.setChecked(selected);
             }
 
-            /*if (mStars) {
+            if (mStars) {
                 holder.flagged.setChecked(flagged);
-            }*/
+            }
             holder.position = cursor.getPosition();
 
             if (holder.contactBadge != null) {
@@ -2026,23 +2027,20 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         public TextView time;
         public View chip;
         //public TextView threadCount;
-        //public CheckBox flagged;
-        public CheckBox selected;
         public CheckBox flagged;
+        public CheckBox selected;
         public int position = -1;
         public QuickContactBadge contactBadge;
         @Override
         public void onClick(View view) {
             if (position != -1) {
-
                 switch (view.getId()) {
                     case R.id.selected_checkbox:
                         toggleMessageSelectWithAdapterPosition(position);
                         break;
-                    /*case R.id.flagged_bottom_right:
-                    case R.id.flagged_center_right:
+                    case R.id.flagged:
                         toggleMessageFlagWithAdapterPosition(position);
-                        break;*/
+                        break;
                 }
             }
         }
@@ -2052,7 +2050,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private View getFooterView(ViewGroup parent) {
         if (mFooterView == null) {
             mFooterView = mInflater.inflate(R.layout.message_list_item_footer, parent, false);
-            mFooterView.setId(R.layout.message_list_item_footer);
+            mFooterView.setId(R.id.message_list_item_footer);
             FooterViewHolder holder = new FooterViewHolder();
             holder.main = (TextView) mFooterView.findViewById(R.id.main_text);
             mFooterView.setTag(holder);

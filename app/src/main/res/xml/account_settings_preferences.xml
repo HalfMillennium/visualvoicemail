@@ -135,6 +135,12 @@
             android:entryValues="@array/account_setup_expunge_policy_values"
             android:dialogTitle="@string/account_setup_expunge_policy_label" />!-->
 
+        <CheckBoxPreference
+            android:persistent="false"
+            android:key="server_requires_cellular"
+            android:title="@string/server_requires_cellular"
+            android:summary="@string/server_requires_cellular_desc"/>
+
         <PreferenceScreen
             android:key="incoming"
             android:title="@string/account_settings_incoming_label"

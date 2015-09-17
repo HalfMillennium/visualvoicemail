@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.fsck.k9.mail.Store;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -106,6 +105,7 @@ public class AccountSettings extends K9PreferenceActivity {
     public static final int PREFERENCE_AUTO_CHECK_MISSED_CALL = 1;
     public static final int PREFERENCE_AUTO_CHECK_SMS = 2;
     public static final int PREFERENCE_AUTO_CHECK_PUSH = 3;
+    public static final String PREFERENCE_REQUIRES_CELLULAR = "server_requires_cellular";
 
     private Account mAccount;
     private boolean mIsMoveCapable = false;
@@ -176,6 +176,7 @@ public class AccountSettings extends K9PreferenceActivity {
     private ListPreference mSpamFolder;
     private ListPreference mTrashFolder;*/
     //private CheckBoxPreference mAlwaysShowCcBcc;
+    private CheckBoxPreference mRequiresCellular;
 
 
     public static void actionSettings(Context context, Account account) {
@@ -327,19 +328,19 @@ public class AccountSettings extends K9PreferenceActivity {
                 mAutoCheckMethod.setSummary(mAutoCheckMethod.getEntries()[index]);
                 mAutoCheckMethod.setValue(summary);
                 // If helper number available, show dialog
-                if (Integer.parseInt(mAutoCheckMethod.getValue())==PREFERENCE_AUTO_CHECK_SMS){
-                    if (mAccount.getProvider().helperNumbers.containsKey("notify_sms")){
+                if (Integer.parseInt(mAutoCheckMethod.getValue()) == PREFERENCE_AUTO_CHECK_SMS) {
+                    if (mAccount.getProvider().helperNumbers.containsKey("notify_sms")) {
                         String number = mAccount.getProvider().helperNumbers.get("notify_sms");
-                        showCallDialog("Would you like to enable SMS notifications by dialing "+number+" now?", number);
+                        showCallDialog("Would you like to enable SMS notifications by dialing " + number + " now?", number);
                     }
                 } else {
-                    if (Integer.parseInt(lastValue)==PREFERENCE_AUTO_CHECK_SMS){
-                        if (mAccount.getProvider().helperNumbers.containsKey("activate")){
+                    if (Integer.parseInt(lastValue) == PREFERENCE_AUTO_CHECK_SMS) {
+                        if (mAccount.getProvider().helperNumbers.containsKey("activate")) {
                             String number = mAccount.getProvider().helperNumbers.get("activate");
-                            showCallDialog("Would you like to disable SMS notifications by dialing "+number+" now?", number);
+                            showCallDialog("Would you like to disable SMS notifications by dialing " + number + " now?", number);
                         }
                     }
-                    if (Integer.parseInt(mAutoCheckMethod.getValue())==PREFERENCE_AUTO_CHECK_PUSH) {
+                    if (Integer.parseInt(mAutoCheckMethod.getValue()) == PREFERENCE_AUTO_CHECK_PUSH) {
                         mCheckFrequency.setValue("720");
                         mCheckFrequency.setSummary(R.string.account_setup_options_mail_check_frequency_12hour);
                         Toast.makeText(AccountSettings.this, "Manual fetch frequency reduced to save data", Toast.LENGTH_LONG).show();
@@ -348,6 +349,9 @@ public class AccountSettings extends K9PreferenceActivity {
                 return false;
             }
         });
+
+        mRequiresCellular = (CheckBoxPreference) findPreference(PREFERENCE_REQUIRES_CELLULAR);
+        mRequiresCellular.setChecked(mAccount.getRequiresCellular());
 
         /*mDisplayMode = (ListPreference) findPreference(PREFERENCE_DISPLAY_MODE);
         mDisplayMode.setValue(mAccount.getFolderDisplayMode().name());
@@ -846,6 +850,7 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         }
         //mAccount.setShowPictures(ShowPictures.valueOf(mAccountShowPictures.getValue()));
+        mAccount.setRequiresCellular(mRequiresCellular.isChecked());
 
         boolean needsRefresh = mAccount.setAutomaticCheckIntervalMinutes(Integer.parseInt(mCheckFrequency.getValue()));
         int autoCheck = Integer.parseInt(mAutoCheckMethod.getValue());

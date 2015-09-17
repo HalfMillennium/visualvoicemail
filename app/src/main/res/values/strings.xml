@@ -295,7 +295,7 @@
     <string name="global_settings_confirm_menu_discard">Discard message</string>
     <string name="global_settings_confirm_action_delete_notif">Delete (from notification)</string>
 
-    <string name="global_settings_privacy_hide_useragent">Remove K-9 User-Agent from mail headers</string>
+    <string name="global_settings_privacy_hide_useragent">Remove User-Agent from mail headers</string>
     <string name="global_settings_privacy_hide_timezone">Use UTC as time zone in mail headers</string>
     <string name="global_settings_notification_hide_subject_title">Hide subject in notifications</string>
     <string name="global_settings_notification_hide_subject_never">Never</string>
@@ -1166,5 +1166,7 @@
     <string name="account_setup_options_auto_check_missedcall">After Missed Calls</string>
     <string name="account_setup_options_auto_check_sms">After SMS Alert</string>
     <string name="account_setup_options_auto_check_push">Use Push</string>
+    <string name="server_requires_cellular">Cellular Network Required</string>
+    <string name="server_requires_cellular_desc">Cellular required for server access</string>
 
 </resources>
