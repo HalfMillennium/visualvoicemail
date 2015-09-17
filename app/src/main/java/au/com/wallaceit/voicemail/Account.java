@@ -159,8 +159,8 @@ public class Account implements BaseAccount, StoreConfig {
 
     public static final SortType DEFAULT_SORT_TYPE = SortType.SORT_DATE;
     public static final boolean DEFAULT_SORT_ASCENDING = false;
-    public static final String NO_OPENPGP_PROVIDER = "";
-    public static final long NO_OPENPGP_KEY = 0;
+    //public static final String NO_OPENPGP_PROVIDER = "";
+    //public static final long NO_OPENPGP_KEY = 0;
 
     private DeletePolicy mDeletePolicy = DeletePolicy.NEVER;
 
@@ -190,16 +190,16 @@ public class Account implements BaseAccount, StoreConfig {
     private String mArchiveFolderName;
     private String mSpamFolderName;
     private String mAutoExpandFolderName;
-    private FolderMode mFolderDisplayMode;
-    private FolderMode mFolderSyncMode;
-    private FolderMode mFolderPushMode;
-    private FolderMode mFolderTargetMode;
+    //private FolderMode mFolderDisplayMode;
+    //private FolderMode mFolderSyncMode;
+    //private FolderMode mFolderPushMode;
+    //private FolderMode mFolderTargetMode;
     private int mAccountNumber;
     private boolean mPushPollOnConnect;
     private boolean mNotifySync;
     private SortType mSortType;
     private Map<SortType, Boolean> mSortAscending = new HashMap<SortType, Boolean>();
-    private ShowPictures mShowPictures;
+    //private ShowPictures mShowPictures;
     private boolean mIsSignatureBeforeQuotedText;
     private Expunge mExpungePolicy = Expunge.EXPUNGE_IMMEDIATELY;
     private int mMaxPushFolders;
@@ -272,9 +272,9 @@ public class Account implements BaseAccount, StoreConfig {
         NONE, ALL, FIRST_CLASS, FIRST_AND_SECOND_CLASS, NOT_SECOND_CLASS
     }
 
-    public enum ShowPictures {
+    /*public enum ShowPictures {
         NEVER, ALWAYS, ONLY_FROM_CONTACTS
-    }
+    }*/
 
     public enum Searchable {
         ALL, DISPLAYABLE, NONE
@@ -301,13 +301,13 @@ public class Account implements BaseAccount, StoreConfig {
         mFolderNotifyNewMailMode = FolderMode.ALL;
         mNotifySync = true;
         //mNotifySelfNewMail = true;
-        mFolderDisplayMode = FolderMode.NOT_SECOND_CLASS;
-        mFolderSyncMode = FolderMode.FIRST_CLASS;
-        mFolderPushMode = FolderMode.FIRST_CLASS;
-        mFolderTargetMode = FolderMode.NOT_SECOND_CLASS;
+        //mFolderDisplayMode = FolderMode.NOT_SECOND_CLASS;
+        //mFolderSyncMode = FolderMode.FIRST_CLASS;
+        //mFolderPushMode = FolderMode.FIRST_CLASS;
+        //mFolderTargetMode = FolderMode.NOT_SECOND_CLASS;
         mSortType = DEFAULT_SORT_TYPE;
         mSortAscending.put(DEFAULT_SORT_TYPE, DEFAULT_SORT_ASCENDING);
-        mShowPictures = ShowPictures.ALWAYS;
+        //mShowPictures = ShowPictures.ALWAYS;
         mIsSignatureBeforeQuotedText = false;
         mExpungePolicy = Expunge.EXPUNGE_IMMEDIATELY;
         mAutoExpandFolderName = INBOX;
@@ -454,7 +454,7 @@ public class Account implements BaseAccount, StoreConfig {
 
         mSortAscending.put(mSortType, prefs.getBoolean(mUuid + ".sortAscending", false));
 
-        mShowPictures = getEnumStringPref(prefs, mUuid + ".showPicturesEnum", ShowPictures.NEVER);
+        //mShowPictures = getEnumStringPref(prefs, mUuid + ".showPicturesEnum", ShowPictures.NEVER);
 
         mNotificationSetting.setVibrate(prefs.getBoolean(mUuid + ".vibrate", false));
         mNotificationSetting.setVibratePattern(prefs.getInt(mUuid + ".vibratePattern", 0));
@@ -465,13 +465,13 @@ public class Account implements BaseAccount, StoreConfig {
         mNotificationSetting.setLed(prefs.getBoolean(mUuid + ".led", true));
         mNotificationSetting.setLedColor(prefs.getInt(mUuid + ".ledColor", mChipColor));
 
-        mFolderDisplayMode = getEnumStringPref(prefs, mUuid  + ".folderDisplayMode", FolderMode.NOT_SECOND_CLASS);
+        //mFolderDisplayMode = getEnumStringPref(prefs, mUuid  + ".folderDisplayMode", FolderMode.NOT_SECOND_CLASS);
 
-        mFolderSyncMode = getEnumStringPref(prefs, mUuid  + ".folderSyncMode", FolderMode.FIRST_CLASS);
+        //mFolderSyncMode = getEnumStringPref(prefs, mUuid  + ".folderSyncMode", FolderMode.ALL);
 
-        mFolderPushMode = getEnumStringPref(prefs, mUuid  + ".folderPushMode", FolderMode.FIRST_CLASS);
+        //mFolderPushMode = getEnumStringPref(prefs, mUuid  + ".folderPushMode", FolderMode.ALL);
 
-        mFolderTargetMode = getEnumStringPref(prefs, mUuid  + ".folderTargetMode", FolderMode.NOT_SECOND_CLASS);
+        //mFolderTargetMode = getEnumStringPref(prefs, mUuid  + ".folderTargetMode", FolderMode.NOT_SECOND_CLASS);
 
         searchableFolders = getEnumStringPref(prefs, mUuid + ".searchableFolders", Searchable.ALL);
 
@@ -724,11 +724,11 @@ public class Account implements BaseAccount, StoreConfig {
         editor.putInt(mUuid + ".accountNumber", mAccountNumber);
         editor.putString(mUuid + ".sortTypeEnum", mSortType.name());
         editor.putBoolean(mUuid + ".sortAscending", mSortAscending.get(mSortType));
-        editor.putString(mUuid + ".showPicturesEnum", mShowPictures.name());
-        editor.putString(mUuid + ".folderDisplayMode", mFolderDisplayMode.name());
-        editor.putString(mUuid + ".folderSyncMode", mFolderSyncMode.name());
-        editor.putString(mUuid + ".folderPushMode", mFolderPushMode.name());
-        editor.putString(mUuid + ".folderTargetMode", mFolderTargetMode.name());
+        //editor.putString(mUuid + ".showPicturesEnum", mShowPictures.name());
+        //editor.putString(mUuid + ".folderDisplayMode", mFolderDisplayMode.name());
+        //editor.putString(mUuid + ".folderSyncMode", mFolderSyncMode.name());
+        //editor.putString(mUuid + ".folderPushMode", mFolderPushMode.name());
+        //editor.putString(mUuid + ".folderTargetMode", mFolderTargetMode.name());
         editor.putBoolean(mUuid + ".signatureBeforeQuotedText", this.mIsSignatureBeforeQuotedText);
         editor.putString(mUuid + ".expungePolicy", mExpungePolicy.name());
         editor.putBoolean(mUuid + ".syncRemoteDeletions", mSyncRemoteDeletions);
@@ -1244,20 +1244,20 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized FolderMode getFolderDisplayMode() {
-        return mFolderDisplayMode;
+        return FolderMode.ALL;
     }
 
-    public synchronized boolean setFolderDisplayMode(FolderMode displayMode) {
+    /*public synchronized boolean setFolderDisplayMode(FolderMode displayMode) {
         FolderMode oldDisplayMode = mFolderDisplayMode;
         mFolderDisplayMode = displayMode;
         return oldDisplayMode != displayMode;
-    }
+    }*/
 
     public synchronized FolderMode getFolderSyncMode() {
-        return mFolderSyncMode;
+        return FolderMode.ALL;
     }
 
-    public synchronized boolean setFolderSyncMode(FolderMode syncMode) {
+    /*public synchronized boolean setFolderSyncMode(FolderMode syncMode) {
         FolderMode oldSyncMode = mFolderSyncMode;
         mFolderSyncMode = syncMode;
 
@@ -1268,18 +1268,18 @@ public class Account implements BaseAccount, StoreConfig {
             return true;
         }
         return false;
-    }
+    }*/
 
     public synchronized FolderMode getFolderPushMode() {
-        return mFolderPushMode;
+        return FolderMode.ALL;
     }
 
-    public synchronized boolean setFolderPushMode(FolderMode pushMode) {
+    /*public synchronized boolean setFolderPushMode(FolderMode pushMode) {
         FolderMode oldPushMode = mFolderPushMode;
 
         mFolderPushMode = pushMode;
         return pushMode != oldPushMode;
-    }
+    }*/
 
     public synchronized boolean isShowOngoing() {
         return mNotifySync;
@@ -1308,21 +1308,21 @@ public class Account implements BaseAccount, StoreConfig {
         mSortAscending.put(sortType, sortAscending);
     }
 
-    public synchronized ShowPictures getShowPictures() {
+    /*public synchronized ShowPictures getShowPictures() {
         return mShowPictures;
     }
 
     public synchronized void setShowPictures(ShowPictures showPictures) {
         mShowPictures = showPictures;
-    }
+    }*/
 
     public synchronized FolderMode getFolderTargetMode() {
-        return mFolderTargetMode;
+        return FolderMode.ALL;
     }
 
-    public synchronized void setFolderTargetMode(FolderMode folderTargetMode) {
+    /*public synchronized void setFolderTargetMode(FolderMode folderTargetMode) {
         mFolderTargetMode = folderTargetMode;
-    }
+    }*/
 
     public synchronized boolean isSignatureBeforeQuotedText() {
         return mIsSignatureBeforeQuotedText;

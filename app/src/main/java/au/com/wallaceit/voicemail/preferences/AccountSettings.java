@@ -13,7 +13,6 @@ import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.Account.FolderMode;
 import au.com.wallaceit.voicemail.Account.Searchable;
-import au.com.wallaceit.voicemail.Account.ShowPictures;
 import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.R;
@@ -171,10 +170,10 @@ public class AccountSettings {
         s.put("sortAscending", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(Account.DEFAULT_SORT_ASCENDING))
         ));
-        s.put("showPicturesEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
+        /*s.put("showPicturesEnum", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new EnumSetting<ShowPictures>(
                         ShowPictures.class, ShowPictures.NEVER))
-        ));
+        ));*/
         s.put("signatureBeforeQuotedText", au.com.wallaceit.voicemail.preferences.Settings.versions(
                 new V(1, new BooleanSetting(false))
         ));

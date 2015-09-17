@@ -533,7 +533,7 @@
 
     <string name="account_settings_general_title">General settings</string>
     <string name="account_settings_reading_mail">Reading mail</string>
-    <string name="account_settings_sync">Fetching mail</string>
+    <string name="account_settings_sync">Sync Settings</string>
     <string name="account_settings_folders">Folders</string>
     <string name="account_settings_quote_prefix_label">Quoted text prefix</string>
     <string name="account_settings_crypto">Cryptography</string>
@@ -1162,5 +1162,9 @@
     <string name="call_action">Call</string>
     <string name="share_action">Share</string>
     <string name="save_action">Save</string>
+    <string name="account_setup_options_auto_check_fetchonly">Fetch Only</string>
+    <string name="account_setup_options_auto_check_missedcall">After Missed Calls</string>
+    <string name="account_setup_options_auto_check_sms">After SMS Alert</string>
+    <string name="account_setup_options_auto_check_push">Use Push</string>
 
 </resources>

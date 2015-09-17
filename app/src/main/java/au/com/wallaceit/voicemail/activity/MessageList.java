@@ -674,15 +674,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             return false;
         }
 
-        switch (itemId) {
-            case R.id.send_messages: {
-                mMessageListFragment.onSendPendingMessages();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

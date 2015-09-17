@@ -15,6 +15,7 @@ import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Pusher;
@@ -356,7 +357,7 @@ public class MailService extends CoreService {
         for (Account account : Preferences.getPreferences(au.com.wallaceit.voicemail.service.MailService.this).getAccounts()) {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "Setting up pushers for account " + account.getDescription());
-            if (account.isEnabled() && account.isAvailable(getApplicationContext())) {
+            if (account.getAutomaticCheckMethod()==AccountSettings.PREFERENCE_AUTO_CHECK_PUSH && (account.isEnabled() && account.isAvailable(getApplicationContext()))) {
                 pushing |= MessagingController.getInstance(getApplication()).setupPushing(account);
             } else {
                 //TODO: setupPushing of unavailable accounts when they become available (sd-card inserted)

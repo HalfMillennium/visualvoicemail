@@ -311,27 +311,19 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     	}
     	
     	Log.i(TAG, "OnActivityResult: recieved " + strResCode);
-    	
- 
-    	// Turn back on the WiFi if we turned it off
    	
-    	if ( (resCode == RESULT_OK) && mAccount.validated )
-        {
+    	if ( (resCode == RESULT_OK) && mAccount.validated ){
             mAccount.save(Preferences.getPreferences(this));
             VisualVoicemail.setServicesEnabled(this);
             Intent intent = new Intent(AccountSetup.this, Accounts.class);
             startActivity(intent);
-            //setResult(RESULT_OK);
             finish();
-       	}
-        else
-        {
+       	} else {
         	// we added an added an account so now we need to remove it
         	if (mAccount != null)
         		Preferences.getPreferences(this).deleteAccount(mAccount);
         }
     }
-
 
     public void onClick(View v)
     {

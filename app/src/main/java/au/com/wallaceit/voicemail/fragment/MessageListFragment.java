@@ -1410,25 +1410,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             return false;
         }
 
-        switch (itemId) {
-        case R.id.send_messages: {
-            onSendPendingMessages();
-            return true;
-        }
-        /*case R.id.expunge: {
-            if (mCurrentFolder != null) {
-                onExpunge(mAccount, mCurrentFolder.name);
-            }
-            return true;
-        }*/
-        default: {
-            return super.onOptionsItemSelected(item);
-        }
-        }
-    }
-
-    public void onSendPendingMessages() {
-        mController.sendPendingMessages(mAccount, null);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

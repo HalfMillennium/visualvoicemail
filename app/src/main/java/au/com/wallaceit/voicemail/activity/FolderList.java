@@ -405,7 +405,7 @@ public class FolderList extends K9ListActivity {
             return true;
         }
 
-        case KeyEvent.KEYCODE_1: {
+        /*case KeyEvent.KEYCODE_1: {
             setDisplayMode(FolderMode.FIRST_CLASS);
             return true;
         }
@@ -420,14 +420,14 @@ public class FolderList extends K9ListActivity {
         case KeyEvent.KEYCODE_4: {
             setDisplayMode(FolderMode.ALL);
             return true;
-        }
+        }*/
         }//switch
 
 
         return super.onKeyDown(keyCode, event);
     }//onKeyDown
 
-    private void setDisplayMode(FolderMode newMode) {
+    /*private void setDisplayMode(FolderMode newMode) {
         mAccount.setFolderDisplayMode(newMode);
         mAccount.save(Preferences.getPreferences(this));
         if (mAccount.getFolderPushMode() != FolderMode.NONE) {
@@ -435,7 +435,7 @@ public class FolderList extends K9ListActivity {
         }
         mAdapter.getFilter().filter(null);
         onRefresh(false);
-    }
+    }*/
 
 
     private void onRefresh(final boolean forceRemote) {
@@ -509,11 +509,6 @@ public class FolderList extends K9ListActivity {
 
             return true;
 
-        case R.id.send_messages:
-            MessagingController.getInstance(getApplication()).sendPendingMessages(mAccount, null);
-
-            return true;
-
         case R.id.list_folders:
             onRefresh(REFRESH_REMOTE);
 
@@ -539,22 +534,6 @@ public class FolderList extends K9ListActivity {
 
             return true;
 
-        case R.id.display_1st_class: {
-            setDisplayMode(FolderMode.FIRST_CLASS);
-            return true;
-        }
-        case R.id.display_1st_and_2nd_class: {
-            setDisplayMode(FolderMode.FIRST_AND_SECOND_CLASS);
-            return true;
-        }
-        case R.id.display_not_second_class: {
-            setDisplayMode(FolderMode.NOT_SECOND_CLASS);
-            return true;
-        }
-        case R.id.display_all: {
-            setDisplayMode(FolderMode.ALL);
-            return true;
-        }
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -882,31 +861,6 @@ public class FolderList extends K9ListActivity {
                 if (account.equals(mAccount)) {
                     refreshFolder(account, folderName);
                     informUserOfStatus();
-                }
-            }
-
-            @Override
-            public void sendPendingMessagesCompleted(Account account) {
-                super.sendPendingMessagesCompleted(account);
-                if (account.equals(mAccount)) {
-                    refreshFolder(account, mAccount.getOutboxFolderName());
-                }
-            }
-
-            @Override
-            public void sendPendingMessagesStarted(Account account) {
-                super.sendPendingMessagesStarted(account);
-
-                if (account.equals(mAccount)) {
-                    mHandler.dataChanged();
-                }
-            }
-
-            @Override
-            public void sendPendingMessagesFailed(Account account) {
-                super.sendPendingMessagesFailed(account);
-                if (account.equals(mAccount)) {
-                    refreshFolder(account, mAccount.getOutboxFolderName());
                 }
             }
 

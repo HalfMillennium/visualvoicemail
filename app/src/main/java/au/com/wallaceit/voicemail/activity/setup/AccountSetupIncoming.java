@@ -19,6 +19,8 @@ import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.FolderMode;
 
 import com.fsck.k9.mail.NetworkType;
+
+import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import au.com.wallaceit.voicemail.helper.Utility;
@@ -488,52 +490,39 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ( (resultCode == RESULT_OK) && mAccount.validated ){
+            mAccount.save(Preferences.getPreferences(this));
+            VisualVoicemail.setServicesEnabled(this);
+            Intent intent = new Intent(AccountSetupIncoming.this, Accounts.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // we added an added an account so now we need to remove it
+
+        }
         if (resultCode == RESULT_OK) {
             if (Intent.ACTION_EDIT.equals(getIntent().getAction())) {
-                boolean isPushCapable = false;
-                try {
-                    Store store = mAccount.getRemoteStore();
-                    isPushCapable = store.isPushCapable();
-                } catch (Exception e) {
-                    Log.e(VisualVoicemail.LOG_TAG, "Could not get remote store", e);
-                }
-                if (isPushCapable && mAccount.getFolderPushMode() != FolderMode.NONE) {
-                    MailService.actionRestartPushers(this, null);
-                }
-                mAccount.save(Preferences.getPreferences(this));
-                finish();
-            } else {
-                /*
-                 * Set the username and password for the outgoing settings to the username and
-                 * password the user just set for incoming.
-                 */
-                /*try {
-                    String username = mUsernameView.getText().toString();
-
-                    String password = null;
-                    String clientCertificateAlias = null;
-                    AuthType authType = getSelectedAuthType();
-                    if (AuthType.EXTERNAL == authType) {
-                        clientCertificateAlias = mClientCertificateSpinner.getAlias();
-                    } else {
-                        password = mPasswordView.getText().toString();
+                    boolean isPushCapable = false;
+                    try {
+                        Store store = mAccount.getRemoteStore();
+                        isPushCapable = store.isPushCapable();
+                    } catch (Exception e) {
+                        Log.e(VisualVoicemail.LOG_TAG, "Could not get remote store", e);
                     }
-
-                    /URI oldUri = new URI(mAccount.getTransportUri());
-                    ServerSettings transportServer = new ServerSettings(Type.SMTP, oldUri.getHost(), oldUri.getPort(),
-                            ConnectionSecurity.SSL_TLS_REQUIRED, authType, username, password, clientCertificateAlias);
-                    String transportUri = Transport.createTransportUri(transportServer);
-                    mAccount.setTransportUri(transportUri);
-                } catch (URISyntaxException use) {*/
-                    /*
-                     * If we can't set up the URL we just continue. It's only for
-                     * convenience.
-                     */
-                //}
-
-
-                //AccountSetupOutgoing.actionOutgoingSettings(this, mAccount, mMakeDefault);
+                    if (isPushCapable && mAccount.getFolderPushMode() != FolderMode.NONE) {
+                        MailService.actionRestartPushers(this, null);
+                    }
+                    mAccount.save(Preferences.getPreferences(this));
+                    finish();
+            } else {
+                // first time setup, return to AccountSetup activity to save account
+                setResult(RESULT_OK);
                 finish();
+            }
+        } else {
+            if (!Intent.ACTION_EDIT.equals(getIntent().getAction())){ // remove account if failed initial setup
+                if (mAccount != null)
+                    Preferences.getPreferences(this).deleteAccount(mAccount);
             }
         }
     }
