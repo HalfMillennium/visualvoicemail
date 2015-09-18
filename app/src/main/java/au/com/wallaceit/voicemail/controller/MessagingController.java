@@ -4768,12 +4768,11 @@ public class MessagingController implements Runnable {
 
         builder.setNumber(unreadCount);
 
-        String accountDescr = (account.getDescription() != null) ?
-                account.getDescription() : account.getPhoneNumber();
+        //String accountDescr = (account.getDescription() != null) ? account.getDescription() : account.getPhoneNumber();
         final ArrayList<MessageReference> allRefs = new ArrayList<MessageReference>();
         data.supplyAllMessageRefs(allRefs);
 
-        if (platformSupportsExtendedNotifications() && !privacyModeEnabled) {
+        /*if (platformSupportsExtendedNotifications() && !privacyModeEnabled) {
             if (newMessages > 1) {
                 // multiple messages pending, show inbox style
                 NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
@@ -4811,6 +4810,11 @@ public class MessagingController implements Runnable {
                     context.getString(R.string.notification_action_reply),
                     NotificationActionService.getReplyIntent(context, account, message.makeMessageReference()));
             }
+
+            builder.setContentText(subject);
+            builder.setSubText(accountDescr);
+            builder.setContentTitle(sender);
+            builder.setStyle(style);
 
             // Mark Read on phone
             builder.addAction(
@@ -4870,12 +4874,12 @@ public class MessagingController implements Runnable {
                                 .build();
                 builder.extend(wearableExtender.addAction(wearActionSpam));
             }
-        } else {
-            String accountNotice = context.getString(R.string.notification_new_one_account_fmt,
-                    unreadCount, accountDescr);
+        } else {*/
+            String accountNotice = context.getString(R.string.notification_new_one_account_fmt, unreadCount,
+                    context.getResources().getQuantityString(R.plurals.voicemail_plurals, unreadCount));
             builder.setContentTitle(accountNotice);
-            builder.setContentText(summary);
-        }
+            //builder.setContentText(summary);
+        //}
 
         for (Message m : data.messages) {
             if (m.isSet(Flag.FLAGGED)) {
@@ -4887,14 +4891,14 @@ public class MessagingController implements Runnable {
         TaskStackBuilder stack;
         boolean treatAsSingleMessageNotification;
 
-        if (platformSupportsExtendedNotifications()) {
+        /*if (platformSupportsExtendedNotifications()) {
             // in the new-style notifications, we focus on the new messages, not the unread ones
             treatAsSingleMessageNotification = newMessages == 1;
-        } else {
+        } else {*/
             // in the old-style notifications, we focus on unread messages, as we don't have a
             // good way to express the new message count
             treatAsSingleMessageNotification = unreadCount == 1;
-        }
+        //}
 
         if (treatAsSingleMessageNotification) {
             stack = buildMessageViewBackStack(context, message.makeMessageReference());
@@ -4927,7 +4931,7 @@ public class MessagingController implements Runnable {
 
         NotificationSetting n = account.getNotificationSetting();
 
-        configureLockScreenNotification(builder, context, account, newMessages, unreadCount, accountDescr, sender, data.messages);
+        configureLockScreenNotification(builder, context, account, newMessages, unreadCount, "", sender, data.messages);
 
         configureNotification(
                 builder,
@@ -5084,7 +5088,7 @@ public class MessagingController implements Runnable {
                 // This is the Android default, but we should be explicit in case that changes in the future.
                 builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
                 break;
-            case SENDERS:
+            /*case SENDERS:
                 if (newMessages == 1) {
                     publicNotification.setContentText(formattedSender);
                 } else {
@@ -5103,7 +5107,7 @@ public class MessagingController implements Runnable {
                 break;
             case EVERYTHING:
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-                break;
+                break;*/
             case MESSAGE_COUNT:
             default:
                 publicNotification.setContentText(accountDescription);
