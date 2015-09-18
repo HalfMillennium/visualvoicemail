@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -1477,12 +1478,64 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 onCopy(getMessageAtPosition(adapterPosition));
                 break;
             }
+
+            case R.id.open_external_player:
+                mFragmentListener.openMessage(getReferenceForPosition(adapterPosition));
+                break;
+
+            case R.id.add_to_contacts:
+                onAddToContacts(getMessageAtPosition(adapterPosition));
+                break;
+
+            case R.id.share:
+                mFragmentListener.shareMessage(getReferenceForPosition(adapterPosition));
+                break;
+
+            case R.id.save:
+                mFragmentListener.saveMessage(getReferenceForPosition(adapterPosition));
+                break;
+
+            case R.id.call:
+                onCall(getMessageAtPosition(adapterPosition));
+                break;
         }
 
         mContextMenuUniqueId = 0;
         return true;
     }
 
+    public void onCall(Message message) {
+        if (message != null) {
+            Address addresses[] = message.getFrom();
+            // there should only be one from address
+            if ( addresses.length > 0){
+                VvmContacts vvmContacts = new VvmContacts(getActivity());
+                String number = vvmContacts.extractPhoneFromVoicemailAddress(addresses[0]);
+                if (vvmContacts.isPhoneNumberValid(number)) {
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:" + number));
+                    startActivity(intent);
+                }
+            }
+        }
+    }
+
+    public void onAddToContacts(Message message) {
+        if (message != null) {
+            Address addresses[] = message.getFrom();
+            // there should only be one from address
+            if ( addresses.length > 0) {
+                VvmContacts vvmContacts = new VvmContacts(getActivity());
+                String number = vvmContacts.extractPhoneFromVoicemailAddress(addresses[0]);
+                if (vvmContacts.isPhoneNumberValid(number)) {
+                    Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+                    intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+                    intent.putExtra(ContactsContract.Intents.Insert.PHONE, number);
+                    startActivity(intent);
+                }
+            }
+        }
+    }
 
     private static String getSenderAddressFromCursor(Cursor cursor) {
         String fromList = cursor.getString(SENDER_LIST_COLUMN);
@@ -1817,22 +1870,31 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //Address[] toAddrs = Address.unpack(toList);
             //Address[] ccAddrs = Address.unpack(ccList);
 
-            boolean fromMe = mMessageHelper.toMe(account, fromAddrs);
+            //boolean fromMe = mMessageHelper.toMe(account, fromAddrs);
             //boolean toMe = mMessageHelper.toMe(account, toAddrs);
             //boolean ccMe = mMessageHelper.toMe(account, ccAddrs);
 
             // try to extract phone number from voicemail address
-            String fromNumber = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
+            Address contactLookupAddress = null;
+            String fromName= "Unknown";
+            String fromNumber = "";
+            if (fromAddrs.length > 0) {
+                contactLookupAddress = fromAddrs[0];
+                fromNumber = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
+                fromName = vvmContacts.getDisplayName(fromNumber);
+                contactLookupAddress.setAddress(fromNumber);
+                contactLookupAddress.setPersonal(fromName);
+            }
 
             CharSequence displayNumber = vvmContacts.getFormattedPhone(fromNumber, !read);
-            CharSequence displayName = vvmContacts.getFormattedDisplayName(fromNumber, !read);
+            CharSequence displayName = vvmContacts.getFormattedDisplayName(fromName, !read);
             //CharSequence displayDate = DateUtils.getRelativeTimeSpanString(context, cursor.getLong(DATE_COLUMN));
             Date sentDate = new Date(cursor.getLong(DATE_COLUMN));
             CharSequence displayRelativeDate = mMessageHelper.formatRelativeDate(sentDate);
             CharSequence displayDate = mMessageHelper.formatDate(sentDate);
             CharSequence displayTime = mMessageHelper.formatTime(sentDate);
 
-            Address counterpartyAddress = null;
+
             /*if (fromMe) {
                 if (toAddrs.length > 0) {
                     counterpartyAddress = toAddrs[0];
@@ -1840,9 +1902,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     counterpartyAddress = ccAddrs[0];
                 }
             } else*/
-            if (fromAddrs.length > 0) {
-                counterpartyAddress = fromAddrs[0];
-            }
+
 
             //int threadCount = (mThreadedList) ? cursor.getInt(THREAD_COUNT_COLUMN) : 0;
 
@@ -1876,15 +1936,15 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             holder.position = cursor.getPosition();
 
             if (holder.contactBadge != null) {
-                if (counterpartyAddress != null) {
-                    holder.contactBadge.assignContactFromEmail(counterpartyAddress.getAddress(), true);
+                if (contactLookupAddress != null) {
+                    holder.contactBadge.assignContactFromPhone(contactLookupAddress.getAddress(), true);
                     /*
                      * At least in Android 2.2 a different background + padding is used when no
                      * email address is available. ListView reuses the views but QuickContactBadge
                      * doesn't reset the padding, so we do it ourselves.
                      */
                     holder.contactBadge.setPadding(0, 0, 0, 0);
-                    mContactsPictureLoader.loadContactPicture(counterpartyAddress, holder.contactBadge);
+                    mContactsPictureLoader.loadContactPicture(contactLookupAddress, holder.contactBadge);
                 } else {
                     holder.contactBadge.assignContactUri(null);
                     holder.contactBadge.setImageResource(R.drawable.ic_contact_picture);
@@ -3020,6 +3080,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         void showMoreFromSameSender(String senderAddress);
         void playMessage(MessageReference messageReference);
         void openMessage(MessageReference messageReference);
+        void saveMessage(MessageReference messageReference);
+        void shareMessage(MessageReference messageReference);
         void setMessageListTitle(String title);
         void setMessageListSubTitle(String subTitle);
         void setUnreadCount(int unread);

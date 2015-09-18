@@ -29,9 +29,23 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.MessagingException;
+import com.fsck.k9.mail.internet.MimeUtility;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.SortType;
@@ -45,9 +59,15 @@ import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragmentListener;
+import au.com.wallaceit.voicemail.helper.MediaScannerNotifier;
 import au.com.wallaceit.voicemail.helper.PlayerUtilities;
+import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.helper.VoicemailAttachmentHelper;
+import au.com.wallaceit.voicemail.helper.VvmContacts;
+import au.com.wallaceit.voicemail.mailstore.LocalMessage;
+import au.com.wallaceit.voicemail.mailstore.LocalPart;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
+import au.com.wallaceit.voicemail.provider.AttachmentProvider;
 import au.com.wallaceit.voicemail.search.LocalSearch;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 import au.com.wallaceit.voicemail.search.SearchSpecification;
@@ -882,25 +902,26 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void openMessage(MessageReference messageReference) {
-        /*Preferences prefs = Preferences.getPreferences(getApplicationContext());
-        Account account = prefs.getAccount(messageReference.getAccountUuid());
-        String folderName = messageReference.getFolderName();
-
-        mMessageViewContainer.removeView(mMessageViewPlaceHolder);
-
-        if (mMessageListFragment != null) {
-            mMessageListFragment.setActiveMessage(messageReference);
+        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        if (attachmentHelper.loadVoicemailAttachment()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            // We explicitly set the ContentType in addition to the URI because some attachment viewers (such as Polaris office 3.0.x) choke on documents without a mime type
+            String contentType = attachmentHelper.getAttachment().getMimeType();
+            intent.setDataAndType(attachmentHelper.getAttachmentUriForSharing(), contentType);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                // mContext.startActivity(intent);
+                this.startActivity(intent);
+            } catch (Exception e) {
+                Log.e(VisualVoicemail.LOG_TAG, "Could not display attachment of type " + contentType, e);
+                Toast toast = Toast.makeText(MessageList.this, getString(R.string.message_view_no_viewer, contentType), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        } else {
+            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+            toast.show();
         }
-
-        MessageViewFragment fragment = MessageViewFragment.newInstance(messageReference);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.message_view_container, fragment);
-        mMessageViewFragment = fragment;
-        ft.commit();
-
-        if (mDisplayMode != DisplayMode.SPLIT_VIEW) {
-            showMessageView();
-        }*/
     }
 
     @Override
@@ -910,7 +931,65 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             AudioPlayerDialog dialog = new AudioPlayerDialog(MessageList.this, attachmentHelper.getCacheUri());
             dialog.show();
         } else {
-            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail, please try refreshing");
+            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
+    @Override
+    public void saveMessage(MessageReference messageReference) {
+        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        if (attachmentHelper.loadVoicemailAttachment()) {
+            File directory = new File(VisualVoicemail.getAttachmentDefaultPath());
+            if (!directory.exists()) directory.mkdirs();
+            File file = Utility.createUniqueFile(directory, attachmentHelper.getUniqueAttachmentFilename());
+            try {
+                InputStream in = attachmentHelper.getAttachmentInputStream();
+                OutputStream out = new FileOutputStream(file);
+                IOUtils.copy(in, out);
+                out.flush();
+                out.close();
+                in.close();
+                // Notify that the file was saved
+                Toast.makeText(MessageList.this, String.format(getString(R.string.message_view_status_attachment_saved), file.toString()), Toast.LENGTH_LONG).show();
+                //new MediaScannerNotifier(MessageList.this, file.toString());
+                return;
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(MessageList.this, "Failed to save the voicemail", Toast.LENGTH_LONG).show();
+        } else {
+            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
+    @Override
+    public void shareMessage(MessageReference messageReference) {
+        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        if (attachmentHelper.loadVoicemailAttachment()) {
+            LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
+            VvmContacts vvmContacts = new VvmContacts(MessageList.this);
+            String phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+            String name = vvmContacts.getDisplayName(phone);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy H:mm", Locale.ENGLISH);
+            String dateStr = sdf.format(message.getSentDate());
+            String mimetype = attachmentHelper.getAttachment().getMimeType();
+            //Use a chooser to decide whether email or mms
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Voicemail from " + (phone.equals(name)?phone:name+" "+phone)+" at "+dateStr);
+            intent.putExtra(Intent.EXTRA_STREAM,  attachmentHelper.getAttachmentUriForSharing());
+            intent.setType(mimetype);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            startActivity(intent);
+        } else {
+            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
             Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
             toast.show();
         }
@@ -936,12 +1015,12 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void onSwipeRightToLeft(MotionEvent e1, MotionEvent e2) {
-
+        mMessageListFragment.onSwipeRightToLeft(e1, e2);
     }
 
     @Override
     public void onSwipeLeftToRight(MotionEvent e1, MotionEvent e2) {
-
+        mMessageListFragment.onSwipeLeftToRight(e1, e2);
     }
 
     private final class StorageListenerImplementation implements StorageManager.StorageListener {

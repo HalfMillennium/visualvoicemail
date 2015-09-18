@@ -21,6 +21,7 @@ package au.com.wallaceit.voicemail.helper;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.fsck.k9.mail.FetchProfile;
@@ -36,10 +37,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.BuildConfig;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;
@@ -56,23 +61,29 @@ public class VoicemailAttachmentHelper {
     private final MessagingController controller;
     private final MessageReference reference;
     private Part attachment;
+    private String phone;
+    private Date date;
 
     public VoicemailAttachmentHelper(Context context, MessagingController controller, MessageReference reference) {
         this.context = context;
         this.controller = controller;
         this.reference = reference;
+        LocalMessage message = reference.restoreToLocalMessage(context);
+        VvmContacts vvmContacts = new VvmContacts(context);
+        phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+        date = message.getSentDate();
     }
 
+    public Part getAttachment(){
+        return attachment;
+    }
+
+    public Uri getAttachmentUriForSharing() {
+        return FileProvider.getUriForFile(context, "au.com.wallaceit.voicemail", new File(getCacheUri().toString()));
+    }
 
     public Uri getCacheUri(){
-        String filename = null;
-        try {
-            filename = MimeUtility.getHeaderParameter(attachment.getDisposition(), "filename");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        String fileExt = filename!=null ? filename.substring(filename.lastIndexOf(".")) : ".3gp";
-        File outFile = new File(context.getCacheDir()+"/voicemail/", ((LocalPart) attachment).getMessage().getUid()+fileExt);
+        File outFile = new File(context.getCacheDir()+"/voicemail/", getUniqueAttachmentFilename());
         if (!outFile.exists()){
             if (!outFile.getParentFile().exists())
                 outFile.getParentFile().mkdir();
@@ -91,6 +102,17 @@ public class VoicemailAttachmentHelper {
         }
 
         return Uri.parse(outFile.getPath());
+    }
+
+    public String getUniqueAttachmentFilename(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy_H-mm", Locale.ENGLISH);
+        String dateStr = sdf.format(date);
+        return reference.getUid()+"_"+phone+"_"+dateStr+"."+MimeUtility.getExtensionByMimeType(attachment.getMimeType());
+    }
+
+    public InputStream getAttachmentInputStream() throws MessagingException {
+        LocalPart localPart = (LocalPart) attachment;
+        return getAttachmentInputStream(reference.getAccountUuid(), String.valueOf(localPart.getId()));
     }
 
     private InputStream getAttachmentInputStream(String accountUuid, String attachmentId) throws MessagingException {

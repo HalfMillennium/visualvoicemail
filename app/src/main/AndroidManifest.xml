@@ -34,22 +34,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
-    <permission
-        android:name="${applicationId}.permission.READ_ATTACHMENT"
-        android:description="@string/read_attachment_desc"
-        android:label="@string/read_attachment_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
-        android:protectionLevel="dangerous"/>
-    <uses-permission android:name="${applicationId}.permission.READ_ATTACHMENT"/>
-
-    <permission
-        android:name="${applicationId}.permission.READ_MESSAGES"
-        android:description="@string/read_messages_desc"
-        android:label="@string/read_messages_label"
-        android:permissionGroup="android.permission-group.MESSAGES"
-        android:protectionLevel="dangerous"/>
-    <uses-permission android:name="${applicationId}.permission.READ_MESSAGES"/>
-
     <application
         android:name=".VisualVoicemail"
         android:allowTaskReparenting="false"
@@ -292,36 +276,18 @@
             android:exported="false"/>
 
         <provider
-            android:name=".provider.AttachmentProvider"
-            android:authorities="${applicationId}.attachmentprovider"
-            android:exported="true"
-            android:grantUriPermissions="true"
-            android:multiprocess="true"
-            android:readPermission="${applicationId}.permission.READ_ATTACHMENT"/>
-
-        <provider
-            android:name=".provider.MessageProvider"
-            android:authorities="${applicationId}.messageprovider"
-            android:exported="true"
-            android:grantUriPermissions="true"
-            android:multiprocess="true"
-            android:readPermission="${applicationId}.permission.READ_MESSAGES"/>
-
-        <provider
             android:name=".provider.EmailProvider"
             android:authorities="${applicationId}.provider.email"
             android:exported="false"/>
 
         <provider
-            android:name=".provider.K9FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="au.com.wallaceit.voicemail"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/allowed_file_provider_paths" />
-
         </provider>
     </application>
 

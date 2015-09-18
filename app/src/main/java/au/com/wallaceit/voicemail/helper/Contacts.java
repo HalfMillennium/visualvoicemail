@@ -34,7 +34,7 @@ public class Contacts {
      * Array of columns to load from the database.
      *
      * Important: The _ID field is needed by
-     * {@link com.fsck.k9.EmailAddressAdapter} or more specificly by
+     *  or more specificly by
      * {@link android.widget.ResourceCursorAdapter}.
      */
     protected static final String PROJECTION[] = {
@@ -327,17 +327,17 @@ public class Contacts {
     /**
      * Get URI to the picture of the contact with the supplied email address.
      *
-     * @param address
+     * @param  phone
      *         An email address. The contact database is searched for a contact with this email
      *         address.
      *
      * @return URI to the picture of the contact with the supplied email address. {@code null} if
      *         no such contact could be found or the contact doesn't have a picture.
      */
-    public Uri getPhotoUri(String address) {
+    public Uri getPhotoUri(String phone) {
         Long contactId;
         try {
-            final Cursor c = getContactByAddress(address);
+            final Cursor c = getContactByPhoneNumber(phone);
             if (c == null) {
                 return null;
             }
@@ -371,7 +371,7 @@ public class Contacts {
             Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
             return Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
         } catch (Exception e) {
-            Log.e(VisualVoicemail.LOG_TAG, "Couldn't fetch photo for contact with email " + address, e);
+            Log.e(VisualVoicemail.LOG_TAG, "Couldn't fetch photo for contact with email " + phone, e);
             return null;
         }
     }
@@ -401,6 +401,25 @@ public class Contacts {
      */
     private Cursor getContactByAddress(final String address) {
         final Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Email.CONTENT_LOOKUP_URI, Uri.encode(address));
+        final Cursor c = mContentResolver.query(
+                uri,
+                PROJECTION,
+                null,
+                null,
+                SORT_ORDER);
+        return c;
+    }
+
+    /**
+     * Return a {@link Cursor} instance that can be used to fetch information
+     * about the contact with the given email address.
+     *
+     * @param phone The email address to search for.
+     * @return A {@link Cursor} instance that can be used to fetch information
+     *         about the contact with the given email address
+     */
+    private Cursor getContactByPhoneNumber(final String phone) {
+        final Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, Uri.encode(phone));
         final Cursor c = mContentResolver.query(
                 uri,
                 PROJECTION,

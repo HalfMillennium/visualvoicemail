@@ -781,9 +781,7 @@ public class VisualVoicemail extends Application {
             sSplitViewMode = SplitViewMode.valueOf(splitViewMode);
         }
 
-        // CSM Modofied to default to the Downloads directory
-        //mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath",  Environment.getExternalStorageDirectory().toString());
-        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath",  Environment.getExternalStorageDirectory().toString()+"/Voicemail");
         sUseBackgroundAsUnreadIndicator = sprefs.getBoolean("useBackgroundAsUnreadIndicator", true);
         sThreadedViewEnabled = sprefs.getBoolean("threadedView", true);
         fontSizes.load(sprefs);
