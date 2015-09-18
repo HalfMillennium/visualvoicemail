@@ -20,7 +20,7 @@ public class FolderInfoHolder implements Comparable<au.com.wallaceit.voicemail.a
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof au.com.wallaceit.voicemail.activity.FolderInfoHolder && name.equals(((au.com.wallaceit.voicemail.activity.FolderInfoHolder) o).name);
+        return o instanceof au.com.wallaceit.voicemail.activity.FolderInfoHolder && name.equals(((FolderInfoHolder) o).name);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FolderInfoHolder implements Comparable<au.com.wallaceit.voicemail.a
         return name.hashCode();
     }
 
-    public int compareTo(au.com.wallaceit.voicemail.activity.FolderInfoHolder o) {
+    public int compareTo(FolderInfoHolder o) {
         String s1 = this.name;
         String s2 = o.name;
 

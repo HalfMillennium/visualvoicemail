@@ -1,17 +1,34 @@
 package au.com.wallaceit.voicemail.helper;
+/*
+ * Copyright 2013 Michael Boyde Wallace (http://wallaceit.com.au)
+ * This file is part of Visual Voicemail.
+ *
+ * Visual Voicemail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Visual Voicemail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Visual Voicemail (COPYING). If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Created by michael on 15/09/15.
+ */
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/**
- * Created by michael on 22/02/15.
- */
 public class HipriController {
 
     /**
@@ -22,6 +39,8 @@ public class HipriController {
      * @return true for success, else false
      */
     public static boolean start(Context context, String address) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         String TAG_LOG = "ForceCellular";
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

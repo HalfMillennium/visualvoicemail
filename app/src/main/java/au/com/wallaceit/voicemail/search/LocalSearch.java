@@ -395,7 +395,7 @@ public class LocalSearch implements SearchSpecification {
         mPredefined = (in.readByte() == 1);
         mManualSearch = (in.readByte() == 1);
         mAccountUuids.addAll(in.createStringArrayList());
-        mConditions = in.readParcelable(au.com.wallaceit.voicemail.search.LocalSearch.class.getClassLoader());
+        mConditions = in.readParcelable(LocalSearch.class.getClassLoader());
         mLeafSet = (mConditions == null) ? null : mConditions.getLeafSet();
     }
 }

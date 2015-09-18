@@ -41,7 +41,7 @@ public class LocalMessage extends MimeMessage {
     private long messagePartId;
     private String mimeType;
 
-    private LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore localStore) {
+    private LocalMessage(LocalStore localStore) {
         this.localStore = localStore;
     }
 
@@ -518,7 +518,7 @@ public class LocalMessage extends MimeMessage {
     protected void copy(MimeMessage destination) {
         super.copy(destination);
         if (destination instanceof au.com.wallaceit.voicemail.mailstore.LocalMessage) {
-            ((au.com.wallaceit.voicemail.mailstore.LocalMessage)destination).mReference = mReference;
+            ((LocalMessage)destination).mReference = mReference;
         }
     }
 
@@ -537,7 +537,7 @@ public class LocalMessage extends MimeMessage {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        final au.com.wallaceit.voicemail.mailstore.LocalMessage that = (au.com.wallaceit.voicemail.mailstore.LocalMessage) o;
+        final au.com.wallaceit.voicemail.mailstore.LocalMessage that = (LocalMessage) o;
         return !(getAccountUuid() != null ? !getAccountUuid().equals(that.getAccountUuid()) : that.getAccountUuid() != null);
     }
 

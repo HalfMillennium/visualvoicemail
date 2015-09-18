@@ -124,7 +124,7 @@ public abstract class CoreService extends Service {
             boolean createIfNotExists) {
 
         if (wakeLockId != null) {
-            intent.putExtra(au.com.wallaceit.voicemail.service.BootReceiver.WAKE_LOCK_ID, wakeLockId);
+            intent.putExtra(BootReceiver.WAKE_LOCK_ID, wakeLockId);
             return;
         }
 
@@ -225,7 +225,7 @@ public abstract class CoreService extends Service {
         }
 
         // If we were started by BootReceiver, release the wake lock acquired there.
-        int wakeLockId = intent.getIntExtra(au.com.wallaceit.voicemail.service.BootReceiver.WAKE_LOCK_ID, -1);
+        int wakeLockId = intent.getIntExtra(BootReceiver.WAKE_LOCK_ID, -1);
         if (wakeLockId != -1) {
             BootReceiver.releaseWakeLock(this, wakeLockId);
         }

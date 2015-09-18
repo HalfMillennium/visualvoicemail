@@ -106,7 +106,7 @@ public class FolderList extends K9ListActivity {
                         mActionBarUnread.setVisibility(View.VISIBLE);
                     }
 
-                    String operation = mAdapter.mListener.getOperation(au.com.wallaceit.voicemail.activity.FolderList.this);
+                    String operation = mAdapter.mListener.getOperation(FolderList.this);
                     if (operation.length() < 1) {
                         mActionBarSubTitle.setText(mAccount.getPhoneNumber());
                     } else {
@@ -466,7 +466,7 @@ public class FolderList extends K9ListActivity {
         // There has to be a cheaper way to get at the localFolder object than this
         LocalFolder localFolder = null;
         try {
-            if (account == null || folderName == null || !account.isAvailable(au.com.wallaceit.voicemail.activity.FolderList.this)) {
+            if (account == null || folderName == null || !account.isAvailable(FolderList.this)) {
                 Log.i(VisualVoicemail.LOG_TAG, "not clear folder of unavailable account");
                 return;
             }
@@ -532,6 +532,10 @@ public class FolderList extends K9ListActivity {
         case R.id.compact:
             onCompact(mAccount);
 
+            return true;
+
+        case R.id.about:
+            VisualVoicemail.showAboutDialog(FolderList.this);
             return true;
 
         default:
@@ -781,7 +785,7 @@ public class FolderList extends K9ListActivity {
                 Folder localFolder = null;
                 try {
                     if (account != null && folderName != null) {
-                        if (!account.isAvailable(au.com.wallaceit.voicemail.activity.FolderList.this)) {
+                        if (!account.isAvailable(FolderList.this)) {
                             Log.i(VisualVoicemail.LOG_TAG, "not refreshing folder of unavailable account");
                             return;
                         }
@@ -1185,7 +1189,7 @@ public class FolderList extends K9ListActivity {
 
         @Override
         public void onClick(View v) {
-            MessageList.actionDisplaySearch(au.com.wallaceit.voicemail.activity.FolderList.this, search, true, false);
+            MessageList.actionDisplaySearch(FolderList.this, search, true, false);
         }
     }
 }

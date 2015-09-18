@@ -723,10 +723,10 @@ public class StorageManager {
      * </p>
      *
      * @param providerId
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      *             If the storage can't be locked.
      */
-    public void lockProvider(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void lockProvider(final String providerId) throws UnavailableStorageException {
         final StorageProvider provider = getProvider(providerId);
         if (provider == null) {
             throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("StorageProvider not found: " + providerId);

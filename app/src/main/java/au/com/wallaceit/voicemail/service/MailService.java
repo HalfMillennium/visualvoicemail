@@ -51,7 +51,7 @@ public class MailService extends CoreService {
     public static void actionReset(Context context, Integer wakeLockId) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESET);
+        i.setAction(MailService.ACTION_RESET);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
@@ -59,7 +59,7 @@ public class MailService extends CoreService {
     public static void actionRestartPushers(Context context, Integer wakeLockId) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESTART_PUSHERS);
+        i.setAction(MailService.ACTION_RESTART_PUSHERS);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
@@ -67,7 +67,7 @@ public class MailService extends CoreService {
     public static void actionReschedulePoll(Context context, Integer wakeLockId) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_RESCHEDULE_POLL);
+        i.setAction(MailService.ACTION_RESCHEDULE_POLL);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
@@ -75,7 +75,7 @@ public class MailService extends CoreService {
     public static void actionCancel(Context context, Integer wakeLockId) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.MailService.ACTION_CANCEL);
+        i.setAction(MailService.ACTION_CANCEL);
         addWakeLockId(context, i, wakeLockId, false); // CK:Q: why should we not create a wake lock if one is not already existing like for example in actionReschedulePoll?
         context.startService(i);
     }
@@ -83,7 +83,7 @@ public class MailService extends CoreService {
     public static void connectivityChange(Context context, Integer wakeLockId) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.MailService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.MailService.CONNECTIVITY_CHANGE);
+        i.setAction(MailService.CONNECTIVITY_CHANGE);
         addWakeLockId(context, i, wakeLockId, false); // CK:Q: why should we not create a wake lock if one is not already existing like for example in actionReschedulePoll?
         context.startService(i);
     }
@@ -256,7 +256,7 @@ public class MailService extends CoreService {
             return;
         }
 
-        Preferences prefs = Preferences.getPreferences(au.com.wallaceit.voicemail.service.MailService.this);
+        Preferences prefs = Preferences.getPreferences(MailService.this);
         SharedPreferences sPrefs = prefs.getPreferences();
         int previousInterval = sPrefs.getInt(PREVIOUS_INTERVAL, -1);
         long lastCheckEnd = sPrefs.getLong(LAST_CHECK_END, -1);
@@ -319,7 +319,7 @@ public class MailService extends CoreService {
 
             Intent i = new Intent(this, au.com.wallaceit.voicemail.service.MailService.class);
             i.setAction(ACTION_CHECK_MAIL);
-            au.com.wallaceit.voicemail.service.BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.MailService.this, nextTime, i);
+            au.com.wallaceit.voicemail.service.BootReceiver.scheduleIntent(MailService.this, nextTime, i);
         }
     }
 
@@ -329,7 +329,7 @@ public class MailService extends CoreService {
 
     private void stopPushers() {
         MessagingController.getInstance(getApplication()).stopAllPushing();
-        PushService.stopService(au.com.wallaceit.voicemail.service.MailService.this);
+        PushService.stopService(MailService.this);
     }
 
     private void reschedulePushers(boolean hasConnectivity, boolean doBackground) {
@@ -354,9 +354,10 @@ public class MailService extends CoreService {
 
     private void setupPushers() {
         boolean pushing = false;
-        for (Account account : Preferences.getPreferences(au.com.wallaceit.voicemail.service.MailService.this).getAccounts()) {
+        for (Account account : Preferences.getPreferences(MailService.this).getAccounts()) {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "Setting up pushers for account " + account.getDescription());
+            // only start if voicemail auto check method is push
             if (account.getAutomaticCheckMethod()==AccountSettings.PREFERENCE_AUTO_CHECK_PUSH && (account.isEnabled() && account.isAvailable(getApplicationContext()))) {
                 pushing |= MessagingController.getInstance(getApplication()).setupPushing(account);
             } else {
@@ -364,7 +365,7 @@ public class MailService extends CoreService {
             }
         }
         if (pushing) {
-            PushService.startService(au.com.wallaceit.voicemail.service.MailService.this);
+            PushService.startService(MailService.this);
         }
         pushingRequested = pushing;
     }
@@ -424,7 +425,7 @@ public class MailService extends CoreService {
                 Log.d(VisualVoicemail.LOG_TAG, "Next pusher refresh scheduled for " + new Date(nextTime));
             Intent i = new Intent(this, au.com.wallaceit.voicemail.service.MailService.class);
             i.setAction(ACTION_REFRESH_PUSHERS);
-            BootReceiver.scheduleIntent(au.com.wallaceit.voicemail.service.MailService.this, nextTime, i);
+            BootReceiver.scheduleIntent(MailService.this, nextTime, i);
         }
     }
 

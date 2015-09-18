@@ -5,10 +5,10 @@
     <!-- This should make it easier for forks to change the branding -->
 
     <!-- Used in AndroidManifest.xml -->
-    <string name="beta_app_name">K-9 Mail BETA</string>
+    <string name="beta_app_name">Visual Voicemail BETA</string>
 
-    <string name="shortcuts_title">K-9 Accounts</string>
-    <string name="unread_widget_label">K-9 Unread</string>
+    <string name="shortcuts_title">Voicemail Accounts</string>
+    <string name="unread_widget_label">Voicemail Unread</string>
 
     <!-- Used in the about dialog -->
     <string name="app_license">Licensed under the Apache License, Version 2.0.</string>
@@ -18,12 +18,8 @@
     <string name="welcome_message_title">Welcome to Visual Voicemail</string>
 
 
-    <!-- Default signature -->
-    <string name="default_signature">-- \nSent from my Android device with K-9 Mail. Please excuse my brevity.</string>
-
-
     <!-- General strings that include the app name -->
-    <string name="account_delete_dlg_instructions_fmt">The account \"<xliff:g id="account">%s</xliff:g>\" will be removed from K-9 Mail.</string>
+    <string name="account_delete_dlg_instructions_fmt">The account \"<xliff:g id="account">%s</xliff:g>\" will be removed from VisualVoicemail.</string>
     <string name="account_recreate_dlg_instructions_fmt">All local data for \"<xliff:g id="account">%s</xliff:g>\" will be removed. Account settings will be retained.</string>
     <string name="account_clear_dlg_instructions_fmt">Local copies of messages in \"<xliff:g id="account">%s</xliff:g>\" will be removed. Account settings will be retained.</string>
 
@@ -1129,7 +1125,7 @@
     <string name="app_name">Visual Voicemail</string>
 
     <!-- Used in the about dialog -->
-    <string name="app_authors">Martin-Azizi &amp; Michael Wallace</string>
+    <string name="app_authors">Created By:\nMichael Wallace &amp; Martin-Azizi</string>
     <string name="app_copyright_fmt">Copyright 2012-<xliff:g>%s</xliff:g></string>
 
     <!-- Installation message -->
@@ -1168,5 +1164,6 @@
     <string name="account_setup_options_auto_check_push">Use Push</string>
     <string name="server_requires_cellular">Cellular Network Required</string>
     <string name="server_requires_cellular_desc">Cellular required for server access</string>
+    <string name="about_info"><![CDATA[VisualVoicemail is a fork of the fantastic K-9 email client & supports standard IMAP voicemail servers.]]></string>
 
 </resources>

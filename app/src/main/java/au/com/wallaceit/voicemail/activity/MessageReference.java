@@ -112,7 +112,7 @@ public class MessageReference implements Parcelable {
         if (o instanceof au.com.wallaceit.voicemail.activity.MessageReference == false) {
             return false;
         }
-        au.com.wallaceit.voicemail.activity.MessageReference other = (au.com.wallaceit.voicemail.activity.MessageReference) o;
+        au.com.wallaceit.voicemail.activity.MessageReference other = (MessageReference) o;
         if ((accountUuid == other.accountUuid || (accountUuid != null && accountUuid.equals(other.accountUuid)))
                 && (folderName == other.folderName || (folderName != null && folderName.equals(other.folderName)))
                 && (uid == other.uid || (uid != null && uid.equals(other.uid)))) {

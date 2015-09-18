@@ -35,7 +35,7 @@ public class LockableDatabase {
          * @return Any relevant data. Can be <code>null</code>.
          * @throws WrappedException
          * @throws MessagingException
-         * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+         * @throws mailstore.UnavailableStorageException
          */
         T doDbWork(SQLiteDatabase db) throws WrappedException, MessagingException;
     }
@@ -85,7 +85,7 @@ public class LockableDatabase {
                 } finally {
                     unlockWrite();
                 }
-            } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
+            } catch (UnavailableStorageException e) {
                 Log.w(VisualVoicemail.LOG_TAG, "Unable to writelock on unmount", e);
             }
         }
@@ -102,7 +102,7 @@ public class LockableDatabase {
 
             try {
                 openOrCreateDataspace();
-            } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
+            } catch (UnavailableStorageException e) {
                 Log.e(VisualVoicemail.LOG_TAG, "Unable to open DB on mount", e);
             }
         }
@@ -178,14 +178,14 @@ public class LockableDatabase {
      * done with the storage.
      * </p>
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      *             If storage can't be locked because it is not available
      */
-    protected void lockRead() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    protected void lockRead() throws UnavailableStorageException {
         mReadLock.lock();
         try {
             getStorageManager().lockProvider(mStorageProviderId);
-        } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
+        } catch (UnavailableStorageException e) {
             mReadLock.unlock();
             throw e;
         } catch (RuntimeException e) {
@@ -208,10 +208,10 @@ public class LockableDatabase {
      * done with the storage.
      * </p>
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      *             If storage can't be locked because it is not available.
      */
-    protected void lockWrite() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    protected void lockWrite() throws UnavailableStorageException {
         lockWrite(mStorageProviderId);
     }
 
@@ -227,14 +227,14 @@ public class LockableDatabase {
      * @param providerId
      *            Never <code>null</code>.
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      *             If storage can't be locked because it is not available.
      */
-    protected void lockWrite(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    protected void lockWrite(final String providerId) throws UnavailableStorageException {
         mWriteLock.lock();
         try {
             getStorageManager().lockProvider(providerId);
-        } catch (au.com.wallaceit.voicemail.mailstore.UnavailableStorageException e) {
+        } catch (UnavailableStorageException e) {
             mWriteLock.unlock();
             throw e;
         } catch (RuntimeException e) {
@@ -270,7 +270,7 @@ public class LockableDatabase {
      *
      * @param <T>
      * @return Whatever {@link DbCallback#doDbWork(SQLiteDatabase)} returns.
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws mailstore.UnavailableStorageException
      */
     public <T> T execute(final boolean transactional, final DbCallback<T> callback) throws MessagingException {
         lockRead();
@@ -358,7 +358,7 @@ public class LockableDatabase {
         }
     }
 
-    public void open() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void open() throws UnavailableStorageException {
         lockWrite();
         try {
             openOrCreateDataspace();
@@ -370,9 +370,9 @@ public class LockableDatabase {
 
     /**
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      */
-    private void openOrCreateDataspace() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    private void openOrCreateDataspace() throws UnavailableStorageException {
 
         lockWrite();
         try {
@@ -408,9 +408,9 @@ public class LockableDatabase {
      * @param providerId
      *            Never <code>null</code>.
      * @return DB file.
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      */
-    protected File prepareStorage(final String providerId) throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    protected File prepareStorage(final String providerId) throws UnavailableStorageException {
         final StorageManager storageManager = getStorageManager();
 
         final File databaseFile = storageManager.getDatabase(uUid, providerId);
@@ -442,20 +442,20 @@ public class LockableDatabase {
     /**
      * Delete the backing database.
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      */
-    public void delete() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void delete() throws UnavailableStorageException {
         delete(false);
     }
 
-    public void recreate() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void recreate() throws UnavailableStorageException {
         delete(true);
     }
 
     /**
      * @param recreate
      *            <code>true</code> if the DB should be recreated after delete
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      */
     private void delete(final boolean recreate) throws UnavailableStorageException {
         lockWrite();

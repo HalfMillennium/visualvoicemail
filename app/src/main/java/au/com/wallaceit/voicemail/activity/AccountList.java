@@ -99,7 +99,7 @@ public abstract class AccountList extends K9ListActivity implements OnItemClickL
 
     class AccountsAdapter extends ArrayAdapter<BaseAccount> {
         public AccountsAdapter(List<BaseAccount> accounts) {
-            super(au.com.wallaceit.voicemail.activity.AccountList.this, 0, accounts);
+            super(AccountList.this, 0, accounts);
         }
 
         @Override

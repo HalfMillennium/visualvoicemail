@@ -27,7 +27,7 @@ public class PollService extends CoreService {
     public static void startService(Context context, boolean forceCheckMail) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.PollService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.PollService.START_SERVICE);
+        i.setAction(PollService.START_SERVICE);
         if (forceCheckMail)
             i.addFlags(FLAG_FORCE_CHECK);
         addWakeLock(context, i);
@@ -37,7 +37,7 @@ public class PollService extends CoreService {
     public static void stopService(Context context) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.PollService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.PollService.STOP_SERVICE);
+        i.setAction(PollService.STOP_SERVICE);
         addWakeLock(context, i);
         context.startService(i);
     }
@@ -93,7 +93,7 @@ public class PollService extends CoreService {
         public synchronized void wakeLockAcquire() {
             TracingWakeLock oldWakeLock = wakeLock;
 
-            TracingPowerManager pm = TracingPowerManager.getPowerManager(au.com.wallaceit.voicemail.service.PollService.this);
+            TracingPowerManager pm = TracingPowerManager.getPowerManager(PollService.this);
             wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "PollService wakeLockAcquire");
             wakeLock.setReferenceCounted(false);
             wakeLock.acquire(VisualVoicemail.WAKE_LOCK_TIMEOUT);
@@ -140,7 +140,7 @@ public class PollService extends CoreService {
             controller.setCheckMailListener(null);
             MailService.saveLastCheckEnd(getApplication());
 
-            MailService.actionReschedulePoll(au.com.wallaceit.voicemail.service.PollService.this, null);
+            MailService.actionReschedulePoll(PollService.this, null);
             wakeLockRelease();
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "PollService stopping with startId = " + startId);

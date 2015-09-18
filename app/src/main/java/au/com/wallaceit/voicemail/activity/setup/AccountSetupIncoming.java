@@ -69,16 +69,24 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
     private EditText mWebdavMailboxPathView;
     private Button mNextButton;
     private Account mAccount;
-    private boolean mMakeDefault;
     private CheckBox mCompressionMobile;
     private CheckBox mCompressionWifi;
     private CheckBox mCompressionOther;
-    private CheckBox mSubscribedFoldersOnly;
+    //private CheckBox mSubscribedFoldersOnly;
     private AuthTypeAdapter mAuthTypeAdapter;
     private ConnectionSecurity[] mConnectionSecurityChoices = ConnectionSecurity.values();
+    private CheckBox mRequiresCellular;
+    private EditText mAccountName;
+
+    public static void actionNewAccountSetup(Activity context, Account account) {
+        Intent i = new Intent(context, AccountSetupIncoming.class);
+        i.putExtra(EXTRA_ACCOUNT, account.getUuid());
+        i.putExtra(EXTRA_MAKE_DEFAULT, true);
+        context.startActivityForResult(i, 0);
+    }
 
     public static void actionIncomingSettings(Activity context, Account account, boolean makeDefault) {
-        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming.class);
+        Intent i = new Intent(context, AccountSetupIncoming.class);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         i.putExtra(EXTRA_MAKE_DEFAULT, makeDefault);
         context.startActivity(i);
@@ -89,7 +97,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
     }
 
     public static Intent intentActionEditIncomingSettings(Context context, Account account) {
-        Intent i = new Intent(context, au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming.class);
+        Intent i = new Intent(context, AccountSetupIncoming.class);
         i.setAction(Intent.ACTION_EDIT);
         i.putExtra(EXTRA_ACCOUNT, account.getUuid());
         return i;
@@ -119,7 +127,9 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
         mCompressionMobile = (CheckBox)findViewById(R.id.compression_mobile);
         mCompressionWifi = (CheckBox)findViewById(R.id.compression_wifi);
         mCompressionOther = (CheckBox)findViewById(R.id.compression_other);
-        mSubscribedFoldersOnly = (CheckBox)findViewById(R.id.subscribed_folders_only);
+        //mSubscribedFoldersOnly = (CheckBox)findViewById(R.id.subscribed_folders_only);
+        mRequiresCellular = (CheckBox) findViewById(R.id.account_requires_cellular);
+        mAccountName = (EditText) findViewById(R.id.account_name);
 
         mNextButton.setOnClickListener(this);
 
@@ -145,7 +155,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
 
         String accountUuid = getIntent().getStringExtra(EXTRA_ACCOUNT);
         mAccount = Preferences.getPreferences(this).getAccount(accountUuid);
-        mMakeDefault = getIntent().getBooleanExtra(EXTRA_MAKE_DEFAULT, false);
+        //mMakeDefault = getIntent().getBooleanExtra(EXTRA_MAKE_DEFAULT, false);
 
         /*
          * If we're being reloaded we override the original account with the one
@@ -192,7 +202,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                 findViewById(R.id.webdav_auth_path_section).setVisibility(View.GONE);
                 findViewById(R.id.compression_section).setVisibility(View.GONE);
                 findViewById(R.id.compression_label).setVisibility(View.GONE);
-                mSubscribedFoldersOnly.setVisibility(View.GONE);
+                //mSubscribedFoldersOnly.setVisibility(View.GONE);
             } else if (Type.IMAP == settings.type) {
                 serverLabelView.setText(R.string.account_setup_incoming_imap_server_label);
 
@@ -208,9 +218,9 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                 findViewById(R.id.webdav_owa_path_section).setVisibility(View.GONE);
                 findViewById(R.id.webdav_auth_path_section).setVisibility(View.GONE);
 
-                if (!editSettings) {
+                /*if (!editSettings) {
                     findViewById(R.id.imap_folder_setup_section).setVisibility(View.GONE);
-                }
+                }*/
             } else if (Type.WebDAV == settings.type) {
                 serverLabelView.setText(R.string.account_setup_incoming_webdav_server_label);
                 mConnectionSecurityChoices = new ConnectionSecurity[] {
@@ -223,7 +233,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                 findViewById(R.id.account_auth_type).setVisibility(View.GONE);
                 findViewById(R.id.compression_section).setVisibility(View.GONE);
                 findViewById(R.id.compression_label).setVisibility(View.GONE);
-                mSubscribedFoldersOnly.setVisibility(View.GONE);
+                //mSubscribedFoldersOnly.setVisibility(View.GONE);
 
                 WebDavStoreSettings webDavSettings = (WebDavStoreSettings) settings;
 
@@ -285,9 +295,18 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
             }
             mCurrentPortViewSetting = mPortView.getText().toString();
 
-            mSubscribedFoldersOnly.setChecked(mAccount.subscribedFoldersOnly());
+            //mSubscribedFoldersOnly.setChecked(mAccount.subscribedFoldersOnly());
         } catch (Exception e) {
             failure(e);
+        }
+        // show & populate setup fields
+        if (!Intent.ACTION_EDIT.equals(getIntent().getAction())){
+            findViewById(R.id.account_name_label).setVisibility(View.VISIBLE);
+            mAccountName.setVisibility(View.VISIBLE);
+            mAccountName.setText(mAccount.getDescription());
+            findViewById(R.id.account_requires_cellular_label).setVisibility(View.VISIBLE);
+            mRequiresCellular.setVisibility(View.VISIBLE);
+            mRequiresCellular.setChecked(true);
         }
     }
 
@@ -469,7 +488,8 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
 
         mNextButton.setEnabled(Utility.domainFieldValid(mServerView)
                 && Utility.requiredFieldValid(mPortView)
-                && (hasValidPasswordSettings || hasValidExternalAuthSettings));
+                && (hasValidPasswordSettings || hasValidExternalAuthSettings)
+                && (Intent.ACTION_EDIT.equals(getIntent().getAction()) || !mAccountName.getText().toString().equals("")));
         Utility.setCompoundDrawablesAlpha(mNextButton, mNextButton.isEnabled() ? 255 : 128);
     }
 
@@ -490,16 +510,6 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ( (resultCode == RESULT_OK) && mAccount.validated ){
-            mAccount.save(Preferences.getPreferences(this));
-            VisualVoicemail.setServicesEnabled(this);
-            Intent intent = new Intent(AccountSetupIncoming.this, Accounts.class);
-            startActivity(intent);
-            finish();
-        } else {
-            // we added an added an account so now we need to remove it
-
-        }
         if (resultCode == RESULT_OK) {
             if (Intent.ACTION_EDIT.equals(getIntent().getAction())) {
                     boolean isPushCapable = false;
@@ -527,8 +537,16 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
         }
     }
 
+    public void onBackPressed(){
+        if (!Intent.ACTION_EDIT.equals(getIntent().getAction()) && mAccount != null)
+            Preferences.getPreferences(this).deleteAccount(mAccount);
+
+        super.onBackPressed();
+    }
+
     protected void onNext() {
         try {
+
             ConnectionSecurity connectionSecurity = getSelectedSecurity();
 
             String username = mUsernameView.getText().toString();
@@ -570,7 +588,13 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
             mAccount.setCompression(NetworkType.MOBILE, mCompressionMobile.isChecked());
             mAccount.setCompression(NetworkType.WIFI, mCompressionWifi.isChecked());
             mAccount.setCompression(NetworkType.OTHER, mCompressionOther.isChecked());
-            mAccount.setSubscribedFoldersOnly(mSubscribedFoldersOnly.isChecked());
+            //mAccount.setSubscribedFoldersOnly(mSubscribedFoldersOnly.isChecked());
+
+            // visual voicemail specific setup
+            mAccount.setRequiresCellular(mRequiresCellular.isChecked());
+            mAccount.setDescription(mAccountName.getText().toString());
+            mAccount.setPhoneNumber("");
+            mAccount = AccountCreator.initialVisualVoicemailSetup(AccountSetupIncoming.this, mAccount);
 
             AccountSetupCheckSettings.actionCheckSettings(this, mAccount, CheckDirection.INCOMING);
         } catch (Exception e) {
@@ -626,7 +650,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
     };
 
     private AuthType getSelectedAuthType() {
-        au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder holder = (au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder) mAuthTypeView.getSelectedItem();
+        au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder holder = (AuthTypeHolder) mAuthTypeView.getSelectedItem();
         return holder.authType;
     }
 

@@ -631,6 +631,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 onShowFolderList();
                 return true;
             }
+            case R.id.about:
+                VisualVoicemail.showAboutDialog(MessageList.this);
+                return true;
         }
 
         if (!mSingleFolderMode) {

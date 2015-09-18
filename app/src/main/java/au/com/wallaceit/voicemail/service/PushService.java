@@ -23,7 +23,7 @@ public class PushService extends CoreService {
     public static void stopService(Context context) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.PushService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.PushService.STOP_SERVICE);
+        i.setAction(PushService.STOP_SERVICE);
         addWakeLock(context, i);
         context.startService(i);
     }

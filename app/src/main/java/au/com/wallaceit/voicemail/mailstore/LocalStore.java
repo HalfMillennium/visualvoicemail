@@ -167,7 +167,7 @@ public class LocalStore extends Store implements Serializable {
      * This constructor is only used by {@link Store#getLocalInstance(Account, Context)}
      * @param account
      * @param context
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException if not {@link StorageProvider#isReady(Context)}
+     * @throws UnavailableStorageException if not {@link StorageProvider#isReady(Context)}
      */
     public LocalStore(final Account account, final Context context) throws MessagingException {
         mAccount = account;
@@ -184,7 +184,7 @@ public class LocalStore extends Store implements Serializable {
     /**
      * Get an instance of a local mail store.
      *
-     * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+     * @throws UnavailableStorageException
      *          if not {@link StorageProvider#isReady(Context)}
      */
     public static au.com.wallaceit.voicemail.mailstore.LocalStore getInstance(Account account, Context context)
@@ -377,7 +377,7 @@ public class LocalStore extends Store implements Serializable {
                                 continue;
                             }
                             String folderName = cursor.getString(FOLDER_NAME_INDEX);
-                            LocalFolder folder = new LocalFolder(au.com.wallaceit.voicemail.mailstore.LocalStore.this, folderName);
+                            LocalFolder folder = new LocalFolder(LocalStore.this, folderName);
                             folder.open(cursor);
 
                             folders.add(folder);
@@ -400,11 +400,11 @@ public class LocalStore extends Store implements Serializable {
     public void checkSettings() throws MessagingException {
     }
 
-    public void delete() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void delete() throws UnavailableStorageException {
         database.delete();
     }
 
-    public void recreate() throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+    public void recreate() throws UnavailableStorageException {
         database.recreate();
     }
 
@@ -597,7 +597,7 @@ public class LocalStore extends Store implements Serializable {
                     cursor = db.rawQuery(queryString + " LIMIT 10", placeHolders);
 
                     while (cursor.moveToNext()) {
-                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore.this, null, folder);
+                        LocalMessage message = new LocalMessage(LocalStore.this, null, folder);
                         message.populateFromGetMessageCursor(cursor);
 
                         messages.add(message);
@@ -610,7 +610,7 @@ public class LocalStore extends Store implements Serializable {
                     cursor = db.rawQuery(queryString + " LIMIT -1 OFFSET 10", placeHolders);
 
                     while (cursor.moveToNext()) {
-                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalStore.this, null, folder);
+                        LocalMessage message = new LocalMessage(LocalStore.this, null, folder);
                         message.populateFromGetMessageCursor(cursor);
 
                         messages.add(message);
@@ -929,10 +929,10 @@ public class LocalStore extends Store implements Serializable {
          *         {@code " IN (?,?,?)"} (starts with a space).
          * @param selectionArgs
          *         The current subset of the argument list.
-         * @throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException
+         * @throws UnavailableStorageException
          */
         void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
+                throws UnavailableStorageException;
 
         /**
          * This will be executed after each invocation of
@@ -978,7 +978,7 @@ public class LocalStore extends Store implements Serializable {
 
             @Override
             public void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                    throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+                    throws UnavailableStorageException {
 
                 db.update("messages", cv, "(empty IS NULL OR empty != 1) AND id" + selectionSet,
                         selectionArgs);
@@ -1026,7 +1026,7 @@ public class LocalStore extends Store implements Serializable {
 
             @Override
             public void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
-                    throws au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+                    throws UnavailableStorageException {
 
                 db.execSQL("UPDATE messages SET " + flagColumn + " = " + ((newState) ? "1" : "0") +
                         " WHERE id IN (" +

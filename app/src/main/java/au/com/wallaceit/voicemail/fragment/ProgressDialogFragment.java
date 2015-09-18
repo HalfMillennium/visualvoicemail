@@ -51,6 +51,6 @@ public class ProgressDialogFragment extends DialogFragment {
 
 
     public interface CancelListener {
-        void onCancel(au.com.wallaceit.voicemail.fragment.ProgressDialogFragment fragment);
+        void onCancel(ProgressDialogFragment fragment);
     }
 }

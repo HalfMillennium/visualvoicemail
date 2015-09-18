@@ -84,7 +84,7 @@ public class DatabaseUpgradeService extends Service {
     public static void startService(Context context) {
         Intent i = new Intent();
         i.setClass(context, au.com.wallaceit.voicemail.service.DatabaseUpgradeService.class);
-        i.setAction(au.com.wallaceit.voicemail.service.DatabaseUpgradeService.ACTION_START_SERVICE);
+        i.setAction(DatabaseUpgradeService.ACTION_START_SERVICE);
         context.startService(i);
     }
 

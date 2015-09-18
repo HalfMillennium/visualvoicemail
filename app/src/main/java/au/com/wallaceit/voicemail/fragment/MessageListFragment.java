@@ -461,7 +461,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         private WeakReference<au.com.wallaceit.voicemail.fragment.MessageListFragment> mFragment;
 
-        public MessageListHandler(au.com.wallaceit.voicemail.fragment.MessageListFragment fragment) {
+        public MessageListHandler(MessageListFragment fragment) {
             mFragment = new WeakReference<au.com.wallaceit.voicemail.fragment.MessageListFragment>(fragment);
         }
         public void folderLoading(String folder, boolean loading) {
@@ -3278,10 +3278,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 sortColumn = MessageColumns.INTERNAL_DATE;
                 break;
             }*/
-            case SORT_ATTACHMENT: {
-                sortColumn = "(" + MessageColumns.ATTACHMENT_COUNT + " < 1)";
-                break;
-            }
+
             case SORT_FLAGGED: {
                 sortColumn = "(" + MessageColumns.FLAGGED + " != 1)";
                 break;

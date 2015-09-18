@@ -54,7 +54,7 @@ public class CoreReceiver extends BroadcastReceiver {
         try {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "CoreReceiver.onReceive" + intent);
-            if (au.com.wallaceit.voicemail.service.CoreReceiver.WAKE_LOCK_RELEASE.equals(intent.getAction())) {
+            if (CoreReceiver.WAKE_LOCK_RELEASE.equals(intent.getAction())) {
                 Integer wakeLockId = intent.getIntExtra(WAKE_LOCK_ID, -1);
                 if (wakeLockId != -1) {
                     if (VisualVoicemail.DEBUG)

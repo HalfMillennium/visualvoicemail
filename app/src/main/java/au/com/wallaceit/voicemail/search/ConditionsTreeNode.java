@@ -119,7 +119,7 @@ public class ConditionsTreeNode implements Parcelable {
         mValue = Operator.CONDITION;
     }
 
-    public ConditionsTreeNode(au.com.wallaceit.voicemail.search.ConditionsTreeNode parent, Operator op) {
+    public ConditionsTreeNode(ConditionsTreeNode parent, Operator op) {
         mParent = parent;
         mValue = op;
         mCondition = null;
@@ -142,7 +142,7 @@ public class ConditionsTreeNode implements Parcelable {
         return copy;
     }
 
-    private au.com.wallaceit.voicemail.search.ConditionsTreeNode cloneNode(au.com.wallaceit.voicemail.search.ConditionsTreeNode parent) {
+    private au.com.wallaceit.voicemail.search.ConditionsTreeNode cloneNode(ConditionsTreeNode parent) {
         au.com.wallaceit.voicemail.search.ConditionsTreeNode copy = new au.com.wallaceit.voicemail.search.ConditionsTreeNode(parent, mValue);
 
         copy.mCondition = mCondition.clone();
@@ -166,7 +166,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New top AND node.
      * @throws Exception
      */
-    public au.com.wallaceit.voicemail.search.ConditionsTreeNode and(au.com.wallaceit.voicemail.search.ConditionsTreeNode expr) throws Exception {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode and(ConditionsTreeNode expr) throws Exception {
         return add(expr, Operator.AND);
     }
 
@@ -196,7 +196,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New top OR node.
      * @throws Exception
      */
-    public au.com.wallaceit.voicemail.search.ConditionsTreeNode or(au.com.wallaceit.voicemail.search.ConditionsTreeNode expr) throws Exception {
+    public au.com.wallaceit.voicemail.search.ConditionsTreeNode or(ConditionsTreeNode expr) throws Exception {
         return add(expr, Operator.OR);
     }
 
@@ -297,7 +297,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @return New parent node, containing the operator.
      * @throws Exception Throws when the provided new node does not have a null parent.
      */
-    private au.com.wallaceit.voicemail.search.ConditionsTreeNode add(au.com.wallaceit.voicemail.search.ConditionsTreeNode node, Operator op) throws Exception {
+    private au.com.wallaceit.voicemail.search.ConditionsTreeNode add(ConditionsTreeNode node, Operator op) throws Exception {
         if (node.mParent != null) {
             throw new Exception("Can only add new expressions from root node down.");
         }
@@ -324,7 +324,7 @@ public class ConditionsTreeNode implements Parcelable {
      * @param oldChild Old child node to be replaced.
      * @param newChild New child node.
      */
-    private void updateChild(au.com.wallaceit.voicemail.search.ConditionsTreeNode oldChild, au.com.wallaceit.voicemail.search.ConditionsTreeNode newChild) {
+    private void updateChild(ConditionsTreeNode oldChild, au.com.wallaceit.voicemail.search.ConditionsTreeNode newChild) {
         // we can compare objects id's because this is the desired behaviour in this case
         if (mLeft == oldChild) {
             mLeft = newChild;
@@ -417,9 +417,9 @@ public class ConditionsTreeNode implements Parcelable {
 
     private ConditionsTreeNode(Parcel in) {
         mValue = Operator.values()[in.readInt()];
-        mCondition = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
-        mLeft = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
-        mRight = in.readParcelable(au.com.wallaceit.voicemail.search.ConditionsTreeNode.class.getClassLoader());
+        mCondition = in.readParcelable(ConditionsTreeNode.class.getClassLoader());
+        mLeft = in.readParcelable(ConditionsTreeNode.class.getClassLoader());
+        mRight = in.readParcelable(ConditionsTreeNode.class.getClassLoader());
         mParent = null;
 
         if (mLeft != null) {

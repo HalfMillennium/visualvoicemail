@@ -36,6 +36,7 @@ import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.Provider;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.account.AccountCreator;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.helper.Utility;
@@ -245,33 +246,15 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
             
             // create a new account
             // NOTE: if we fail the server check, we need to make sure that we delete the account
-            
             mAccount = Preferences.getPreferences(this).newAccount();
-            mAccount.setDescription(selectedProvider.toString());
+            mAccount.setProvider(selectedProvider);
             mAccount.setNetworkOperatorName(selectedProvider.networkOperatorName);
             mAccount.setRequiresCellular(selectedProvider.requiresCellular);
-            mAccount.setProvider(selectedProvider);
+            mAccount.setDescription(selectedProvider.toString());
             mAccount.setStoreUri(uri.toString());
-            mAccount.setDraftsFolderName(getString(R.string.special_mailbox_name_drafts));
-            mAccount.setTrashFolderName(getString(R.string.special_mailbox_name_trash));
-            mAccount.setArchiveFolderName(getString(R.string.special_mailbox_name_archive));
-            mAccount.setSpamFolderName(getString(R.string.special_mailbox_name_spam));
-            mAccount.setSentFolderName(getString(R.string.special_mailbox_name_sent));
 
-            mAccount.setMaximumAutoDownloadMessageSize(0);
-            mAccount.setMaximumPolledMessageAge(-1);
-            mAccount.setSubscribedFoldersOnly(false);
-            if (uri.toString().startsWith("imap"))
-            {
-                mAccount.setDeletePolicy(Account.DeletePolicy.ON_DELETE);
-            }
-            else if (uri.toString().startsWith("pop3"))
-            {
-                mAccount.setDeletePolicy(Account.DeletePolicy.NEVER);
-            }
+            mAccount = AccountCreator.initialVisualVoicemailSetup(AccountSetup.this, mAccount);
 
-             
-// CSM            AccountSetupCheckSettings.actionCheckSettings(this, mAccount, true);
             AccountSetupCheckSettings.actionCheckSettings(AccountSetup.this, mAccount, AccountSetupCheckSettings.CheckDirection.INCOMING);
         }
         catch (UnsupportedEncodingException enc)
@@ -336,7 +319,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
                     ConnectionSecurity.SSL_TLS_REQUIRED, AuthType.PLAIN, "username", "password", "");
             String storeUri = RemoteStore.createStoreUri(storeServer);
             mAccount.setStoreUri(storeUri);
-            AccountSetupIncoming.actionIncomingSettings(AccountSetup.this, mAccount, true);
+            AccountSetupIncoming.actionNewAccountSetup(AccountSetup.this, mAccount);
             break;
         case R.id.next:
             Log.d(TAG, "OnNext: next");

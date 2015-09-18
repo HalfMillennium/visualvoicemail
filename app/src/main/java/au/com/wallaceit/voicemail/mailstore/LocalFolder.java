@@ -813,7 +813,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public LocalMessage doDbWork(final SQLiteDatabase db) throws WrappedException, UnavailableStorageException {
                     try {
                         open(OPEN_MODE_RW);
-                        LocalMessage message = new LocalMessage(au.com.wallaceit.voicemail.mailstore.LocalFolder.this.localStore, uid, au.com.wallaceit.voicemail.mailstore.LocalFolder.this);
+                        LocalMessage message = new LocalMessage(LocalFolder.this.localStore, uid, au.com.wallaceit.voicemail.mailstore.LocalFolder.this);
                         Cursor cursor = null;
 
                         try {
@@ -896,7 +896,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (!(folder instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder)) {
             throw new MessagingException("copyMessages called with incorrect Folder");
         }
-        return ((au.com.wallaceit.voicemail.mailstore.LocalFolder) folder).appendMessages(msgs, true);
+        return ((LocalFolder) folder).appendMessages(msgs, true);
     }
 
     @Override
@@ -905,7 +905,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             throw new MessagingException("moveMessages called with non-LocalFolder");
         }
 
-        final au.com.wallaceit.voicemail.mailstore.LocalFolder lDestFolder = (au.com.wallaceit.voicemail.mailstore.LocalFolder)destFolder;
+        final au.com.wallaceit.voicemail.mailstore.LocalFolder lDestFolder = (LocalFolder)destFolder;
 
         final Map<String, String> uidMap = new HashMap<String, String>();
 
@@ -1688,7 +1688,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder) {
-            return ((au.com.wallaceit.voicemail.mailstore.LocalFolder)o).mName.equals(mName);
+            return ((LocalFolder)o).mName.equals(mName);
         }
         return super.equals(o);
     }

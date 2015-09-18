@@ -34,6 +34,11 @@
         android:title="@string/delete_action"/>
     <!-- MessageView -->
     <item
+        android:id="@+id/about"
+        android:icon="?attr/iconActionAbout"
+        android:title="@string/about_action"/>
+
+    <item
         android:id="@+id/move"
         android:icon="?attr/iconActionMove"
         android:showAsAction="ifRoom"

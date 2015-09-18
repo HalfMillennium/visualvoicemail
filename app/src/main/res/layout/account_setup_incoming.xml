@@ -18,6 +18,37 @@
         android:orientation="vertical">
         <!-- This text may be changed in code if the server is IMAP, etc. -->
         <TextView
+            android:id="@+id/account_name_label"
+            android:text="@string/account_settings_description_label"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorPrimary"
+            android:contentDescription="@string/account_setup_incoming_password_label"
+            android:visibility="gone"/>
+        <EditText
+            android:id="@+id/account_name"
+            android:singleLine="true"
+            android:inputType="text"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/account_requires_cellular_label"
+            android:text="@string/server_requires_cellular"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorPrimary"
+            android:contentDescription="@string/account_setup_incoming_password_label"
+            android:visibility="gone"/>
+        <CheckBox
+            android:id="@+id/account_requires_cellular"
+            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:visibility="gone"/>
+        <TextView
             android:id="@+id/account_server_label"
             android:text="@string/account_setup_incoming_pop_server_label"
             android:layout_height="wrap_content"
@@ -128,16 +159,6 @@
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:contentDescription="@string/account_setup_incoming_imap_path_prefix_label" />
-        </LinearLayout>
-        <LinearLayout android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:id="@+id/imap_folder_setup_section"
-            android:orientation="vertical">
-            <CheckBox
-                android:id="@+id/subscribed_folders_only"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="@string/account_setup_incoming_subscribed_folders_only_label"
-            />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/webdav_advanced_header"

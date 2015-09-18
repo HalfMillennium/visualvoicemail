@@ -253,7 +253,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
                 // TODO: refactor with DialogFragment.
                 // This is difficult because we need to pass through chain[0] for onClick()
-                new AlertDialog.Builder(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this)
+                new AlertDialog.Builder(AccountSetupCheckSettings.this)
                 .setTitle(getString(R.string.account_setup_failed_dlg_invalid_certificate_title))
                 //.setMessage(getString(R.string.account_setup_failed_dlg_invalid_certificate)
                 .setMessage(getString(msgResId, exMessage)
@@ -293,7 +293,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
                     R.string.account_setup_failed_dlg_certificate_message_fmt,
                     e.getMessage() == null ? "" : e.getMessage());
         }
-        au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.actionCheckSettings(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this, mAccount,
+        au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.actionCheckSettings(AccountSetupCheckSettings.this, mAccount,
                 mDirection);
     }
 
@@ -449,7 +449,7 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
 
         private void clearCertificateErrorNotifications() {
             final MessagingController ctrl = MessagingController.getInstance(getApplication());
-            ctrl.clearCertificateErrorNotifications(au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.this,
+            ctrl.clearCertificateErrorNotifications(AccountSetupCheckSettings.this,
                     account, CheckDirection.INCOMING);
         }
 

@@ -166,6 +166,7 @@ public class AudioPlayerDialog extends Dialog {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 Toast.makeText(getContext(), "Failed to play the audio file", Toast.LENGTH_SHORT).show();
+                dismiss();
                 return false;
             }
         });
@@ -186,7 +187,7 @@ public class AudioPlayerDialog extends Dialog {
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Failed to open the audio file", Toast.LENGTH_SHORT).show();
-            return;
+            dismiss();
         }
     }
 

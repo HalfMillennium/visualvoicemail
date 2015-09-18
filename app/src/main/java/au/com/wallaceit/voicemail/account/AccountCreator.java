@@ -1,7 +1,12 @@
 package au.com.wallaceit.voicemail.account;
 
 
+import android.content.Context;
+
+import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
+import au.com.wallaceit.voicemail.R;
+
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings.Type;
 
@@ -12,6 +17,22 @@ import com.fsck.k9.mail.ServerSettings.Type;
  * TODO Move much of the code from au.com.wallaceit.voicemail.activity.setup.* into here
  */
 public class AccountCreator {
+
+    public static Account initialVisualVoicemailSetup(Context context, Account account){
+
+        account.setDraftsFolderName(context.getString(R.string.special_mailbox_name_drafts));
+        account.setTrashFolderName(context.getString(R.string.special_mailbox_name_trash));
+        account.setArchiveFolderName(context.getString(R.string.special_mailbox_name_archive));
+        account.setSpamFolderName(context.getString(R.string.special_mailbox_name_spam));
+        account.setSentFolderName(context.getString(R.string.special_mailbox_name_sent));
+
+        account.setMaximumAutoDownloadMessageSize(0);
+        account.setMaximumPolledMessageAge(-1);
+        account.setSubscribedFoldersOnly(false);
+        account.setDeletePolicy(Account.DeletePolicy.ON_DELETE);
+
+        return account;
+    }
 
     public static DeletePolicy getDefaultDeletePolicy(Type type) {
         switch (type) {

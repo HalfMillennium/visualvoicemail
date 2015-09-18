@@ -10,14 +10,17 @@ import java.util.ResourceBundle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Debug;
@@ -25,8 +28,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.text.Html;
 import android.text.format.Time;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
@@ -1406,5 +1414,39 @@ public class VisualVoicemail extends Application {
             editor.putInt(KEY_LAST_ACCOUNT_DATABASE_VERSION, LocalStore.DB_VERSION);
             editor.commit();
         }
+    }
+    /**
+     * Get current version number.
+     *
+     * @return String version
+     */
+    public static String getVersionNumber(Context context) {
+        String version = "?";
+        try {
+            PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            version = pi.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            //Log.e(TAG, "Package name not found", e);
+        }
+        return version;
+    }
+
+    public static void showAboutDialog(Context context){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        LinearLayout about = (LinearLayout) inflater.inflate(R.layout.about, null);
+        ((TextView) about.findViewById(R.id.about_version)).setText(String.format(context.getString(R.string.debug_version_fmt), VisualVoicemail.getVersionNumber(context)));
+        TextView link = (TextView) about.findViewById(R.id.about_link);
+        link.setMovementMethod(LinkMovementMethod.getInstance());
+        link.setText(Html.fromHtml("<a href=\"" + context.getString(R.string.app_webpage_url) + "\">View Website</a>"));
+
+        new AlertDialog.Builder(context)
+                .setView(about)
+                .setCancelable(true)
+                .setPositiveButton(R.string.okay_action, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface d, int c) {
+                        d.dismiss();
+                    }
+                })
+                .show();
     }
 }

@@ -36,7 +36,7 @@ public class MessageInfoHolder {
         if (!(o instanceof au.com.wallaceit.voicemail.activity.MessageInfoHolder)) {
             return false;
         }
-        au.com.wallaceit.voicemail.activity.MessageInfoHolder other = (au.com.wallaceit.voicemail.activity.MessageInfoHolder)o;
+        au.com.wallaceit.voicemail.activity.MessageInfoHolder other = (MessageInfoHolder)o;
         return message.equals(other.message);
     }
 

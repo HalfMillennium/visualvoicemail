@@ -1364,13 +1364,9 @@ public class Account implements BaseAccount, StoreConfig {
 
     public Store getRemoteStore() throws MessagingException {
         if (mRequiresCellular) {
-            try {
-                URL url = new URL(getStoreUri());
-                HipriController.start(mContext, url.getHost());
-                // TODO: Handle failure; at the moment the socket will just time out
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            Uri url = Uri.parse(getStoreUri());
+            HipriController.start(mContext, url.getHost());
+            // TODO: Handle failure; at the moment the socket will just time out
         }
         return RemoteStore.getInstance(VisualVoicemail.app, this);
     }

@@ -375,7 +375,7 @@ public class Prefs extends K9PreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 FileBrowserHelper
                 .getInstance()
-                .showFileBrowserActivity(au.com.wallaceit.voicemail.activity.setup.Prefs.this,
+                .showFileBrowserActivity(Prefs.this,
                                          new File(VisualVoicemail.getAttachmentDefaultPath()),
                                          ACTIVITY_CHOOSE_FOLDER, callback);
 
