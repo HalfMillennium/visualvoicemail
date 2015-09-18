@@ -50,6 +50,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.mailstore.BinaryMemoryBody;
 import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
@@ -61,7 +62,7 @@ public class VoicemailAttachmentHelper {
     private final MessagingController controller;
     private final MessageReference reference;
     private Part attachment;
-    private String phone;
+    private String phone = "";
     private Date date;
 
     public VoicemailAttachmentHelper(Context context, MessagingController controller, MessageReference reference) {
@@ -69,8 +70,10 @@ public class VoicemailAttachmentHelper {
         this.controller = controller;
         this.reference = reference;
         LocalMessage message = reference.restoreToLocalMessage(context);
-        VvmContacts vvmContacts = new VvmContacts(context);
-        phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+        if (message.getFrom().length>0) {
+            VvmContacts vvmContacts = new VvmContacts(context);
+            phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+        }
         date = message.getSentDate();
     }
 
@@ -165,12 +168,12 @@ public class VoicemailAttachmentHelper {
             for (int i = 0; i < mp.getCount(); i++) {
                 Log.i(VisualVoicemail.LOG_TAG, "multiPartCount = " + mp.getCount());
                 Part rtn = walkMessagePartsForRecording(mp.getBodyPart(i));
-                if (rtn!=null && rtn.getBody() instanceof FileBackedBody)
+                if (rtn!=null)
                     return rtn;
             }
         } else {
             Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
-            if (part.getBody() instanceof FileBackedBody)
+            if (part.getBody() instanceof FileBackedBody || part.getBody() instanceof BinaryMemoryBody)
                 return part;
         }
         Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " null: " + part.getMimeType());

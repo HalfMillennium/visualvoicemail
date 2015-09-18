@@ -419,7 +419,7 @@ public class Contacts {
      *         about the contact with the given email address
      */
     private Cursor getContactByPhoneNumber(final String phone) {
-        final Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, Uri.encode(phone));
+        final Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, Uri.encode(phone));
         final Cursor c = mContentResolver.query(
                 uri,
                 PROJECTION,
