@@ -35,6 +35,11 @@
         android:icon="?attr/iconActionRefresh"
         android:title="@string/refresh_folders_action"/>
     <item
+        android:id="@+id/show_all_folders"
+        android:checkable="true"
+        android:checked="false"
+        android:title="@string/show_all"/>
+    <item
         android:id="@+id/settings"
         android:icon="?attr/iconActionSettings"
         android:showAsAction="never"

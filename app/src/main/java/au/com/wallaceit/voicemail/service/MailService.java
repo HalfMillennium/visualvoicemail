@@ -394,12 +394,6 @@ public class MailService extends CoreService {
                     }
                 }
             }
-            // Whenever we refresh our pushers, send any unsent messages
-            if (VisualVoicemail.DEBUG) {
-                Log.d(VisualVoicemail.LOG_TAG, "PUSHREFRESH:  trying to send mail in all folders!");
-            }
-
-            MessagingController.getInstance(getApplication()).sendPendingMessages(null);
 
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "Exception while refreshing pushers", e);

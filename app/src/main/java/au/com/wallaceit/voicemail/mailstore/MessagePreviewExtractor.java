@@ -98,12 +98,12 @@ class MessagePreviewExtractor {
             appendDivider(text);
         }
 
-        String subject = messageHeader.getMessage().getSubject();
+        /*String subject = messageHeader.getMessage().getSubject();
         if (TextUtils.isEmpty(subject)) {
             text.append(context.getString(R.string.preview_untitled_inner_message));
         } else {
             text.append(context.getString(R.string.preview_inner_message, subject));
-        }
+        }*/
     }
 
     private static void appendDivider(StringBuilder text) {

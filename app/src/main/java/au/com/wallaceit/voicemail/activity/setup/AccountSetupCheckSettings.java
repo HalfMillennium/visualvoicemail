@@ -5,12 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,14 +24,10 @@ import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
 
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.helper.HipriController;
 
 import com.fsck.k9.mail.AuthenticationFailedException;
 import com.fsck.k9.mail.CertificateValidationException;
-import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mail.Transport;
-import com.fsck.k9.mail.store.webdav.WebDavStore;
 import com.fsck.k9.mail.filter.Hex;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateEncodingException;
@@ -465,57 +458,17 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
         }
 
         private void checkIncoming() throws Throwable {
-            // setup cellular routing if required by the provider
-            /*WifiManager wifiManager	= (WifiManager) AccountSetupCheckSettings.this.getSystemService(Context.WIFI_SERVICE);
-            boolean wifiEnabled = wifiManager.isWifiEnabled();
-            boolean wifiWasDisabled = false;
-            if (wifiEnabled && mAccount.getRequiresCellular()){
-                // Try to switch to HIPRI
-                boolean hiresult = HipriController.start(AccountSetupCheckSettings.this, Uri.parse(mAccount.getStoreUri()).getHost());
-                if (!hiresult){
-                    ConnectivityManager connectivityManager = (ConnectivityManager) AccountSetupCheckSettings.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-                    // HIPRI failed: turn off wifi to validate settings
-                    Log.d(getPackageName(), "HIPRI connection failed: Disabling WiFi");
-                    wifiManager.setWifiEnabled(false);
-                    wifiWasDisabled = true;
 
-                    // now wait a bit to see if the mobile connection gets up and running
-                    for (int count=0; count<=10; count++)
-                    {
-                        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected())
-                            break;
-
-                        if (count == 10)
-                            throw new Throwable("Unable to obtain a mobile connection:\nCheck if Mobile Data is enabled and try again");
-
-                        Thread.sleep(1000);
-                        if (mDestroyed)
-                        {
-                            finish();
-                            return;
-                        }
-                    }
-                }
-            }*/
 
             Store store = account.getRemoteStore();
-            /*if (store instanceof WebDavStore) {
-                publishProgress(R.string.account_setup_check_settings_authenticate);
-            } else {
-                publishProgress(R.string.account_setup_check_settings_check_incoming_msg);
-            }*/
+
             store.checkSettings();
 
-            /*if (store instanceof WebDavStore) {
-                publishProgress(R.string.account_setup_check_settings_fetch);
-            }*/
             MessagingController.getInstance(getApplication()).listFoldersSynchronous(account, true, null);
             MessagingController.getInstance(getApplication()).synchronizeMailbox(account, account.getInboxFolderName(), null, null);
 
             mAccount.validated = true;
 
-            //if ( wifiWasDisabled )
-                //wifiManager.setWifiEnabled(true);
         }
 
         @Override

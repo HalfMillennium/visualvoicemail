@@ -623,12 +623,6 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
      * MessagingController.checkMail().
      */
     private void onCheckMail(Account account) {
-        MessagingController.getInstance(getApplication()).checkMail(this, account, true, true, null);
-        if (account == null) {
-            MessagingController.getInstance(getApplication()).sendPendingMessages(null);
-        } else {
-            MessagingController.getInstance(getApplication()).sendPendingMessages(account, null);
-        }
 
     }
 
@@ -985,14 +979,14 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                     mAccount.setStoreUri(newStoreUri);
                 }
 
-                if (mOutgoingPassword != null) {
+                /*if (mOutgoingPassword != null) {
                     // Set outgoing server password
                     String transportUri = mAccount.getTransportUri();
                     ServerSettings outgoing = Transport.decodeTransportUri(transportUri);
                     ServerSettings newOutgoing = outgoing.newPassword(mOutgoingPassword);
                     String newTransportUri = Transport.createTransportUri(newOutgoing);
                     mAccount.setTransportUri(newTransportUri);
-                }
+                }*/
 
                 // Mark account as enabled
                 mAccount.setEnabled(true);

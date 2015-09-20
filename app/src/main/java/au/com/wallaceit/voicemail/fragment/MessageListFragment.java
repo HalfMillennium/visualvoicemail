@@ -235,16 +235,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
     }
 
-    public static class AttachmentComparator implements Comparator<Cursor> {
-
-        @Override
-        public int compare(Cursor cursor1, Cursor cursor2) {
-            int o1HasAttachment = (cursor1.getInt(ATTACHMENT_COUNT_COLUMN) > 0) ? 0 : 1;
-            int o2HasAttachment = (cursor2.getInt(ATTACHMENT_COUNT_COLUMN) > 0) ? 0 : 1;
-            return o1HasAttachment - o2HasAttachment;
-        }
-    }
-
     public static class FlaggedComparator implements Comparator<Cursor> {
 
         @Override
@@ -323,7 +313,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         final Map<SortType, Comparator<Cursor>> map =
                 new EnumMap<SortType, Comparator<Cursor>>(SortType.class);
-        map.put(SortType.SORT_ATTACHMENT, new AttachmentComparator());
         map.put(SortType.SORT_DATE, new DateComparator());
         map.put(SortType.SORT_FLAGGED, new FlaggedComparator());
         map.put(SortType.SORT_SENDER, new SenderComparator());
@@ -1661,7 +1650,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     class MessageListActivityListener extends ActivityListener {
         @Override
         public void remoteSearchFailed(String folder, final String err) {
-            mHandler.post(new Runnable() {
+            /*mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     Activity activity = getActivity();
@@ -1670,13 +1659,13 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                                 Toast.LENGTH_LONG).show();
                     }
                 }
-            });
+            });*/
         }
 
         @Override
         public void remoteSearchStarted(String folder) {
-            mHandler.progress(true);
-            mHandler.updateFooter(mContext.getString(R.string.remote_search_sending_query));
+            /*mHandler.progress(true);
+            mHandler.updateFooter(mContext.getString(R.string.remote_search_sending_query));*/
         }
 
         @Override
@@ -1700,14 +1689,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         @Override
         public void remoteSearchServerQueryComplete(String folderName, int numResults, int maxResults) {
-            mHandler.progress(true);
+            /*mHandler.progress(true);
             if (maxResults != 0 && numResults > maxResults) {
                 mHandler.updateFooter(mContext.getString(R.string.remote_search_downloading_limited,
                         maxResults, numResults));
             } else {
                 mHandler.updateFooter(mContext.getString(R.string.remote_search_downloading, numResults));
             }
-            mFragmentListener.setMessageListProgress(Window.PROGRESS_START);
+            mFragmentListener.setMessageListProgress(Window.PROGRESS_START);*/
         }
 
         @Override
@@ -2919,7 +2908,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     public void checkMail() {
         if (isSingleAccountMode() && isSingleFolderMode()) {
             mController.synchronizeMailbox(mAccount, mFolderName, mListener, null);
-            mController.sendPendingMessages(mAccount, mListener);
         } else if (mAllAccounts) {
             mController.checkMail(mContext, null, true, true, mListener);
         } else {

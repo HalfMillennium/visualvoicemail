@@ -91,6 +91,7 @@ public class FolderList extends K9ListActivity {
     private TextView mActionBarTitle;
     private TextView mActionBarSubTitle;
     private TextView mActionBarUnread;
+    private boolean mViewAllFolders = false;
 
     class FolderListHandler extends Handler {
 
@@ -221,7 +222,6 @@ public class FolderList extends K9ListActivity {
             }
         };
         MessagingController.getInstance(getApplication()).synchronizeMailbox(mAccount, folder.name, listener, null);
-        sendMail(mAccount);
     }
 
     public static Intent actionHandleAccountIntent(Context context, Account account, boolean fromShortcut) {
@@ -441,7 +441,11 @@ public class FolderList extends K9ListActivity {
     private void onRefresh(final boolean forceRemote) {
 
         MessagingController.getInstance(getApplication()).listFolders(mAccount, forceRemote, mAdapter.mListener);
+    }
 
+    private void onShowAllFolders(boolean showAll){
+        mViewAllFolders = showAll;
+        onRefresh(false);
     }
 
     private void onEditPrefs() {
@@ -484,14 +488,6 @@ public class FolderList extends K9ListActivity {
         onRefresh(!REFRESH_REMOTE);
     }
 
-
-
-
-
-    private void sendMail(Account account) {
-        MessagingController.getInstance(getApplication()).sendPendingMessages(account, mAdapter.mListener);
-    }
-
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case android.R.id.home:
@@ -512,6 +508,11 @@ public class FolderList extends K9ListActivity {
         case R.id.list_folders:
             onRefresh(REFRESH_REMOTE);
 
+            return true;
+
+        case R.id.show_all_folders:
+            item.setChecked(!item.isChecked());
+            onShowAllFolders(item.isChecked());
             return true;
 
         case R.id.account_settings:
@@ -721,11 +722,11 @@ public class FolderList extends K9ListActivity {
                     for (Folder folder : folders) {
                         Folder.FolderClass fMode = folder.getDisplayClass();
 
-                        if ((aMode == FolderMode.FIRST_CLASS && fMode != Folder.FolderClass.FIRST_CLASS)
+                        if (((aMode == FolderMode.FIRST_CLASS && fMode != Folder.FolderClass.FIRST_CLASS)
                                 || (aMode == FolderMode.FIRST_AND_SECOND_CLASS &&
                                     fMode != Folder.FolderClass.FIRST_CLASS &&
                                     fMode != Folder.FolderClass.SECOND_CLASS)
-                        || (aMode == FolderMode.NOT_SECOND_CLASS && fMode == Folder.FolderClass.SECOND_CLASS)) {
+                        || (aMode == FolderMode.NOT_SECOND_CLASS && fMode == Folder.FolderClass.SECOND_CLASS)) && !mViewAllFolders) {
                             continue;
                         }
 

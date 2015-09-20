@@ -1,4 +1,4 @@
-package au.com.wallaceit.voicemail.helper;
+package com.fsck.k9.mail.transport;
 /*
  * Copyright 2013 Michael Boyde Wallace (http://wallaceit.com.au)
  * This file is part of Visual Voicemail.
@@ -19,10 +19,8 @@ package au.com.wallaceit.voicemail.helper;
  * Created by michael on 15/09/15.
  */
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -34,16 +32,13 @@ public class HipriController {
     /**
      * Enable mobile connection for a specific address, the connection is closed after the app & services have exited.
      * Note: background sync with push causes it to be permanently enabled
-     * @param context a Context (application or activity)
+     * @param connectivityManager a ConnectivityManager
      * @param address the address to enable
      * @return true for success, else false
      */
-    public static boolean start(Context context, String address) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+    public static boolean start(ConnectivityManager connectivityManager, String address) {
 
         String TAG_LOG = "ForceCellular";
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (null == connectivityManager) {
             Log.d(TAG_LOG, "ConnectivityManager is null, cannot try to force a mobile connection");
             return false;

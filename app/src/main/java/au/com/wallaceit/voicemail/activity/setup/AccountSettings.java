@@ -48,9 +48,7 @@ public class AccountSettings extends K9PreferenceActivity {
     private static final int DIALOG_COLOR_PICKER_ACCOUNT = 1;
     private static final int DIALOG_COLOR_PICKER_LED = 2;
 
-    private static final int SELECT_AUTO_EXPAND_FOLDER = 1;
-
-    private static final int ACTIVITY_MANAGE_IDENTITIES = 2;
+    //private static final int SELECT_AUTO_EXPAND_FOLDER = 1;
 
     private static final String PREFERENCE_SCREEN_MAIN = "main";
     private static final String PREFERENCE_SCREEN_INCOMING = "incoming_prefs";
@@ -93,12 +91,12 @@ public class AccountSettings extends K9PreferenceActivity {
     //private static final String PREFERENCE_REMOTE_SEARCH_NUM_RESULTS = "account_remote_search_num_results";
 
     private static final String PREFERENCE_LOCAL_STORAGE_PROVIDER = "local_storage_provider";
-    private static final String PREFERENCE_CATEGORY_FOLDERS = "folders";
-    private static final String PREFERENCE_ARCHIVE_FOLDER = "archive_folder";
-    private static final String PREFERENCE_DRAFTS_FOLDER = "drafts_folder";
-    private static final String PREFERENCE_SENT_FOLDER = "sent_folder";
-    private static final String PREFERENCE_SPAM_FOLDER = "spam_folder";
-    private static final String PREFERENCE_TRASH_FOLDER = "trash_folder";
+    //private static final String PREFERENCE_CATEGORY_FOLDERS = "folders";
+    //private static final String PREFERENCE_ARCHIVE_FOLDER = "archive_folder";
+    //private static final String PREFERENCE_DRAFTS_FOLDER = "drafts_folder";
+    //private static final String PREFERENCE_SENT_FOLDER = "sent_folder";
+    //private static final String PREFERENCE_SPAM_FOLDER = "spam_folder";
+    //private static final String PREFERENCE_TRASH_FOLDER = "trash_folder";
 
     public static final String PREFERENCE_AUTO_CHECK = "account_auto_check";
     public static final int PREFERENCE_AUTO_CHECK_NONE = 0;

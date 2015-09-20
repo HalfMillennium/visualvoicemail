@@ -1,5 +1,6 @@
 package com.fsck.k9.mail.store.imap;
 
+import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.fsck.k9.mail.NetworkType;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.filter.PeekableInputStream;
 import com.fsck.k9.mail.ssl.TrustedSocketFactory;
+import com.fsck.k9.mail.transport.HipriController;
 import com.jcraft.jzlib.JZlib;
 import com.jcraft.jzlib.ZOutputStream;
 
@@ -74,13 +76,15 @@ class ImapConnection {
     private ImapSettings mSettings;
     private ConnectivityManager mConnectivityManager;
     private final TrustedSocketFactory mSocketFactory;
+    private boolean mRequiresCellular;
 
     public ImapConnection(ImapSettings settings,
                           TrustedSocketFactory socketFactory,
-                          ConnectivityManager connectivityManager) {
+                          ConnectivityManager connectivityManager, boolean requiresCellular) {
         this.mSettings = settings;
         this.mSocketFactory = socketFactory;
         this.mConnectivityManager = connectivityManager;
+        this.mRequiresCellular = requiresCellular;
     }
 
     public Set<String> getCapabilities() {
@@ -98,6 +102,13 @@ class ImapConnection {
     public void open() throws IOException, MessagingException {
         if (isOpen()) {
             return;
+        }
+
+        // Check if we need to force 3g.
+        // Some providers will only permit access to the voice mail system via there own network
+        if (mRequiresCellular) {
+            HipriController.start(mConnectivityManager, mSettings.getHost());
+            // TODO: Handle failure; at the moment the socket will just time out
         }
 
         boolean authSuccess = false;

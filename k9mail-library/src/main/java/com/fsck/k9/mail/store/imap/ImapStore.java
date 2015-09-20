@@ -100,6 +100,7 @@ public class ImapStore extends RemoteStore {
     private String mPathPrefix;
     private String mCombinedPrefix = null;
     private String mPathDelimiter = null;
+    private boolean mRequiresCellular;
 
     /**
      * Decodes an ImapStore URI.
@@ -338,6 +339,8 @@ public class ImapStore extends RemoteStore {
             throw new MessagingException("Error while decoding store URI", e);
         }
 
+        mRequiresCellular = storeConfig.getRequiresCellular();
+
         mHost = settings.host;
         mPort = settings.port;
 
@@ -462,13 +465,6 @@ public class ImapStore extends RemoteStore {
 
                 if (folder.equalsIgnoreCase(mStoreConfig.getInboxFolderName())) {
                     continue;
-                } else if (folder.equals(mStoreConfig.getOutboxFolderName())) {
-                    /*
-                     * There is a folder on the server with the same name as our local
-                     * outbox. Until we have a good plan to deal with this situation
-                     * we simply ignore the folder on the server.
-                     */
-                    continue;
                 } else {
                     int prefixLength = getCombinedPrefix().length();
                     if (prefixLength > 0) {
@@ -550,7 +546,7 @@ public class ImapStore extends RemoteStore {
                 ImapList attributes = response.getList(1);
                 for (int i = 0, count = attributes.size(); i < count; i++) {
                     String attribute = attributes.getString(i);
-                    if (attribute.equals("\\Drafts")) {
+                    /*if (attribute.equals("\\Drafts")) {
                         mStoreConfig.setDraftsFolderName(decodedFolderName);
                         if (K9MailLib.isDebug()) Log.d(LOG_TAG, "Folder auto-configuration detected draft folder: " + decodedFolderName);
                     } else if (attribute.equals("\\Sent")) {
@@ -560,7 +556,7 @@ public class ImapStore extends RemoteStore {
                         //rfc6154 just mentions \Junk
                         mStoreConfig.setSpamFolderName(decodedFolderName);
                         if (K9MailLib.isDebug()) Log.d(LOG_TAG, "Folder auto-configuration detected spam folder: " + decodedFolderName);
-                    } else if (attribute.equals("\\Trash")) {
+                    } else*/ if (attribute.equals("\\Trash")) {
                         mStoreConfig.setTrashFolderName(decodedFolderName);
                         if (K9MailLib.isDebug()) Log.d(LOG_TAG, "Folder auto-configuration detected trash folder: " + decodedFolderName);
                     }
@@ -575,7 +571,7 @@ public class ImapStore extends RemoteStore {
             ImapConnection connection = new ImapConnection(
                     new StoreImapSettings(),
                     mTrustedSocketFactory,
-                    mConnectivityManager);
+                    mConnectivityManager, mRequiresCellular);
 
             connection.open();
             autoconfigureFolders(connection);
@@ -599,7 +595,7 @@ public class ImapStore extends RemoteStore {
             if (connection == null) {
                 connection = new ImapConnection(new StoreImapSettings(),
                         mTrustedSocketFactory,
-                        mConnectivityManager);
+                        mConnectivityManager, mRequiresCellular);
             }
             return connection;
         }

@@ -1,8 +1,6 @@
 
 package au.com.wallaceit.voicemail;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
 
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings;
-import au.com.wallaceit.voicemail.helper.HipriController;
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
@@ -132,11 +129,11 @@ public class Account implements BaseAccount, StoreConfig {
     public enum SortType {
         SORT_DATE(R.string.sort_earliest_first, R.string.sort_latest_first, false),
         SORT_ARRIVAL(R.string.sort_earliest_first, R.string.sort_latest_first, false),
-        SORT_SUBJECT(R.string.sort_subject_alpha, R.string.sort_subject_re_alpha, true),
+        //SORT_SUBJECT(R.string.sort_subject_alpha, R.string.sort_subject_re_alpha, true),
         SORT_SENDER(R.string.sort_sender_alpha, R.string.sort_sender_re_alpha, true),
         SORT_UNREAD(R.string.sort_unread_first, R.string.sort_unread_last, true),
-        SORT_FLAGGED(R.string.sort_flagged_first, R.string.sort_flagged_last, true),
-        SORT_ATTACHMENT(R.string.sort_attach_first, R.string.sort_unattached_first, true);
+        SORT_FLAGGED(R.string.sort_flagged_first, R.string.sort_flagged_last, true);
+        //SORT_ATTACHMENT(R.string.sort_attach_first, R.string.sort_unattached_first, true);
 
         private int ascendingToast;
         private int descendingToast;
@@ -184,11 +181,11 @@ public class Account implements BaseAccount, StoreConfig {
     private FolderMode mFolderNotifyNewMailMode;
     //private boolean mNotifySelfNewMail;
     private String mInboxFolderName;
-    private String mDraftsFolderName;
-    private String mSentFolderName;
+    //private String mDraftsFolderName;
+    //private String mSentFolderName;
     private String mTrashFolderName;
-    private String mArchiveFolderName;
-    private String mSpamFolderName;
+    //private String mArchiveFolderName;
+    //private String mSpamFolderName;
     private String mAutoExpandFolderName;
     //private FolderMode mFolderDisplayMode;
     //private FolderMode mFolderSyncMode;
@@ -292,7 +289,7 @@ public class Account implements BaseAccount, StoreConfig {
         mContext = context;
         mUuid = UUID.randomUUID().toString();
         mLocalStorageProviderId = StorageManager.getInstance(context).getDefaultProviderId();
-        mAutomaticCheckIntervalMinutes = -1;
+        mAutomaticCheckIntervalMinutes = 120;
         mIdleRefreshMinutes = 24;
         mPushPollOnConnect = true;
         mDisplayCount = VisualVoicemail.DEFAULT_VISIBLE_LIMIT;
@@ -354,6 +351,12 @@ public class Account implements BaseAccount, StoreConfig {
         mNotificationSetting.setRingtone("content://settings/system/notification_sound");
         mNotificationSetting.setLedColor(mChipColor);
 
+        mAutomaticCheckMethod = 2;
+        mNetworkOperatorName = "";
+        mPhoneNumber = "";
+        mRequiresCellular = false;
+        mAccountProviderId = "-1";
+
         cacheChips();
     }
 
@@ -414,11 +417,11 @@ public class Account implements BaseAccount, StoreConfig {
         mNotifySync = prefs.getBoolean(mUuid + ".notifyMailCheck", false);
         mDeletePolicy =  DeletePolicy.fromInt(prefs.getInt(mUuid + ".deletePolicy", DeletePolicy.NEVER.setting));
         mInboxFolderName = prefs.getString(mUuid  + ".inboxFolderName", INBOX);
-        mDraftsFolderName = prefs.getString(mUuid  + ".draftsFolderName", "Drafts");
-        mSentFolderName = prefs.getString(mUuid  + ".sentFolderName", "Sent");
+        //mDraftsFolderName = prefs.getString(mUuid  + ".draftsFolderName", "Drafts");
+        //mSentFolderName = prefs.getString(mUuid  + ".sentFolderName", "Sent");
         mTrashFolderName = prefs.getString(mUuid  + ".trashFolderName", "Trash");
-        mArchiveFolderName = prefs.getString(mUuid  + ".archiveFolderName", "Archive");
-        mSpamFolderName = prefs.getString(mUuid  + ".spamFolderName", "Spam");
+        //mArchiveFolderName = prefs.getString(mUuid  + ".archiveFolderName", "Archive");
+        //mSpamFolderName = prefs.getString(mUuid  + ".spamFolderName", "Spam");
         mExpungePolicy = getEnumStringPref(prefs, mUuid + ".expungePolicy", Expunge.EXPUNGE_IMMEDIATELY);
         mSyncRemoteDeletions = prefs.getBoolean(mUuid  + ".syncRemoteDeletions", true);
 
@@ -490,7 +493,7 @@ public class Account implements BaseAccount, StoreConfig {
         //mAlwaysShowCcBcc = prefs.getBoolean(mUuid + ".alwaysShowCcBcc", false);
 
         // VVM specific
-        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 1);
+        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 2);
         mNetworkOperatorName = prefs.getString(mUuid + ".networkOperatorName", "");
         mPhoneNumber = prefs.getString( mUuid + ".phoneNumber", "");
         mRequiresCellular = prefs.getBoolean(mUuid + ".requiresCellular", false);
@@ -679,7 +682,7 @@ public class Account implements BaseAccount, StoreConfig {
              *
              * I bet there is a much smarter way to do this. Anyone like to suggest it?
              */
-            List<au.com.wallaceit.voicemail.Account> accounts = preferences.getAccounts();
+            List<Account> accounts = preferences.getAccounts();
             int[] accountNumbers = new int[accounts.size()];
             for (int i = 0; i < accounts.size(); i++) {
                 accountNumbers[i] = accounts.get(i).getAccountNumber();
@@ -715,11 +718,11 @@ public class Account implements BaseAccount, StoreConfig {
         editor.putBoolean(mUuid + ".notifyMailCheck", mNotifySync);
         editor.putInt(mUuid + ".deletePolicy", mDeletePolicy.setting);
         editor.putString(mUuid + ".inboxFolderName", mInboxFolderName);
-        editor.putString(mUuid + ".draftsFolderName", mDraftsFolderName);
-        editor.putString(mUuid + ".sentFolderName", mSentFolderName);
+        //editor.putString(mUuid + ".draftsFolderName", mDraftsFolderName);
+        //editor.putString(mUuid + ".sentFolderName", mSentFolderName);
         editor.putString(mUuid + ".trashFolderName", mTrashFolderName);
-        editor.putString(mUuid + ".archiveFolderName", mArchiveFolderName);
-        editor.putString(mUuid + ".spamFolderName", mSpamFolderName);
+        //editor.putString(mUuid + ".archiveFolderName", mArchiveFolderName);
+        //editor.putString(mUuid + ".spamFolderName", mSpamFolderName);
         editor.putString(mUuid + ".autoExpandFolderName", mAutoExpandFolderName);
         editor.putInt(mUuid + ".accountNumber", mAccountNumber);
         editor.putString(mUuid + ".sortTypeEnum", mSortType.name());
@@ -729,7 +732,7 @@ public class Account implements BaseAccount, StoreConfig {
         //editor.putString(mUuid + ".folderSyncMode", mFolderSyncMode.name());
         //editor.putString(mUuid + ".folderPushMode", mFolderPushMode.name());
         //editor.putString(mUuid + ".folderTargetMode", mFolderTargetMode.name());
-        editor.putBoolean(mUuid + ".signatureBeforeQuotedText", this.mIsSignatureBeforeQuotedText);
+        //editor.putBoolean(mUuid + ".signatureBeforeQuotedText", this.mIsSignatureBeforeQuotedText);
         editor.putString(mUuid + ".expungePolicy", mExpungePolicy.name());
         editor.putBoolean(mUuid + ".syncRemoteDeletions", mSyncRemoteDeletions);
         editor.putInt(mUuid + ".maxPushFolders", mMaxPushFolders);
@@ -934,9 +937,9 @@ public class Account implements BaseAccount, StoreConfig {
         return null;
     }
 
-    public synchronized void setTransportUri(String transportUri) {
+    /*public synchronized void setTransportUri(String transportUri) {
         //this.mTransportUri = transportUri;
-    }
+    }*/
 
     @Override
     public String getPhoneNumber() {
@@ -958,7 +961,7 @@ public class Account implements BaseAccount, StoreConfig {
         this.mDescription = description;
     }
 
-    public synchronized Boolean getRequiresCellular() {
+    public synchronized boolean getRequiresCellular() {
         return mRequiresCellular;
     }
 
@@ -1134,20 +1137,20 @@ public class Account implements BaseAccount, StoreConfig {
     public boolean isSpecialFolder(String folderName) {
         return (folderName != null && (folderName.equalsIgnoreCase(getInboxFolderName()) ||
                 folderName.equals(getTrashFolderName()) ||
-                folderName.equals(getDraftsFolderName()) ||
+                /*folderName.equals(getDraftsFolderName()) ||
                 folderName.equals(getArchiveFolderName()) ||
                 folderName.equals(getSpamFolderName()) ||
                 folderName.equals(getOutboxFolderName()) ||
-                folderName.equals(getSentFolderName()) ||
+                folderName.equals(getSentFolderName()) ||*/
                 folderName.equals(getErrorFolderName())));
     }
 
     public synchronized String getDraftsFolderName() {
-        return mDraftsFolderName;
+        return null;
     }
 
     public synchronized void setDraftsFolderName(String name) {
-        mDraftsFolderName = name;
+        //mDraftsFolderName = name;
     }
 
     /**
@@ -1155,11 +1158,11 @@ public class Account implements BaseAccount, StoreConfig {
      * @return true if account has a drafts folder set.
      */
     public synchronized boolean hasDraftsFolder() {
-        return !VisualVoicemail.FOLDER_NONE.equalsIgnoreCase(mDraftsFolderName);
+        return false;
     }
 
     public synchronized String getSentFolderName() {
-        return mSentFolderName;
+        return null;
     }
 
     public synchronized String getErrorFolderName() {
@@ -1167,7 +1170,7 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized void setSentFolderName(String name) {
-        mSentFolderName = name;
+        //mSentFolderName = name;
     }
 
     /**
@@ -1175,7 +1178,7 @@ public class Account implements BaseAccount, StoreConfig {
      * @return true if account has a sent folder set.
      */
     public synchronized boolean hasSentFolder() {
-        return !VisualVoicemail.FOLDER_NONE.equalsIgnoreCase(mSentFolderName);
+        return false;
     }
 
 
@@ -1196,11 +1199,11 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized String getArchiveFolderName() {
-        return mArchiveFolderName;
+        return null;
     }
 
     public synchronized void setArchiveFolderName(String archiveFolderName) {
-        mArchiveFolderName = archiveFolderName;
+        //mArchiveFolderName = archiveFolderName;
     }
 
     /**
@@ -1208,15 +1211,15 @@ public class Account implements BaseAccount, StoreConfig {
      * @return true if account has an archive folder set.
      */
     public synchronized boolean hasArchiveFolder() {
-        return !VisualVoicemail.FOLDER_NONE.equalsIgnoreCase(mArchiveFolderName);
+        return false;
     }
 
     public synchronized String getSpamFolderName() {
-        return mSpamFolderName;
+        return null;
     }
 
     public synchronized void setSpamFolderName(String name) {
-        mSpamFolderName = name;
+        //mSpamFolderName = name;
     }
 
     /**
@@ -1224,7 +1227,7 @@ public class Account implements BaseAccount, StoreConfig {
      * @return true if account has a spam folder set.
      */
     public synchronized boolean hasSpamFolder() {
-        return !VisualVoicemail.FOLDER_NONE.equalsIgnoreCase(mSpamFolderName);
+        return false;
     }
 
     public synchronized String getOutboxFolderName() {
@@ -1244,7 +1247,7 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized FolderMode getFolderDisplayMode() {
-        return FolderMode.ALL;
+        return FolderMode.FIRST_CLASS;
     }
 
     /*public synchronized boolean setFolderDisplayMode(FolderMode displayMode) {
@@ -1254,7 +1257,7 @@ public class Account implements BaseAccount, StoreConfig {
     }*/
 
     public synchronized FolderMode getFolderSyncMode() {
-        return FolderMode.ALL;
+        return FolderMode.FIRST_CLASS;
     }
 
     /*public synchronized boolean setFolderSyncMode(FolderMode syncMode) {
@@ -1271,7 +1274,7 @@ public class Account implements BaseAccount, StoreConfig {
     }*/
 
     public synchronized FolderMode getFolderPushMode() {
-        return FolderMode.ALL;
+        return FolderMode.FIRST_CLASS;
     }
 
     /*public synchronized boolean setFolderPushMode(FolderMode pushMode) {
@@ -1317,12 +1320,12 @@ public class Account implements BaseAccount, StoreConfig {
     }*/
 
     public synchronized FolderMode getFolderTargetMode() {
-        return FolderMode.ALL;
+        return FolderMode.FIRST_CLASS;
     }
 
     /*public synchronized void setFolderTargetMode(FolderMode folderTargetMode) {
         mFolderTargetMode = folderTargetMode;
-    }*/
+    }
 
     public synchronized boolean isSignatureBeforeQuotedText() {
         return mIsSignatureBeforeQuotedText;
@@ -1330,7 +1333,7 @@ public class Account implements BaseAccount, StoreConfig {
 
     public synchronized void setSignatureBeforeQuotedText(boolean mIsSignatureBeforeQuotedText) {
         this.mIsSignatureBeforeQuotedText = mIsSignatureBeforeQuotedText;
-    }
+    }*/
 
     /*public synchronized boolean isNotifySelfNewMail() {
         return mNotifySelfNewMail;
@@ -1363,11 +1366,6 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public Store getRemoteStore() throws MessagingException {
-        if (mRequiresCellular) {
-            Uri url = Uri.parse(getStoreUri());
-            HipriController.start(mContext, url.getHost());
-            // TODO: Handle failure; at the moment the socket will just time out
-        }
         return RemoteStore.getInstance(VisualVoicemail.app, this);
     }
 
@@ -1883,10 +1881,10 @@ public class Account implements BaseAccount, StoreConfig {
      */
     public void excludeSpecialFolders(LocalSearch search) {
         excludeSpecialFolder(search, getTrashFolderName());
-        excludeSpecialFolder(search, getDraftsFolderName());
+        /*excludeSpecialFolder(search, getDraftsFolderName());
         excludeSpecialFolder(search, getSpamFolderName());
         excludeSpecialFolder(search, getOutboxFolderName());
-        excludeSpecialFolder(search, getSentFolderName());
+        excludeSpecialFolder(search, getSentFolderName());*/
         excludeSpecialFolder(search, getErrorFolderName());
         search.or(new SearchCondition(SearchField.FOLDER, Attribute.EQUALS, getInboxFolderName()));
     }
@@ -1910,8 +1908,8 @@ public class Account implements BaseAccount, StoreConfig {
      */
     public void excludeUnwantedFolders(LocalSearch search) {
         excludeSpecialFolder(search, getTrashFolderName());
-        excludeSpecialFolder(search, getSpamFolderName());
-        excludeSpecialFolder(search, getOutboxFolderName());
+        /*excludeSpecialFolder(search, getSpamFolderName());
+        excludeSpecialFolder(search, getOutboxFolderName());*/
         search.or(new SearchCondition(SearchField.FOLDER, Attribute.EQUALS, getInboxFolderName()));
     }
 

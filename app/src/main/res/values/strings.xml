@@ -39,12 +39,12 @@
     <string name="app_libraries">We\'re using the following third-party libraries: <xliff:g id="app_libraries_list">%s</xliff:g></string>
     <string name="app_emoji_icons">Emoji icons: <xliff:g id="app_emoji_icons_link">%s</xliff:g></string>
 
-    <string name="read_attachment_label">read Email attachments</string>
-    <string name="read_attachment_desc">Allows this application to read your Email attachments.</string>
-    <string name="read_messages_label">read Emails</string>
-    <string name="read_messages_desc">Allows this application to read your Emails.</string>
-    <string name="delete_messages_label">Delete Emails</string>
-    <string name="delete_messages_desc">Allows this application to delete your Emails.</string>
+    <string name="read_attachment_label">read Voicemail attachments</string>
+    <string name="read_attachment_desc">Allows this application to read your Voicemail attachments.</string>
+    <string name="read_messages_label">read Voicemails</string>
+    <string name="read_messages_desc">Allows this application to read your Voicemails.</string>
+    <string name="delete_messages_label">Delete Voicemails</string>
+    <string name="delete_messages_desc">Allows this application to delete your Voicemails.</string>
 
     <string name="about_title_fmt">About <xliff:g id="app_name">%s</xliff:g></string>
     <string name="accounts_title">Accounts</string>
@@ -92,7 +92,6 @@
     <string name="discard_action">Discard</string>
     <string name="save_draft_action">Save as draft</string>
     <string name="check_mail_action">Check mail</string>
-    <string name="send_messages_action">Send messages</string>
     <string name="refresh_folders_action">Refresh folder list</string>
     <string name="filter_folders_action">Find folder</string>
     <string name="add_account_action">Add account</string>
@@ -158,10 +157,10 @@
     <string name="clearing_account">Clearing account \"<xliff:g id="account">%s</xliff:g>\"</string>
     <string name="recreating_account">Recreating account \"<xliff:g id="account">%s</xliff:g>\"</string>
 
-    <string name="notification_new_title">New mail</string>
+    <string name="notification_new_title">New Voicemail</string>
     <plurals name="notification_new_messages_title">
-        <item quantity="one"><xliff:g id="new_message_count">%d</xliff:g> new message</item>
-        <item quantity="other"><xliff:g id="new_message_count">%d</xliff:g> new messages</item>
+        <item quantity="one"><xliff:g id="new_message_count">%d</xliff:g> new voicemail</item>
+        <item quantity="other"><xliff:g id="new_message_count">%d</xliff:g> new voicemails</item>
     </plurals>
     <string name="notification_new_one_account_fmt"><xliff:g id="unread_message_count">%d</xliff:g> New <xliff:g id="voicemail_plurals">%s</xliff:g></string>
     <string name="notification_additional_messages">+ <xliff:g id="additional_messages">%1$d</xliff:g> more on <xliff:g id="voicemail_plurals">%2$s</xliff:g></string>
@@ -177,10 +176,8 @@
     <string name="notification_certificate_error_title">Certificate error for <xliff:g id="account">%s</xliff:g></string>
     <string name="notification_certificate_error_text">Check your server settings</string>
 
-    <string name="notification_bg_sync_ticker">Checking mail: <xliff:g id="account">%s</xliff:g>:<xliff:g id="folder">%s</xliff:g></string>
-    <string name="notification_bg_sync_title">Checking mail</string>
-    <string name="notification_bg_send_ticker">Sending mail: <xliff:g id="account">%s</xliff:g></string>
-    <string name="notification_bg_send_title">Sending mail</string>
+    <string name="notification_bg_sync_ticker">Checking voicemail: <xliff:g id="account">%s</xliff:g></string>
+    <string name="notification_bg_sync_title">Checking voicemail</string>
     <string name="notification_bg_title_separator">:</string>
 
     <string name="special_mailbox_name_inbox">Inbox</string>
@@ -195,9 +192,7 @@
     <string name="special_mailbox_name_trash_fmt"><xliff:g id="folder">%s</xliff:g> (Trash)</string>
     <string name="special_mailbox_name_sent_fmt"><xliff:g id="folder">%s</xliff:g> (Sent)</string>
     <string name="special_mailbox_name_archive_fmt"><xliff:g id="folder">%s</xliff:g> (Archive)</string>
-    <string name="special_mailbox_name_spam_fmt"><xliff:g id="folder">%s</xliff:g> (Spam)</string>
-
-    <string name="send_failure_subject">Failed to send some messages</string>
+    <string name="special_mailbox_name_spam_fmt"><xliff:g id="folder">%s</xliff:g> (Spam)</string>>
 
     <string name="debug_version_fmt">Version: <xliff:g id="version">%s</xliff:g></string>
     <string name="debug_enable_debug_logging_title">Enable debug logging</string>
@@ -208,45 +203,10 @@
     <string name="message_list_load_more_messages_action">Load more messages</string>
     <string name="message_to_fmt">To:<xliff:g id="counterParty">%s</xliff:g></string>
 
-    <string name="message_compose_to_hint">To</string>
-    <string name="message_compose_cc_hint">Cc</string>
-    <string name="message_compose_bcc_hint">Bcc</string>
-    <string name="message_compose_subject_hint">Subject</string>
-    <string name="message_compose_content_hint">Message text</string>
-    <string name="message_compose_signature_hint">Signature</string>
-    <string name="message_compose_quote_header_separator">-------- Original Message --------</string>
-    <string name="message_compose_quote_header_subject">Subject:</string>
-    <string name="message_compose_quote_header_send_date">Sent:</string>
-    <string name="message_compose_quote_header_from">From:</string>
-    <string name="message_compose_quote_header_to">To:</string>
-    <string name="message_compose_quote_header_cc">Cc:</string>
-    <string name="message_compose_reply_header_fmt"><xliff:g id="sender">%s</xliff:g> wrote:</string>
-    <string name="message_compose_reply_header_fmt_with_date">On <xliff:g id="sent_date">%1$s</xliff:g>, <xliff:g id="sender">%2$s</xliff:g> wrote:</string>
-    <string name="message_compose_error_no_recipients">You must add at least one recipient.</string>
-    <string name="error_contact_address_not_found">No email address could be found for this contact.</string>
-    <string name="message_compose_attachments_skipped_toast">Some attachments cannot be forwarded because they have not been downloaded.</string>
-    <string name="message_compose_show_quoted_text_action">Quote message</string>
-    <string name="message_compose_description_add_to">Add recipient (To)</string>
-    <string name="message_compose_description_add_cc">Add recipient (CC)</string>
-    <string name="message_compose_description_add_bcc">Add recipient (BCC)</string>
-    <string name="message_compose_description_delete_quoted_text">Remove quoted text</string>
-    <string name="message_compose_description_edit_quoted_text">Edit quoted text</string>
-
-    <string name="message_view_from_format">From: <xliff:g id="name">%s</xliff:g> &lt;<xliff:g id="email">%s</xliff:g>&gt;</string>
-    <string name="message_to_label">To:</string>
-    <string name="message_view_cc_label">Cc:</string>
-    <string name="message_view_attachment_view_action">Open</string>
-    <string name="message_view_attachment_download_action">Save</string>
-    <string name="message_view_status_attachment_saved">Attachment saved to SD card as <xliff:g id="filename">%s</xliff:g>.</string>
-    <string name="message_view_status_attachment_not_saved">Unable to save attachment to SD card.</string>
-    <string name="message_view_show_pictures_action">Show pictures</string>
-    <string name="message_view_show_message_action">Show message</string>
-    <string name="message_view_show_attachments_action">Show attachments</string>
-    <string name="message_view_show_more_attachments_action">More…</string>
-    <string name="message_view_fetching_attachment_toast">Fetching attachment.</string>
+    <string name="message_view_status_attachment_saved">Voicemail saved to SD card as <xliff:g id="filename">%s</xliff:g>.</string>
+    <string name="message_view_status_attachment_not_saved">Unable to save voicemail to SD card.</string>
+    <string name="message_view_fetching_attachment_toast">Fetching voicemail attachment.</string>
     <string name="message_view_no_viewer">Unable to find viewer for <xliff:g id="mimetype">%s</xliff:g>.</string>
-    <string name="message_view_download_remainder">Download complete message</string>
-    <string name="message_view_downloading">Downloading…</string>
 
     <!-- NOTE: The following message refers to strings with id account_setup_incoming_save_all_headers_label and account_setup_incoming_title -->
     <string name="message_additional_headers_not_downloaded">Not all headers have been downloaded or saved. Select \"Save all headers locally\" in the account\'s incoming server settings to enable this for the future.</string>
@@ -262,12 +222,6 @@
     <string name="global_settings_flag_summary">Stars indicate flagged messages</string>
     <string name="global_settings_checkbox_label">Multi-select checkboxes</string>
     <string name="global_settings_checkbox_summary">Always show multi-select checkboxes</string>
-    <string name="global_settings_preview_lines_label">Preview lines</string>
-    <string name="global_settings_show_correspondent_names_label">Show correspondent names</string>
-    <string name="global_settings_show_correspondent_names_summary">Show correspondent names rather than their email addresses</string>
-
-    <string name="global_settings_sender_above_subject_label">Correspondent above subject</string>
-    <string name="global_settings_sender_above_subject_summary">Show correspondent names above the subject line, rather than below it</string>
 
     <string name="global_settings_show_contact_name_label">Show contact names</string>
     <string name="global_settings_show_contact_name_summary">Use recipient names from Contacts when available</string>
@@ -276,15 +230,6 @@
     <string name="global_settings_registered_name_color_changed">Colorize names in your contact list</string>
     <string name="global_settings_folderlist_wrap_folder_names_label">Wrap long folder names</string>
     <string name="global_settings_folderlist_wrap_folder_names_summary">Use multiple lines to show long folder names</string>
-
-    <string name="global_settings_messageview_fixedwidth_label">Fixed-width fonts</string>
-    <string name="global_settings_messageview_fixedwidth_summary">Use a fixed-width font when showing plain-text messages</string>
-    <string name="global_settings_messageview_autofit_width_label">Auto-fit messages</string>
-    <string name="global_settings_messageview_autofit_width_summary">Shrink messages to fit the screen</string>
-    <string name="global_settings_messageview_return_to_list_label">Return to list after delete</string>
-    <string name="global_settings_messageview_return_to_list_summary">Return to message list after message deletion</string>
-    <string name="global_settings_messageview_show_next_label">Show next message after delete</string>
-    <string name="global_settings_messageview_show_next_summary">Show next message by default after message deletion</string>
 
     <string name="global_settings_confirm_actions_title">Confirm actions</string>
     <string name="global_settings_confirm_actions_summary">Show a dialog whenever you perform selected actions</string>
@@ -404,17 +349,6 @@
     <string name="account_setup_incoming_webdav_auth_path_hint">Optional</string>
     <string name="account_setup_incoming_webdav_mailbox_path_label">Mailbox alias</string>
     <string name="account_setup_incoming_webdav_mailbox_path_hint">Optional</string>
-
-    <string name="account_setup_outgoing_title">Outgoing server settings</string>
-    <string name="account_setup_outgoing_smtp_server_label">SMTP server</string>
-    <string name="account_setup_outgoing_port_label">Port</string>
-    <string name="account_setup_outgoing_security_label">Security</string>
-    <string name="account_setup_outgoing_require_login_label">Require sign-in.</string>
-    <string name="account_setup_outgoing_username_label">Username</string>
-    <string name="account_setup_outgoing_password_label">Password</string>
-    <string name="account_setup_outgoing_authentication_label">Authentication</string>
-    <string name="account_setup_outgoing_invalid_setting_combo_notice">\"<xliff:g id="setting_1_label">%1$s</xliff:g> = <xliff:g id="setting_1_value">%2$s</xliff:g>\" is not valid with \"<xliff:g id="setting_2_label">%3$s</xliff:g> = <xliff:g id="setting_2_value">%4$s</xliff:g>\"</string>
-
     <string name="account_setup_bad_uri">Invalid setup: <xliff:g id="err_mess">%s</xliff:g></string>
 
     <string name="account_setup_options_title">Account options</string>
@@ -504,31 +438,6 @@
     <string name="account_settings_show_pictures_never">No</string>
     <string name="account_settings_show_pictures_only_from_contacts">From contacts</string>
     <string name="account_settings_show_pictures_always">From anyone</string>
-
-    <string name="account_settings_composition">Sending mail</string>
-
-    <string name="account_settings_default_quoted_text_shown_label">Quote message when replying</string>
-    <string name="account_settings_default_quoted_text_shown_summary">Include the original message in your reply.</string>
-
-    <string name="account_settings_reply_after_quote_label">Reply after quoted text</string>
-    <string name="account_settings_reply_after_quote_summary">The original message will appear above your reply.</string>
-
-    <string name="account_settings_strip_signature_label">Strip signatures on reply</string>
-    <string name="account_settings_strip_signature_summary">Signatures will be removed from quoted messages</string>
-
-    <string name="account_settings_message_format_label">Message Format</string>
-    <string name="account_settings_message_format_text">Plain Text (remove images and formatting)</string>
-    <string name="account_settings_message_format_html">HTML (keep images and formatting)</string>
-    <string name="account_settings_message_format_auto">Automatic</string>
-
-    <string name="account_settings_always_show_cc_bcc_label">Always show Cc/Bcc</string>
-
-    <string name="account_settings_message_read_receipt_label">Read receipt</string>
-    <string name="account_settings_message_read_receipt_summary">Always request a read receipt</string>
-
-    <string name="account_settings_quote_style_label">Reply quoting style</string>
-    <string name="account_settings_quote_style_prefix">Prefix (like Gmail)</string>
-    <string name="account_settings_quote_style_header">Header (like Outlook)</string>
 
     <string name="account_settings_general_title">General settings</string>
     <string name="account_settings_reading_mail">Reading mail</string>
@@ -661,61 +570,14 @@
     <string name="account_settings_led_label">Blink LED</string>
     <string name="account_settings_led_summary">Blink LED when mail arrives</string>
 
-    <string name="account_settings_composition_title">Message composition options</string>
-    <string name="account_settings_composition_label">Composition defaults</string>
-    <string name="account_settings_composition_summary">Set your default From, Bcc and signature</string>
-
-    <string name="account_settings_identities_label">Manage identities</string>
-    <string name="account_settings_identities_summary">Set up alternate \'From\' addresses and signatures</string>
-
-    <string name="manage_identities_title">Manage identities</string>
-
-    <string name="manage_identities_context_menu_title">Manage identity</string>
-
-    <string name="edit_identity_title">Edit identity</string>
-    <string name="new_identity_action">New identity</string>
-
-    <string name="account_settings_always_bcc_label">Bcc all messages to</string>
-
-    <string name="manage_identities_edit_action">Edit</string>
-    <string name="manage_identities_move_up_action">Move up</string>
-    <string name="manage_identities_move_down_action">Move down</string>
-    <string name="manage_identities_move_top_action">Move to top / make default</string>
-    <string name="manage_identities_remove_action">Remove</string>
-
-    <string name="edit_identity_description_label">Identity description</string>
-    <string name="edit_identity_description_hint">(Optional)</string>
-    <string name="edit_identity_name_label">Your name</string>
-    <string name="edit_identity_name_hint">(Optional)</string>
-    <string name="edit_identity_email_label">Email address</string>
-    <string name="edit_identity_email_hint">(Required)</string>
-    <string name="edit_identity_reply_to_label">Reply-to address</string>
-    <string name="edit_identity_reply_to_hint">(Optional)</string>
-    <string name="edit_identity_signature_label">Signature</string>
-    <string name="edit_identity_signature_hint">(Optional)</string>
-
-    <string name="account_settings_signature_use_label">Use Signature</string>
-    <string name="account_settings_signature_label">Signature</string>
-
-    <string name="default_identity_description">Initial identity</string>
-    <string name="choose_identity_title">Choose identity</string>
-    <string name="send_as">Send as</string>
-
-    <string name="no_removable_identity">You can\'t remove your only identity</string>
-    <string name="identity_has_no_email">You can\'t use an identity without an email address</string>
-
     <string name="sort_earliest_first">Earliest messages first</string>
     <string name="sort_latest_first">Latest messages first</string>
-    <string name="sort_subject_alpha">Subject alphabetical</string>
-    <string name="sort_subject_re_alpha">Subject reverse alphabetical</string>
     <string name="sort_sender_alpha">Sender alphabetical</string>
     <string name="sort_sender_re_alpha">Sender reverse alphabetical</string>
     <string name="sort_flagged_first">Starred messages first</string>
     <string name="sort_flagged_last">Unstarred messages first</string>
     <string name="sort_unread_first">Unread messages first</string>
     <string name="sort_unread_last">Read messages first</string>
-    <string name="sort_attach_first">Messages with attachments first</string>
-    <string name="sort_unattached_first">Messages without attachments first</string>
 
     <string name="sort_by">Sort by…</string>
     <string name="sort_by_date">Date</string>
@@ -731,10 +593,6 @@
     <string name="account_recreate_dlg_title">Recreate Account</string>
 
     <string name="account_clear_dlg_title">Clear Account</string>
-
-    <string name="provider_note_auonejp">Be sure to enable IMAP or POP3 on the au one mail settings page.</string>
-    <string name="provider_note_naver">Be sure to enable IMAP or POP3 on the Naver mail settings page.</string>
-    <string name="provider_note_hanmail">Be sure to enable IMAP or POP3 on the Hanmail(Daum) mail settings page.</string>
 
     <string name="account_setup_failed_dlg_invalid_certificate_title">Unrecognized Certificate</string>
     <string name="account_setup_failed_dlg_invalid_certificate_accept">Accept Key</string>
@@ -752,9 +610,6 @@
     <string name="folder_list_display_mode_first_and_second_class">1st &amp; 2nd Class folders</string>
     <string name="folder_list_display_mode_not_second_class">Hide 2nd Class folders</string>
 
-    <string name="account_settings_signature__location_label">Signature position</string>
-    <string name="account_settings_signature__location_before_quoted_text">Before quoted message</string>
-    <string name="account_settings_signature__location_after_quoted_text">After quoted message</string>
     <string name="setting_theme_global">Use app theme</string>
     <string name="setting_theme_dark">Dark</string>
     <string name="setting_theme_light">Light</string>
@@ -766,16 +621,9 @@
     <string name="interaction_preferences">Interaction</string>
     <string name="accountlist_preferences">Account list</string>
     <string name="messagelist_preferences">Message lists</string>
-    <string name="messageview_preferences">Messages</string>
     <string name="folderlist_preferences">Folder lists</string>
     <string name="settings_theme_label">Theme</string>
-    <string name="settings_message_theme_label">Message view theme</string>
-    <string name="settings_compose_theme_label">Composer theme</string>
     <string name="settings_language_label">Language</string>
-
-    <string name="settings_message_theme_selection_label">Fixed message theme</string>
-    <string name="settings_message_theme_selection_summary_off">Select the message view theme while viewing the message</string>
-    <string name="settings_message_theme_selection_summary_on">Use a fixed message view theme</string>
 
 
     <string name="setting_language_system">System default</string>
@@ -853,20 +701,6 @@
     <string name="font_size_message_list_date">Date</string>
     <string name="font_size_message_list_preview">Preview</string>
 
-    <string name="font_size_message_view">Messages</string>
-    <string name="font_size_message_view_sender">Sender</string>
-    <string name="font_size_message_view_to">To</string>
-    <string name="font_size_message_view_cc">Cc</string>
-    <string name="font_size_message_view_additional_headers">Additional headers</string>
-    <string name="font_size_message_view_subject">Subject</string>
-    <string name="font_size_message_view_date">Time and date</string>
-    <string name="font_size_message_view_content">Message body</string>
-    <string name="font_size_message_view_content_summary"><xliff:g id="fontsize">%d</xliff:g>%%</string>
-    <string name="font_size_message_view_content_dialog_title"><xliff:g id="title">%1$s</xliff:g>: <xliff:g id="summary">%2$s</xliff:g></string>
-
-    <string name="font_size_message_compose">Message composition</string>
-    <string name="font_size_message_compose_input">Text input fields</string>
-
     <string name="font_size_default">Default</string>
     <string name="font_size_tiniest">Tiniest</string>
     <string name="font_size_tiny">Tiny</string>
@@ -879,21 +713,6 @@
     <string name="miscellaneous_preferences">Miscellaneous</string>
 
     <string name="error_activity_not_found">No suitable application for this action found.</string>
-    <string name="btn_crypto_sign">Sign</string>
-    <string name="btn_encrypt">Encrypt</string>
-    <string name="unknown_crypto_signature_user_id">&lt;unknown&gt;</string>
-    <string name="pgp_mime_unsupported">PGP/MIME messages are not supported yet.</string>
-    <string name="attachment_encryption_unsupported">Warning: attachments are NOT signed or encrypted yet.</string>
-    <string name="send_aborted">Send aborted.</string>
-
-    <string name="save_or_discard_draft_message_dlg_title">Save draft message?</string>
-    <string name="save_or_discard_draft_message_instructions_fmt">Save or Discard this message?</string>
-
-    <string name="confirm_discard_draft_message_title">Discard message?</string>
-    <string name="confirm_discard_draft_message">Are you sure you want to discard this message?</string>
-
-    <string name="refuse_to_save_draft_marked_encrypted_dlg_title">Refuse to save draft message.</string>
-    <string name="refuse_to_save_draft_marked_encrypted_instructions_fmt">Refuse to save draft message marked encrypted.</string>
 
     <string name="select_text_now">Select text to copy.</string>
 
@@ -954,12 +773,10 @@
         <item quantity="other">server passwords</item>
     </plurals>
     <string name="settings_import_incoming_server">Incoming server (<xliff:g id="hostname">%s</xliff:g>):</string>
-    <string name="settings_import_outgoing_server">Outgoing server (<xliff:g id="hostname">%s</xliff:g>):</string>
     <plurals name="settings_import_setting_passwords">
         <item quantity="one">Setting password…</item>
         <item quantity="other">Setting passwords…</item>
     </plurals>
-    <string name="settings_import_use_incoming_server_password">Use the incoming server password</string>
     <string name="activate_account_action">Activate</string>
 
     <string name="account_unavailable">Account \"<xliff:g id="account">%s</xliff:g>\" is unavailable; check storage</string>
@@ -977,74 +794,14 @@
     <string name="import_dialog_error_title">Missing File Manager Application</string>
     <string name="close">Close</string>
 
-    <string name="webview_empty_message">No text</string>
-
-    <string name="webview_contextmenu_link_view_action">Open link</string>
-    <string name="webview_contextmenu_link_share_action">Share link</string>
-    <string name="webview_contextmenu_link_copy_action">Copy link to clipboard</string>
-    <string name="webview_contextmenu_link_clipboard_label">Link</string>
-
-    <string name="webview_contextmenu_image_title">Image</string>
-    <string name="webview_contextmenu_image_view_action">View image</string>
-    <string name="webview_contextmenu_image_save_action">Save image</string>
-    <string name="webview_contextmenu_image_download_action">Download image</string>
-    <string name="webview_contextmenu_image_copy_action">Copy image URL to clipboard</string>
-    <string name="webview_contextmenu_image_clipboard_label">Image URL</string>
-
-    <string name="webview_contextmenu_phone_call_action">Call number</string>
-    <string name="webview_contextmenu_phone_save_action">Save to Contacts</string>
-    <string name="webview_contextmenu_phone_copy_action">Copy number to clipboard</string>
-    <string name="webview_contextmenu_phone_clipboard_label">Phone number</string>
-
-    <string name="webview_contextmenu_email_send_action">Send mail</string>
-    <string name="webview_contextmenu_email_save_action">Save to Contacts</string>
-    <string name="webview_contextmenu_email_copy_action">Copy address to clipboard</string>
-    <string name="webview_contextmenu_email_clipboard_label">Email address</string>
-
-    <string name="image_saved_as">Saved image as \"<xliff:g id="filename">%s</xliff:g>\"</string>
-    <string name="image_saving_failed">Saving the image failed.</string>
-
-    <string name="account_settings_remote_search_num_results_entries_all">All</string>
-    <string name="account_settings_remote_search_num_results_entries_10">10</string>
-    <string name="account_settings_remote_search_num_results_entries_25">25</string>
-    <string name="account_settings_remote_search_num_results_entries_50">50</string>
-    <string name="account_settings_remote_search_num_results_entries_100">100</string>
-    <string name="account_settings_remote_search_num_results_entries_250">250</string>
-    <string name="account_settings_remote_search_num_results_entries_500">500</string>
-    <string name="account_settings_remote_search_num_results_entries_1000">1000</string>
-    <string name="account_settings_remote_search_num_label">Server search limit</string>
-    <string name="account_settings_remote_search_num_summary">Search will stop after finding <xliff:g id="num_results">%s</xliff:g> results.</string>
-    <string name="account_settings_remote_search_full_text">Include messages text in server search</string>
-    <string name="account_settings_remote_search_full_text_summary">Full text searches can be slow.</string>
-    <string name="remote_search_sending_query">Sending query to server</string>
-    <string name="remote_search_downloading">Fetching %d results</string>
-    <string name="remote_search_downloading_limited">Fetching %1$d of %2$d results</string>
-    <string name="remote_search_error">Remote search failed</string>
-
-    <string name="account_settings_search">Search</string>
-    <string name="account_settings_remote_search_enabled">Enable server search</string>
-    <string name="account_settings_remote_search_enabled_summary">Search messages on the server in addition to those on your device</string>
-    <string name="action_remote_search">Search messages on server</string>
-    <string name="pull_to_refresh_remote_search_from_local_search_pull">Pull to search server…</string>
-    <string name="pull_to_refresh_remote_search_from_local_search_release">Release to search server…</string>
-    <string name="remote_search_unavailable_no_network">A network connection is required for server search.</string>
-
     <string name="global_settings_background_as_unread_indicator_label">Dim messages after reading</string>
     <string name="global_settings_background_as_unread_indicator_summary">A grey background will show that a message has been read</string>
-
-    <string name="global_settings_threaded_view_label">Threaded view</string>
-    <string name="global_settings_threaded_view_summary">Group messages by conversation</string>
 
     <string name="upgrade_databases_title">Upgrading databases</string>
     <string name="upgrade_databases_unspecified">Upgrading databases…</string>
     <string name="upgrade_database_format">Upgrading database of account \"<xliff:g id="account">%s</xliff:g>\"</string>
 
     <string name="message_list_loading">Loading…</string>
-
-    <string name="global_settings_splitview_mode_label">Show split-screen</string>
-    <string name="global_settings_splitview_always">Always</string>
-    <string name="global_settings_splitview_never">Never</string>
-    <string name="global_settings_splitview_when_in_landscape">When in Landscape orientation</string>
 
     <string name="message_view_empty">Please select a message on the left</string>
 
@@ -1060,48 +817,12 @@
     <string name="global_settings_colorize_missing_contact_pictures_label">Colorize contact pictures</string>
     <string name="global_settings_colorize_missing_contact_pictures_summary">Colorize missing contact pictures</string>
 
-    <string name="global_settings_messageview_visible_refile_actions_title">Visible message actions</string>
-    <string name="global_settings_messageview_visible_refile_actions_summary">Show selected actions in the message view menu</string>
-
     <string name="loading_attachment">Loading attachment…</string>
     <string name="fetching_attachment_dialog_title_send">Sending message</string>
     <string name="fetching_attachment_dialog_title_save">Saving draft</string>
     <string name="fetching_attachment_dialog_message">Fetching attachment…</string>
 
     <string name="auth_external_error">Unable to authenticate.  The server does not advertise the SASL EXTERNAL capability.  This could be due to a problem with the client certificate (expired, unknown certificate authority) or some other configuration problem.</string>
-    
-    <!-- === OpenPGP specific ================================================================== -->
-    <string name="openpgp_decrypting_verifying">Decrypting/Verifying…</string>
-    <string name="openpgp_successful_decryption">Successful decryption</string>
-    <string name="openpgp_signature_valid_certified">Valid signature (certified)</string>
-    <string name="openpgp_signature_valid_uncertified">Valid signature but uncertified</string>
-    <string name="openpgp_signature_unknown">Unknown signer</string>
-    <string name="openpgp_signature_invalid">Invalid signature</string>
-    <string name="openpgp_signature_unknown_text">Missing public key for this signature</string>
-    <string name="openpgp_successful_decryption_valid_signature_certified">Successful decryption and valid signature (certified)</string>
-    <string name="openpgp_successful_decryption_valid_signature_uncertified">Successful decryption and valid signature but uncertified</string>
-    <string name="openpgp_successful_decryption_unknown_signature">Successful decryption but missing public key</string>
-    <string name="openpgp_get_key">Lookup missing key</string>
-    <string name="openpgp_error">OpenPGP Error: %s</string>
-    <string name="openpgp_unknown_error">Unknown OpenPGP Error</string>
-    <string name="openpgp_user_id">User Id</string>
-    <string name="openpgp_canceled_by_user">Canceled by user</string>
-    
-    <string name="openpgp_result_no_signature">"Not Signed"</string>
-    <string name="openpgp_result_invalid_signature">"Invalid signature!"</string>
-    <string name="openpgp_result_signature_uncertified">"Signed by (not certified!)"</string>
-    <string name="openpgp_result_signature_certified">"Signed by"</string>
-    <string name="openpgp_result_signature_expired_key">"Key is expired!"</string>
-    <string name="openpgp_result_signature_revoked_key">"Key has been revoked!"</string>
-    <string name="openpgp_result_signature_insecure">"Insecure!"</string>
-    <string name="openpgp_result_signature_missing_key">"Unknown public key"</string>
-    <string name="openpgp_result_encrypted">"Encrypted"</string>
-    <string name="openpgp_result_not_encrypted">"Not Encrypted"</string>
-    <string name="openpgp_result_decryption_insecure">"Insecure"</string>
-    <string name="openpgp_result_action_show">"Show"</string>
-    <string name="openpgp_result_action_lookup">"Lookup"</string>
-    <string name="openpgp_result_no_name">"No name"</string>
-    <string name="openpgp_result_no_email">"No email"</string>
 
     <!-- === Client certificates specific ================================================================== -->
     <string name="account_setup_basics_client_certificate">Use client certificate</string>
@@ -1111,15 +832,6 @@
     <string name="client_certificate_advanced_options">Advanced options</string>
     <string name="client_certificate_expired">"Client certificate \"<xliff:g id="certificate_alias">%1$s</xliff:g>\" has expired or is not yet valid (<xliff:g id="exception_message">%2$s</xliff:g>)"</string>
 
-    <string name="preview_inner_message">"Includes message titled \"%s\" containing: "</string>
-    <string name="preview_untitled_inner_message">"Includes untitled message containing: "</string>
-
-    <string name="crypto_incomplete_message">Incomplete message</string>
-    <!-- Note: This references message_view_download_remainder -->
-    <string name="crypto_download_complete_message_to_decrypt">Click \'Download complete message\' to allow decryption.</string>
-    <string name="title_activity_main">MainActivity</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <string name="app_webpage_url">http://vvm.martin.cc</string>
@@ -1168,5 +880,6 @@
     <string name="server_requires_cellular">Cellular Network Required</string>
     <string name="server_requires_cellular_desc">Cellular required for server access</string>
     <string name="about_info"><![CDATA[VisualVoicemail is a fork of the fantastic K-9 email client & supports standard IMAP voicemail servers.]]></string>
+    <string name="show_all">Show All</string>
 
 </resources>

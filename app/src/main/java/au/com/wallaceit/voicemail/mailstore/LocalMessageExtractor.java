@@ -293,7 +293,7 @@ public class LocalMessageExtractor {
     private static void addMessageHeaderText(Context context, StringBuilder text, Message message)
             throws MessagingException {
         // From: <sender>
-        Address[] from = message.getFrom();
+        /*Address[] from = message.getFrom();
         if (from != null && from.length > 0) {
             text.append(context.getString(R.string.message_compose_quote_header_from));
             text.append(' ');
@@ -337,7 +337,7 @@ public class LocalMessageExtractor {
         } else {
             text.append(subject);
         }
-        text.append("\r\n\r\n");
+        text.append("\r\n\r\n");*/
     }
 
     /**
@@ -356,7 +356,7 @@ public class LocalMessageExtractor {
     private static void addMessageHeaderHtml(Context context, StringBuilder html, Message message)
             throws MessagingException {
 
-        html.append("<table style=\"border: 0\">");
+        /*html.append("<table style=\"border: 0\">");
 
         // From: <sender>
         Address[] from = message.getFrom();
@@ -391,7 +391,7 @@ public class LocalMessageExtractor {
         addTableRow(html, context.getString(R.string.message_compose_quote_header_subject),
                 (subject == null) ? context.getString(R.string.general_no_subject) : subject);
 
-        html.append("</table>");
+        html.append("</table>");*/
     }
 
     /**
