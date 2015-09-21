@@ -95,6 +95,8 @@ public class VoicemailAttachmentHelper {
                 LocalPart localPart = (LocalPart) attachment;
                 InputStream in = getAttachmentInputStream(localPart.getAccountUuid(), String.valueOf(localPart.getId()));
                 copyFile(in, out);
+                in.close();
+                out.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

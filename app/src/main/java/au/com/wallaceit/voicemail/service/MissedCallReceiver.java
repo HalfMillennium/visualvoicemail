@@ -21,7 +21,6 @@ package au.com.wallaceit.voicemail.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -34,52 +33,35 @@ import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 
 public class MissedCallReceiver extends BroadcastReceiver {
 
+    private static String lastState = TelephonyManager.EXTRA_STATE_IDLE;
+
     @Override
     public void onReceive(Context context, Intent intent){
-
-        SharedPreferences prefs =  Preferences.getPreferences(context).getPreferences();
-        SharedPreferences.Editor editor = prefs.edit();
 
         // Get current phone state
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
         if (VisualVoicemail.DEBUG)
-            Log.i(VisualVoicemail.LOG_TAG, "Call state broadcast received: " + state);
+            Log.w(VisualVoicemail.LOG_TAG, "Call state broadcast received: " + state);
 
         if(state==null)
             return;
 
-        //phone is ringing
-        if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
-            editor.putBoolean("phoneCallRinging", true);
-        }
-
-        //phone is received
-        if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
-            editor.putBoolean("phoneCallReceived", true);
-        }
-
-        // phone is idle
-        if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)){
-            // detect missed call
-            if(prefs.getBoolean("phoneCallRinging", false) && !prefs.getBoolean("phoneCallReceived", false)){
+        // phone is idle, if last state is ringing we have a missed call
+        if (lastState.equals(TelephonyManager.EXTRA_STATE_RINGING) && state.equals(TelephonyManager.EXTRA_STATE_IDLE)){
+            if (VisualVoicemail.DEBUG)
+                Log.w(VisualVoicemail.LOG_TAG, "Missed call detected...");
+            // TODO: If the broadcast receivers do what they are suppose to (ie activate/deactivate) this may be redundant.
+            boolean isEnabled = Preferences.getPreferences(context).getAccounts().get(0).getAutomaticCheckMethod() == AccountSettings.PREFERENCE_AUTO_CHECK_MISSED_CALL;
+            if (isEnabled) {
                 if (VisualVoicemail.DEBUG)
-                    Log.i(VisualVoicemail.LOG_TAG, "Missed call detected...");
-                // TODO: If the broadcast receivers do what they are suppose to (ie activate/deactivate) this may be redundant.
-                boolean isEnabled = Preferences.getPreferences(context).getAccounts().get(0).getAutomaticCheckMethod() == AccountSettings.PREFERENCE_AUTO_CHECK_MISSED_CALL;
-                if (isEnabled) {
-                    if (VisualVoicemail.DEBUG)
-                        Log.i(VisualVoicemail.LOG_TAG, "Missed call check enabled, scheduling check");
-                    PollTask pollTask = new PollTask(context);
-                    Timer timer = new Timer();
-                    timer.schedule(pollTask, 180000);
-                }
-
-                editor.putBoolean("phoneCallRinging", false);
-                editor.putBoolean("phoneCallReceived", false);
+                    Log.w(VisualVoicemail.LOG_TAG, "Missed call check enabled, scheduling check");
+                PollTask pollTask = new PollTask(context);
+                Timer timer = new Timer();
+                timer.schedule(pollTask, 180000);
             }
         }
-        editor.commit();
+        lastState = state;
     }
 
     class PollTask extends TimerTask {

@@ -158,7 +158,7 @@ public class AccountSettings extends K9PreferenceActivity {
     //private OpenPgpAppPreference mCryptoApp;
     //private OpenPgpKeyPreference mCryptoKey;
 
-    private PreferenceScreen mSearchScreen;
+    //private PreferenceScreen mSearchScreen;
     //private CheckBoxPreference mCloudSearchEnabled;
     //private ListPreference mRemoteSearchNumResults;
     /*
@@ -305,7 +305,7 @@ public class AccountSettings extends K9PreferenceActivity {
         values.add("0");
         entries.add(getString(R.string.account_setup_options_auto_check_missedcall));
         values.add("1");
-        if (mAccount.getProvider()!=null && mAccount.getProvider().notifySmsNumber.equals("")){
+        if (mAccount.getProvider()!=null && !mAccount.getProvider().notifySmsNumber.equals("")){
             entries.add(getString(R.string.account_setup_options_auto_check_sms));
             values.add("2");
         }
@@ -599,7 +599,7 @@ public class AccountSettings extends K9PreferenceActivity {
             PreferenceScreen incomingPrefs = (PreferenceScreen) findPreference(PREFERENCE_SCREEN_INCOMING);
             incomingPrefs.removePreference((PreferenceScreen) findPreference(PREFERENCE_SCREEN_PUSH_ADVANCED));
             //incomingPrefs.removePreference((ListPreference) findPreference(PREFERENCE_PUSH_MODE));
-            mMainScreen.removePreference(mSearchScreen);
+            //mMainScreen.removePreference(mSearchScreen);
         }
 
         mAccountNotify = (CheckBoxPreference) findPreference(PREFERENCE_NOTIFY);
@@ -875,9 +875,10 @@ public class AccountSettings extends K9PreferenceActivity {
             );
             packageManager.setComponentEnabledSetting(
                     new ComponentName(AccountSettings.this, SmsReceiver.class),
-                    (autoCheck == PREFERENCE_AUTO_CHECK_SMS ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED:PackageManager.COMPONENT_ENABLED_STATE_DISABLED),
+                    (autoCheck == PREFERENCE_AUTO_CHECK_SMS ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED),
                     PackageManager.DONT_KILL_APP
             );
+            Log.w(VisualVoicemail.LOG_TAG, "Setting auto check method:"+autoCheck);
         }
         //IMAP specific stuff
         /*if (mIsPushCapable) {

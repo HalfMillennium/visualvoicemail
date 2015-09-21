@@ -306,6 +306,7 @@ public class Account implements BaseAccount, StoreConfig {
         mSortAscending.put(DEFAULT_SORT_TYPE, DEFAULT_SORT_ASCENDING);
         //mShowPictures = ShowPictures.ALWAYS;
         mIsSignatureBeforeQuotedText = false;
+        mDeletePolicy = DeletePolicy.ON_DELETE;
         mExpungePolicy = Expunge.EXPUNGE_IMMEDIATELY;
         mAutoExpandFolderName = INBOX;
         mInboxFolderName = INBOX;
@@ -314,7 +315,7 @@ public class Account implements BaseAccount, StoreConfig {
         goToUnreadMessageSearch = false;
         subscribedFoldersOnly = false;
         maximumPolledMessageAge = -1;
-        maximumAutoDownloadMessageSize = 32768;
+        maximumAutoDownloadMessageSize = 0;
         /*mMessageFormat = DEFAULT_MESSAGE_FORMAT;
         mMessageFormatAuto = DEFAULT_MESSAGE_FORMAT_AUTO;
         mMessageReadReceipt = DEFAULT_MESSAGE_READ_RECEIPT;
@@ -351,7 +352,7 @@ public class Account implements BaseAccount, StoreConfig {
         mNotificationSetting.setRingtone("content://settings/system/notification_sound");
         mNotificationSetting.setLedColor(mChipColor);
 
-        mAutomaticCheckMethod = 2;
+        mAutomaticCheckMethod = 1;
         mNetworkOperatorName = "";
         mPhoneNumber = "";
         mRequiresCellular = false;
@@ -400,7 +401,7 @@ public class Account implements BaseAccount, StoreConfig {
         //mTransportUri = Base64.decode(prefs.getString(mUuid + ".transportUri", null));
         mDescription = prefs.getString(mUuid + ".description", null);
         //mAlwaysBcc = prefs.getString(mUuid + ".alwaysBcc", mAlwaysBcc);
-        mAutomaticCheckIntervalMinutes = prefs.getInt(mUuid + ".automaticCheckIntervalMinutes", 60);
+        mAutomaticCheckIntervalMinutes = prefs.getInt(mUuid + ".automaticCheckIntervalMinutes", 120);
 
         mIdleRefreshMinutes = prefs.getInt(mUuid + ".idleRefreshMinutes", 24);
         mPushPollOnConnect = prefs.getBoolean(mUuid + ".pushPollOnConnect", true);
@@ -415,7 +416,7 @@ public class Account implements BaseAccount, StoreConfig {
         mFolderNotifyNewMailMode = getEnumStringPref(prefs, mUuid + ".folderNotifyNewMailMode", FolderMode.ALL);
         //mNotifySelfNewMail = prefs.getBoolean(mUuid + ".notifySelfNewMail", true);
         mNotifySync = prefs.getBoolean(mUuid + ".notifyMailCheck", false);
-        mDeletePolicy =  DeletePolicy.fromInt(prefs.getInt(mUuid + ".deletePolicy", DeletePolicy.NEVER.setting));
+        mDeletePolicy =  DeletePolicy.fromInt(prefs.getInt(mUuid + ".deletePolicy", DeletePolicy.ON_DELETE.setting));
         mInboxFolderName = prefs.getString(mUuid  + ".inboxFolderName", INBOX);
         //mDraftsFolderName = prefs.getString(mUuid  + ".draftsFolderName", "Drafts");
         //mSentFolderName = prefs.getString(mUuid  + ".sentFolderName", "Sent");
@@ -429,7 +430,7 @@ public class Account implements BaseAccount, StoreConfig {
         goToUnreadMessageSearch = prefs.getBoolean(mUuid + ".goToUnreadMessageSearch", false);
         subscribedFoldersOnly = prefs.getBoolean(mUuid + ".subscribedFoldersOnly", false);
         maximumPolledMessageAge = prefs.getInt(mUuid + ".maximumPolledMessageAge", -1);
-        maximumAutoDownloadMessageSize = prefs.getInt(mUuid + ".maximumAutoDownloadMessageSize", 32768);
+        maximumAutoDownloadMessageSize = prefs.getInt(mUuid + ".maximumAutoDownloadMessageSize", 0);
         /*mMessageFormat =  getEnumStringPref(prefs, mUuid + ".messageFormat", DEFAULT_MESSAGE_FORMAT);
         mMessageFormatAuto = prefs.getBoolean(mUuid + ".messageFormatAuto", DEFAULT_MESSAGE_FORMAT_AUTO);
         if (mMessageFormatAuto && mMessageFormat == MessageFormat.TEXT) {
@@ -493,7 +494,7 @@ public class Account implements BaseAccount, StoreConfig {
         //mAlwaysShowCcBcc = prefs.getBoolean(mUuid + ".alwaysShowCcBcc", false);
 
         // VVM specific
-        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 2);
+        mAutomaticCheckMethod = prefs.getInt(mUuid + ".automaticCheckMethod", 1);
         mNetworkOperatorName = prefs.getString(mUuid + ".networkOperatorName", "");
         mPhoneNumber = prefs.getString( mUuid + ".phoneNumber", "");
         mRequiresCellular = prefs.getBoolean(mUuid + ".requiresCellular", false);
@@ -1075,10 +1076,10 @@ public class Account implements BaseAccount, StoreConfig {
      * @param automaticCheckMethod or -1 for never.
      */
     public synchronized boolean setAutomaticCheckMethod(int automaticCheckMethod) {
-        int oldInterval = this.mAutomaticCheckMethod;
+        int oldMethod = this.mAutomaticCheckMethod;
         this.mAutomaticCheckMethod = automaticCheckMethod;
 
-        return (oldInterval != automaticCheckMethod);
+        return (oldMethod != automaticCheckMethod);
     }
 
     public synchronized int getDisplayCount() {

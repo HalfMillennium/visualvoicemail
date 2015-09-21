@@ -23,11 +23,7 @@ import com.fsck.k9.mail.ServerSettings.Type;
 public class AccountCreator {
 
     public static Account initialVisualVoicemailSetup(Context context, Account account){
-        //account.setDraftsFolderName(context.getString(R.string.special_mailbox_name_drafts));
         account.setTrashFolderName(context.getString(R.string.special_mailbox_name_trash));
-        //account.setArchiveFolderName(context.getString(R.string.special_mailbox_name_archive));
-        //account.setSpamFolderName(context.getString(R.string.special_mailbox_name_spam));
-        //account.setSentFolderName(context.getString(R.string.special_mailbox_name_sent));
         try {
             // only sync inbox
             LocalStore localStore = account.getLocalStore();
@@ -39,11 +35,6 @@ public class AccountCreator {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-
-        account.setMaximumAutoDownloadMessageSize(0);
-        account.setMaximumPolledMessageAge(-1);
-        account.setSubscribedFoldersOnly(false);
-        account.setDeletePolicy(Account.DeletePolicy.ON_DELETE);
 
         return account;
     }
