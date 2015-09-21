@@ -639,12 +639,12 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
             mFragmentListener.setMessageListTitle(displayName);
 
-            /*String operation = mListener.getOperation(activity);
+            String operation = mListener.getOperation(activity);
             if (operation.length() < 1) {
                 mFragmentListener.setMessageListSubTitle(mAccount.getPhoneNumber());
             } else {
                 mFragmentListener.setMessageListSubTitle(operation);
-            }*/
+            }
         } else {
             // query result display.  This may be for a search folder as opposed to a user-initiated search.
             if (mTitle != null) {

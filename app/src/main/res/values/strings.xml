@@ -844,14 +844,13 @@
     <string name="app_copyright_fmt">Copyright 2012-<xliff:g>%s</xliff:g></string>
 
     <!-- Installation message -->
-    <string name="beta_message">Visual Voicemail is still under development, ONLY Vodafone Australia is supported</string>
-    <string name="install_message">Visual Voicemail for Android connects to standard IMAP-based visual-voicemail servers (popularized by iPhone) that are deployed by many carriers across the world.\n\nThese carriers are currently supported:\n   - Vodafone Australia\n\nOn the next screen you will be asked to supply the details of your Voicemail account and talked though the setup procedure.\n\nNote: If your carrier is not listed above and provides such a service, let us know and we\'ll see if we can implement it in our application.</string>
+    <string name="beta_message">Visual Voicemail is still under development, ONLY Vodafone Australia is tested &amp; supported</string>
+    <string name="install_message">Visual Voicemail for Android connects to standard IMAP-based visual-voicemail servers (popularized by iPhone) that are deployed by many carriers across the world.\n\nThese carriers are currently supported:\n   - Vodafone Australia\n\nOn the next screen you will be asked to supply the details of your Voicemail account and talked though the setup procedure.\n\nNote: If your carrier is not listed above and provides such a service, advanced users can try manual setup on the next page. Visual Voicemail is a fork of the open-source K-9 mail client, find us on Github to contribute.</string>
     <string name="account_provider_hint">Network Provider</string>
     <string name="account_phone_number_hint">Mobile Number</string>
     <string name="account_password_hint">Password</string>
-
+    <!-- Intructions for each provider -->
     <string name="setup_instructions_1">1: To activate Visual Voicemail, tap the button above to dial 1217\n\n2: Enter your Mobile Phone Number and Voicemail password below (eg 0412345678 / 123456).</string>
-    <string name="setup_instructions_2"></string>
 
     <string name="setup_help_1">If you don\'t know your Voicemail password you can set a new password by:\n
 (1) Dial 121 from you mobile phone\n

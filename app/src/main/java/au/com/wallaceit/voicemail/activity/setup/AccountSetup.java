@@ -144,8 +144,8 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         });
 
         // Populate the provider list
-        ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<Provider>(this, android.R.layout.simple_spinner_item, Provider.getProviderList(AccountSetup.this) );
-        providerAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<Provider>(this, R.layout.spinner_layout, Provider.getProviderList(AccountSetup.this) );
+        providerAdaptor.setDropDownViewResource(R.layout.spinner_layout);
         mProvider.setAdapter(providerAdaptor);
 
     }

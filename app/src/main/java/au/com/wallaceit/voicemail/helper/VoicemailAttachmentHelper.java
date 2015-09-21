@@ -112,7 +112,7 @@ public class VoicemailAttachmentHelper {
     public String getUniqueAttachmentFilename(){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy_H-mm", Locale.ENGLISH);
         String dateStr = sdf.format(date);
-        return reference.getUid()+"_"+phone+"_"+dateStr+"."+MimeUtility.getExtensionByMimeType(attachment.getMimeType());
+        return reference.getUid().replaceAll("[^a-zA-Z0-9.-]", "_")+"_"+phone+"_"+dateStr+"."+MimeUtility.getExtensionByMimeType(attachment.getMimeType());
     }
 
     public InputStream getAttachmentInputStream() throws MessagingException {
