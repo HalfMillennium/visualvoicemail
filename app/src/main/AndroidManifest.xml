@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.wallaceit.voicemail"
     android:versionCode="1"
-    android:versionName="0.1a" >
+    android:versionName="0.9b" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
