@@ -29,6 +29,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -365,9 +367,9 @@ public class MessagingController implements Runnable {
         }
     }
 
-    public synchronized static au.com.wallaceit.voicemail.controller.MessagingController getInstance(Context context) {
+    public synchronized static MessagingController getInstance(Context context) {
         if (inst == null) {
-            inst = new au.com.wallaceit.voicemail.controller.MessagingController(context.getApplicationContext());
+            inst = new MessagingController(context.getApplicationContext());
         }
         return inst;
     }
@@ -2534,9 +2536,7 @@ public class MessagingController implements Runnable {
                 R.string.notification_certificate_error_title, account.getDescription());
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(platformSupportsLockScreenNotifications()
-            ? R.drawable.ic_notify_new_mail_vector
-            : R.drawable.notify_new_voicemail);
+        builder.setSmallIcon(R.drawable.notify_new_voicemail);
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
         builder.setTicker(title);
@@ -4612,7 +4612,7 @@ public class MessagingController implements Runnable {
         builder.setColor(account.getChipColor());
 
         NotificationCompat.Builder publicNotification = new NotificationCompat.Builder(context);
-        publicNotification.setSmallIcon(R.drawable.ic_notify_new_mail_vector);
+        publicNotification.setSmallIcon(R.drawable.notify_new_voicemail);
         publicNotification.setColor(account.getChipColor());
         publicNotification.setNumber(unreadCount);
         final String title = context.getResources().getQuantityString(
