@@ -18,8 +18,10 @@ package au.com.wallaceit.voicemail.activity.misc;
  *
  * Created by michael on 17/09/15.
  */
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -200,7 +202,7 @@ public class AudioPlayerDialog extends Dialog {
         mAudioManager.setMode(AudioManager.MODE_NORMAL);
         mAudioManager.setSpeakerphoneOn(true);
         mPreferences.getPreferences().edit().putBoolean("playerSpeaker", mSpeakerphone).apply();
-        super.dismiss();
+        dismiss();
     }
 
     private void setSpeakerphone(boolean on){

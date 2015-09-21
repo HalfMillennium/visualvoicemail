@@ -132,7 +132,7 @@
 
         <activity
             android:name=".activity.MessageList"
-            android:configChanges="locale"
+            android:configChanges="locale|orientation|screenSize"
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>

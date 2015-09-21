@@ -80,6 +80,8 @@ import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
+
+import au.com.wallaceit.voicemail.helper.VvmContacts;
 import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
@@ -2993,7 +2995,7 @@ public class MessagingController implements Runnable {
 
                     LocalMessage message = localFolder.getMessage(uid);
                     if (message == null
-                    || message.getId() == 0) {
+                            || message.getId() == 0) {
                         throw new IllegalArgumentException("Message not found: folder=" + folder + ", uid=" + uid);
                     }
                     // IMAP search results will usually need to be downloaded before viewing.
@@ -3835,22 +3837,22 @@ public class MessagingController implements Runnable {
                     addErrorMessage(account, null, e);
                 }
                 putBackground("finalize sync", null, new Runnable() {
-                    @Override
-                    public void run() {
+                            @Override
+                            public void run() {
 
-                        if (VisualVoicemail.DEBUG)
-                            Log.i(VisualVoicemail.LOG_TAG, "Finished mail sync");
+                                if (VisualVoicemail.DEBUG)
+                                    Log.i(VisualVoicemail.LOG_TAG, "Finished mail sync");
 
-                        if (wakeLock != null) {
-                            wakeLock.release();
+                                if (wakeLock != null) {
+                                    wakeLock.release();
+                                }
+                                for (MessagingListener l : getListeners()) {
+                                    l.checkMailFinished(context, account);
+                                }
+
+                            }
                         }
-                        for (MessagingListener l : getListeners()) {
-                            l.checkMailFinished(context, account);
-                        }
-
-                    }
-                }
-                             );
+                );
             }
         });
     }
@@ -4180,34 +4182,32 @@ public class MessagingController implements Runnable {
     }
 
     private CharSequence getMessageSender(Context context, Account account, Message message) {
-        try {
-            boolean isSelf = false;
-            final Contacts contacts = VisualVoicemail.showContactName() ? Contacts.getInstance(context) : null;
-            final Address[] fromAddrs = message.getFrom();
-
-            if (fromAddrs != null) {
-                //isSelf = account.isAnIdentity(fromAddrs);
-                if (!isSelf && fromAddrs.length > 0) {
-                    return MessageHelper.toFriendly(fromAddrs[0], contacts).toString();
+        final Contacts contacts = VisualVoicemail.showContactName() ? Contacts.getInstance(context) : null;
+        final Address[] fromAddrs = message.getFrom();
+        String sender = "Unknown";
+        if (fromAddrs != null) {
+            if (fromAddrs.length > 0) {
+                VvmContacts vvmContacts = new VvmContacts(context);
+                sender = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
+                if (vvmContacts.isPhoneNumberValid(sender)){
+                    sender = vvmContacts.getDisplayName(sender);
                 }
             }
-
-            if (isSelf) {
-                // show To: if the message was sent from me
-                Address[] rcpts = message.getRecipients(RecipientType.TO);
-
-                if (rcpts != null && rcpts.length > 0) {
-                    return context.getString(R.string.message_to_fmt,
-                            MessageHelper.toFriendly(rcpts[0], contacts).toString());
-                }
-
-                return context.getString(R.string.general_no_sender);
-            }
-        } catch (MessagingException e) {
-            Log.e(VisualVoicemail.LOG_TAG, "Unable to get sender information for notification.", e);
         }
 
-        return null;
+        /*if (isSelf) {
+            // show To: if the message was sent from me
+            Address[] rcpts = message.getRecipients(RecipientType.TO);
+
+            if (rcpts != null && rcpts.length > 0) {
+                return context.getString(R.string.message_to_fmt,
+                        MessageHelper.toFriendly(rcpts[0], contacts).toString());
+            }
+
+            return context.getString(R.string.general_no_sender);
+        }*/
+
+        return sender;
     }
 
     private CharSequence getMessageSubject(Context context, Message message) {
@@ -4246,21 +4246,6 @@ public class MessagingController implements Runnable {
         preview.setSpan(getEmphasizedSpan(context), 0, subject.length(), 0);
 
         return preview;
-    }
-
-    private CharSequence buildMessageSummary(Context context, CharSequence sender, CharSequence subject) {
-        if (sender == null) {
-            return subject;
-        }
-
-        SpannableStringBuilder summary = new SpannableStringBuilder();
-        summary.append(sender);
-        summary.append(" ");
-        summary.append(subject);
-
-        summary.setSpan(getEmphasizedSpan(context), 0, sender.length(), 0);
-
-        return summary;
     }
 
     public static final boolean platformSupportsExtendedNotifications() {
@@ -4322,8 +4307,9 @@ public class MessagingController implements Runnable {
 
         final KeyguardManager keyguardService = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         final CharSequence sender = getMessageSender(context, account, message);
-        final CharSequence subject = getMessageSubject(context, message);
-        CharSequence summary = buildMessageSummary(context, sender, subject);
+        //final CharSequence subject = getMessageSubject(context, message);
+        //CharSequence summary = buildMessageSummary(context, sender);
+        CharSequence summary = sender;
 
         boolean privacyModeEnabled =
                 (VisualVoicemail.getNotificationHideSubject() == NotificationHideSubject.ALWAYS) ||
@@ -4459,7 +4445,8 @@ public class MessagingController implements Runnable {
             String accountNotice = context.getString(R.string.notification_new_one_account_fmt, unreadCount,
                     context.getResources().getQuantityString(R.plurals.voicemail_plurals, unreadCount));
             builder.setContentTitle(accountNotice);
-            //builder.setContentText(summary);
+        if (newMessages == 1)
+            builder.setContentText(summary);
         //}
 
         for (Message m : data.messages) {

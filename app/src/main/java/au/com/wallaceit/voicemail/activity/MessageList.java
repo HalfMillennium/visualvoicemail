@@ -1,7 +1,6 @@
 package au.com.wallaceit.voicemail.activity;
 
 import android.app.ActionBar;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.app.FragmentTransaction;
@@ -9,12 +8,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,15 +19,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.internet.MimeUtility;
 
 import org.apache.commons.io.IOUtils;
 
@@ -43,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,15 +50,11 @@ import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment;
 import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragmentListener;
-import au.com.wallaceit.voicemail.helper.MediaScannerNotifier;
-import au.com.wallaceit.voicemail.helper.PlayerUtilities;
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.helper.VoicemailAttachmentHelper;
 import au.com.wallaceit.voicemail.helper.VvmContacts;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
-import au.com.wallaceit.voicemail.mailstore.LocalPart;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
-import au.com.wallaceit.voicemail.provider.AttachmentProvider;
 import au.com.wallaceit.voicemail.search.LocalSearch;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 import au.com.wallaceit.voicemail.search.SearchSpecification;

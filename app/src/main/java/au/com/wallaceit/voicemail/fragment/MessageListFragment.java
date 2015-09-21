@@ -300,7 +300,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
     private static final String STATE_SELECTED_MESSAGES = "selectedMessages";
     private static final String STATE_ACTIVE_MESSAGE = "activeMessage";
-    private static final String STATE_REMOTE_SEARCH_PERFORMED = "remoteSearchPerformed";
+    //private static final String STATE_REMOTE_SEARCH_PERFORMED = "remoteSearchPerformed";
     private static final String STATE_MESSAGE_LIST = "listState";
 
     /**
