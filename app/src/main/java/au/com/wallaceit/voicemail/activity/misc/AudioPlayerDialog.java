@@ -21,7 +21,6 @@ package au.com.wallaceit.voicemail.activity.misc;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -56,13 +55,14 @@ public class AudioPlayerDialog extends Dialog {
 
     public AudioPlayerDialog(Context context, Uri uri) {
         super(context);
+        setOwnerActivity((Activity) context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.audio_player);
         mPreferences = Preferences.getPreferences(context);
         mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.setMode(AudioManager.STREAM_MUSIC);
+        mAudioManager.setMode(AudioManager.STREAM_VOICE_CALL);
         mSpeakerphone = mPreferences.getPreferences().getBoolean("playerSpeaker", true);
         mUri = uri;
 

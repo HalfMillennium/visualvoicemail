@@ -12,7 +12,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import android.os.PowerManager;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
@@ -45,19 +43,16 @@ import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
-import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
-import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.MessageReference;
-import au.com.wallaceit.voicemail.activity.NotificationDeleteConfirmation;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
 import au.com.wallaceit.voicemail.helper.Contacts;
-import au.com.wallaceit.voicemail.helper.MessageHelper;
+
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Address;
@@ -67,18 +62,15 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Folder.FolderType;
 
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.Message.RecipientType;
 import com.fsck.k9.mail.CertificateValidationException;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.PushReceiver;
 import com.fsck.k9.mail.Pusher;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
-import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
 
 import au.com.wallaceit.voicemail.helper.VvmContacts;
@@ -88,7 +80,6 @@ import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 import au.com.wallaceit.voicemail.mailstore.LocalStore.PendingCommand;
-import com.fsck.k9.mail.store.pop3.Pop3Store;
 import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.StatsColumns;
@@ -2545,7 +2536,7 @@ public class MessagingController implements Runnable {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(platformSupportsLockScreenNotifications()
             ? R.drawable.ic_notify_new_mail_vector
-            : R.drawable.ic_notify_new_mail);
+            : R.drawable.notify_new_voicemail);
         builder.setWhen(System.currentTimeMillis());
         builder.setAutoCancel(true);
         builder.setTicker(title);
@@ -4228,26 +4219,6 @@ public class MessagingController implements Runnable {
         return sEmphasizedSpan;
     }
 
-    private CharSequence getMessagePreview(Context context, Message message) {
-        CharSequence subject = getMessageSubject(context, message);
-        String snippet = message.getPreview();
-
-        if (TextUtils.isEmpty(subject)) {
-            return snippet;
-        } else if (TextUtils.isEmpty(snippet)) {
-            return subject;
-        }
-
-        SpannableStringBuilder preview = new SpannableStringBuilder();
-        preview.append(subject);
-        preview.append('\n');
-        preview.append(snippet);
-
-        preview.setSpan(getEmphasizedSpan(context), 0, subject.length(), 0);
-
-        return preview;
-    }
-
     public static final boolean platformSupportsExtendedNotifications() {
         // supported in Jellybean
         // TODO: use constant once target SDK is set to >= 16
@@ -4324,7 +4295,7 @@ public class MessagingController implements Runnable {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.ic_notify_new_mail);
+        builder.setSmallIcon(R.drawable.notify_new_voicemail);
         builder.setWhen(System.currentTimeMillis());
         if (!updateSilently) {
             builder.setTicker(summary);
@@ -4697,46 +4668,6 @@ public class MessagingController implements Runnable {
     public void deleteAccount(Context context, Account account) {
         notifyAccountCancel(context, account);
         memorizingListener.removeAccount(account);
-    }
-
-    /**
-     * Save a draft message.
-     * @param account Account we are saving for.
-     * @param message Message to save.
-     * @return Message representing the entry in the local store.
-     */
-    public Message saveDraft(final Account account, final Message message, long existingDraftId) {
-        Message localMessage = null;
-        try {
-            LocalStore localStore = account.getLocalStore();
-            LocalFolder localFolder = localStore.getFolder(account.getDraftsFolderName());
-            localFolder.open(Folder.OPEN_MODE_RW);
-
-            if (existingDraftId != INVALID_MESSAGE_ID) {
-                String uid = localFolder.getMessageUidById(existingDraftId);
-                message.setUid(uid);
-            }
-
-            // Save the message to the store.
-            localFolder.appendMessages(Collections.singletonList(message));
-            // Fetch the message back from the store.  This is the Message that's returned to the caller.
-            localMessage = localFolder.getMessage(message.getUid());
-            localMessage.setFlag(Flag.X_DOWNLOADED_FULL, true);
-
-            PendingCommand command = new PendingCommand();
-            command.command = PENDING_COMMAND_APPEND;
-            command.arguments = new String[] {
-                localFolder.getName(),
-                localMessage.getUid()
-            };
-            queuePendingCommand(account, command);
-            processPendingCommands(account);
-
-        } catch (MessagingException e) {
-            Log.e(VisualVoicemail.LOG_TAG, "Unable to save message as draft.", e);
-            addErrorMessage(account, null, e);
-        }
-        return localMessage;
     }
 
     public long getId(Message message) {
