@@ -838,6 +838,7 @@
 
     <!-- Visual voicemail specific -->
     <string name="app_name">Visual Voicemail</string>
+    <string name="launcher_app_name">Voicemail</string>
 
     <!-- Used in the about dialog -->
     <string name="app_authors">Created By:\nMichael Wallace &amp; Martin-Azizi</string>
