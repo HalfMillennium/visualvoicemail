@@ -1548,6 +1548,8 @@ public class ImapStore extends RemoteStore {
                             message.setFlagInternal(Flag.FORWARDED, true);
                             /* a message contains FORWARDED FLAG -> so we can also create them */
                             mPermanentFlagsIndex.add(Flag.FORWARDED);
+                        } else if (flag.equalsIgnoreCase("\\$CNS-Greeting-On")) {
+                            message.setFlagInternal(Flag.GREETING_ON, true);
                         }
                     }
                 }
@@ -1983,6 +1985,8 @@ public class ImapStore extends RemoteStore {
                 } else if (flag == Flag.FORWARDED
                         && (mCanCreateKeywords || mPermanentFlagsIndex.contains(Flag.FORWARDED))) {
                     flagNames.add("$Forwarded");
+                } else if (flag == Flag.GREETING_ON) {
+                    flagNames.add("\\$CNS-Greeting-On");
                 }
 
             }

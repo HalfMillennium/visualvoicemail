@@ -302,7 +302,7 @@ public class MessagingController implements Runnable {
     // Key is accountNumber
     private final ConcurrentMap<Integer, NotificationData> notificationData = new ConcurrentHashMap<Integer, NotificationData>();
 
-    private static final Set<Flag> SYNC_FLAGS = EnumSet.of(Flag.SEEN, Flag.FLAGGED, Flag.ANSWERED, Flag.FORWARDED);
+    private static final Set<Flag> SYNC_FLAGS = EnumSet.of(Flag.SEEN, Flag.FLAGGED, Flag.ANSWERED, Flag.FORWARDED, Flag.GREETING_ON);
 
     private void suppressMessages(Account account, List<LocalMessage> messages) {
         EmailProviderCache cache = EmailProviderCache.getCache(account.getUuid(), context);
@@ -1777,7 +1777,7 @@ public class MessagingController implements Runnable {
                 messageChanged = true;
             }
         } else {
-            for (Flag flag : au.com.wallaceit.voicemail.controller.MessagingController.SYNC_FLAGS) {
+            for (Flag flag : MessagingController.SYNC_FLAGS) {
                 if (remoteMessage.isSet(flag) != localMessage.isSet(flag)) {
                     localMessage.setFlag(flag, remoteMessage.isSet(flag));
                     messageChanged = true;

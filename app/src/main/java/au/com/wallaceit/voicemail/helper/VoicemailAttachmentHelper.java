@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Locale;
 
 import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.BuildConfig;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;

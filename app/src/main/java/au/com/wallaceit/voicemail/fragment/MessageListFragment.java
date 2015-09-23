@@ -1,20 +1,5 @@
 package au.com.wallaceit.voicemail.fragment;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Future;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -31,19 +16,13 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -67,9 +46,35 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import au.com.wallaceit.voicemail.*;
+import com.fsck.k9.mail.Address;
+import com.fsck.k9.mail.Flag;
+import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.MessagingException;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.ActivityListener;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
@@ -77,18 +82,11 @@ import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
 import au.com.wallaceit.voicemail.controller.MessagingController;
-import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
 import au.com.wallaceit.voicemail.helper.ContactPicture;
 import au.com.wallaceit.voicemail.helper.MergeCursorWithUniqueId;
 import au.com.wallaceit.voicemail.helper.MessageHelper;
 import au.com.wallaceit.voicemail.helper.Utility;
-import com.fsck.k9.mail.Address;
-import com.fsck.k9.mail.Flag;
-import com.fsck.k9.mail.Folder;
-import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.MessagingException;
-
 import au.com.wallaceit.voicemail.helper.VvmContacts;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
@@ -103,10 +101,6 @@ import au.com.wallaceit.voicemail.search.SearchSpecification;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
-
-import com.handmark.pulltorefresh.library.ILoadingLayout;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 
 public class MessageListFragment extends Fragment implements OnItemClickListener,
@@ -735,6 +729,13 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             if (mPreferences.getPreferences().getBoolean("mark_message_as_read_on_view", true)) {
                 setFlag(adaptorPosition, Flag.SEEN, true);
                 Log.w(VisualVoicemail.LOG_TAG, "Marking read");
+            }
+            LocalMessage message = reference.restoreToLocalMessage(getActivity());
+            Set<Flag> flags = message.getFlags();
+            Iterator it = flags.iterator();
+            while (it.hasNext()){
+                Flag flag = (Flag) it.next();
+                Log.w(VisualVoicemail.LOG_TAG, flag.name());
             }
         }
     }
@@ -1845,12 +1846,86 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            MessageViewHolder holder = (MessageViewHolder) view.getTag();
+
             boolean read = (cursor.getInt(READ_COLUMN) == 1);
+            int maybeBoldTypeface = (read) ? Typeface.NORMAL : Typeface.BOLD;
+            long uniqueId = cursor.getLong(mUniqueIdColumn);
+            boolean selected = mSelected.contains(uniqueId);
+
+            Account account = getAccountFromCursor(cursor);
+            holder.chip.setBackgroundColor(account.getChipColor());
+
+            if (mCheckboxes) {
+                holder.selected.setChecked(selected);
+            }
+
+            // Background color
+            if (selected || VisualVoicemail.useBackgroundAsUnreadIndicator()) {
+                int res;
+                if (selected) {
+                    res = R.attr.messageListSelectedBackgroundColor;
+                } else if (read) {
+                    res = R.attr.messageListReadItemBackgroundColor;
+                } else {
+                    res = R.attr.messageListUnreadItemBackgroundColor;
+                }
+
+                TypedValue outValue = new TypedValue();
+                getActivity().getTheme().resolveAttribute(res, outValue, true);
+                view.setBackgroundColor(outValue.data);
+            } else {
+                view.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            if (mActiveMessage != null) {
+                String uid = cursor.getString(UID_COLUMN);
+                String folderName = cursor.getString(FOLDER_NAME_COLUMN);
+
+                if (account.getUuid().equals(mActiveMessage.getAccountUuid()) &&
+                        folderName.equals(mActiveMessage.getFolderName()) &&
+                        uid.equals(mActiveMessage.getUid())) {
+                    int res = R.attr.messageListActiveItemBackgroundColor;
+
+                    TypedValue outValue = new TypedValue();
+                    getActivity().getTheme().resolveAttribute(res, outValue, true);
+                    view.setBackgroundColor(outValue.data);
+                }
+            }
+
+            // greetings view
+            if (mFolderName.equals("Greetings")){
+                LocalMessage message = getMessageAtPosition(cursor.getPosition());
+                try {
+                    String[] headerVals = message.getHeader("X-CNS-Greeting-Type");
+                    String greetingType = headerVals.length>0?headerVals[0]:"Unknown";
+                    String greetingDesc = "";
+                    if (greetingType.equals("voice-signature")){
+                        greetingType = "Voice Signature";
+                        greetingDesc = "A short recording of your name";
+                    } else if (greetingType.equals("normal-greeting")){
+                        greetingType = "Voice Greeting";
+                        greetingDesc = "A long customised greeting";
+                    }
+                    holder.from.setText(greetingType);
+                    holder.from_number.setText(greetingDesc);
+
+                    boolean flagged = message.getFlags().contains(Flag.GREETING_ON);
+
+                    if (mStars) {
+                        holder.flagged.setChecked(flagged);
+                    }
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+
+
             //boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
             //boolean answered = (cursor.getInt(ANSWERED_COLUMN) == 1);
             //boolean forwarded = (cursor.getInt(FORWARDED_COLUMN) == 1);
 
-            Account account = getAccountFromCursor(cursor);
 
             String fromList = cursor.getString(SENDER_LIST_COLUMN);
             //String toList = cursor.getString(TO_LIST_COLUMN);
@@ -1906,19 +1981,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //boolean hasAttachments = (cursor.getInt(ATTACHMENT_COUNT_COLUMN) > 0);
             boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
 
-            MessageViewHolder holder = (MessageViewHolder) view.getTag();
-
-            int maybeBoldTypeface = (read) ? Typeface.NORMAL : Typeface.BOLD;
-
-            long uniqueId = cursor.getLong(mUniqueIdColumn);
-            boolean selected = mSelected.contains(uniqueId);
-
-            holder.chip.setBackgroundColor(account.getChipColor());
-
-            if (mCheckboxes) {
-                holder.selected.setChecked(selected);
-            }
-
             if (mStars) {
                 holder.flagged.setChecked(flagged);
             }
@@ -1937,39 +1999,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 } else {
                     holder.contactBadge.assignContactUri(null);
                     holder.contactBadge.setImageResource(R.drawable.ic_contact_picture);
-                }
-            }
-
-            // Background color
-            if (selected || VisualVoicemail.useBackgroundAsUnreadIndicator()) {
-                int res;
-                if (selected) {
-                    res = R.attr.messageListSelectedBackgroundColor;
-                } else if (read) {
-                    res = R.attr.messageListReadItemBackgroundColor;
-                } else {
-                    res = R.attr.messageListUnreadItemBackgroundColor;
-                }
-
-                TypedValue outValue = new TypedValue();
-                getActivity().getTheme().resolveAttribute(res, outValue, true);
-                view.setBackgroundColor(outValue.data);
-            } else {
-                view.setBackgroundColor(Color.TRANSPARENT);
-            }
-
-            if (mActiveMessage != null) {
-                String uid = cursor.getString(UID_COLUMN);
-                String folderName = cursor.getString(FOLDER_NAME_COLUMN);
-
-                if (account.getUuid().equals(mActiveMessage.getAccountUuid()) &&
-                        folderName.equals(mActiveMessage.getFolderName()) &&
-                        uid.equals(mActiveMessage.getUid())) {
-                    int res = R.attr.messageListActiveItemBackgroundColor;
-
-                    TypedValue outValue = new TypedValue();
-                    getActivity().getTheme().resolveAttribute(res, outValue, true);
-                    view.setBackgroundColor(outValue.data);
                 }
             }
 

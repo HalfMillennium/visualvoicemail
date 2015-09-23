@@ -240,7 +240,7 @@ public class LocalMessage extends MimeMessage {
                             delete();
                         }
 
-                        au.com.wallaceit.voicemail.mailstore.LocalMessage.super.setFlag(flag, set);
+                        LocalMessage.super.setFlag(flag, set);
                     } catch (MessagingException e) {
                         throw new WrappedException(e);
                     }
@@ -248,7 +248,7 @@ public class LocalMessage extends MimeMessage {
                      * Set the flags on the message.
                      */
                     ContentValues cv = new ContentValues();
-                    cv.put("flags", au.com.wallaceit.voicemail.mailstore.LocalMessage.this.localStore.serializeFlags(getFlags()));
+                    cv.put("flags", LocalMessage.this.localStore.serializeFlags(getFlags()));
                     cv.put("read", isSet(Flag.SEEN) ? 1 : 0);
                     cv.put("flagged", isSet(Flag.FLAGGED) ? 1 : 0);
                     cv.put("answered", isSet(Flag.ANSWERED) ? 1 : 0);
