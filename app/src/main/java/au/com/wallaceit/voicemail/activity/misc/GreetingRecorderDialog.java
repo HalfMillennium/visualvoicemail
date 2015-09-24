@@ -36,12 +36,12 @@ import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
+import com.fsck.k9.mail.internet.BinaryTempFileMessageBody;
 import com.fsck.k9.mail.internet.MimeBodyPart;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
-import com.fsck.k9.mail.internet.MimeUtility;
 
 import org.apache.james.mime4j.codec.EncoderUtil;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -52,16 +52,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.controller.MessagingController;
-import au.com.wallaceit.voicemail.helper.MessageHelper;
-import au.com.wallaceit.voicemail.helper.Utility;
+import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
-import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 public class GreetingRecorderDialog extends Dialog implements View.OnClickListener {
     private Account mAccount;
@@ -77,7 +74,7 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.recordview);
         mAccount = account;
-        outputPath = getContext().getCacheDir() + "tempgreeting.amr";
+        outputPath = getContext().getCacheDir() + "/tempgreeting.amr";
         new File(outputPath).delete(); // remove last cached file; audio recorder appends
         recordButton = (Button) findViewById(R.id.record);
         recordButton.setOnClickListener(this);
@@ -163,9 +160,9 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
             message.setHeader("X-AppleVM-Message-Version", "1.0");
             message.setHeader("X-CNS-Greeting-Type", type);
             // add attachment
-            Body body = new BinaryTempFileBody(outputPath);
+            Body body = new FileBackedBody(new File(outputPath), MimeUtil.ENC_BASE64);
+
             MimeBodyPart bp = new MimeBodyPart(body);
-            bp.setEncoding(MimeUtil.ENC_BASE64);
             bp.addHeader(MimeHeader.HEADER_CONTENT_TYPE, String.format("%s;\r\n name=\"%s\"", contentType, EncoderUtil.encodeIfNecessary("message.amr", EncoderUtil.Usage.WORD_ENTITY, 7)));
             bp.addHeader(MimeHeader.HEADER_CONTENT_DISPOSITION, String.format(Locale.US, "attachment;\r\n filename=\"%s\";\r\n size=%d", "message.amr", new File(outputPath).length()));
 
