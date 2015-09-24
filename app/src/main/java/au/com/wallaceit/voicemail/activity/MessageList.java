@@ -650,7 +650,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 return true;
 
             case R.id.create_greeting:
-                GreetingRecorderDialog recorderDialog = new GreetingRecorderDialog(MessageList.this);
+                GreetingRecorderDialog recorderDialog = new GreetingRecorderDialog(MessageList.this, mAccount);
                 recorderDialog.setCanceledOnTouchOutside(false);
                 recorderDialog.show();
                 return true;
