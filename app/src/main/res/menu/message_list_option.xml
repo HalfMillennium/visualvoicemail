@@ -102,6 +102,16 @@
         android:id="@+id/show_folder_list"
         android:showAsAction="never"
         android:title="@string/folders_title" />
+
+    <item
+        android:id="@+id/show_greetings"
+        android:showAsAction="never"
+        android:title="@string/greetings" />
+
+    <item
+        android:id="@+id/create_greeting"
+        android:showAsAction="never"
+        android:title="@string/new_greeting" />
     <!-- always -->
     <item
         android:id="@+id/settings"

@@ -3244,7 +3244,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     }
 
     public boolean isManualSearch() {
-        return mSearch.isManualSearch();
+        // hacky fix for NPE when opening another folder from message list
+        return mSearch != null && mSearch.isManualSearch();
     }
 
     public boolean isAccountExpungeCapable() {

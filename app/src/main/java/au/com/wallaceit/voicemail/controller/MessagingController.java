@@ -881,6 +881,46 @@ public class MessagingController implements Runnable {
     }
 
     /**
+     * Save a greeting message.
+     * @param account Account we are saving for.
+     * @param message Message to save.
+     * @return Message representing the entry in the local store.
+     */
+    public Message saveGreeting(final Account account, final Message message, long existingDraftId) {
+        Message localMessage = null;
+        try {
+            LocalStore localStore = account.getLocalStore();
+            LocalFolder localFolder = localStore.getFolder("Greetings");
+            localFolder.open(Folder.OPEN_MODE_RW);
+
+            if (existingDraftId != INVALID_MESSAGE_ID) {
+                String uid = localFolder.getMessageUidById(existingDraftId);
+                message.setUid(uid);
+            }
+
+            // Save the message to the store.
+            localFolder.appendMessages(Collections.singletonList(message));
+            // Fetch the message back from the store.  This is the Message that's returned to the caller.
+            localMessage = localFolder.getMessage(message.getUid());
+            localMessage.setFlag(Flag.X_DOWNLOADED_FULL, true);
+
+            PendingCommand command = new PendingCommand();
+            command.command = PENDING_COMMAND_APPEND;
+            command.arguments = new String[] {
+                    localFolder.getName(),
+                    localMessage.getUid()
+            };
+            queuePendingCommand(account, command);
+            processPendingCommands(account);
+
+        } catch (MessagingException e) {
+            Log.e(VisualVoicemail.LOG_TAG, "Unable to save message as draft.", e);
+            addErrorMessage(account, null, e);
+        }
+        return localMessage;
+    }
+
+    /**
      * Start background synchronization of the specified folder.
      * @param account
      * @param folder
@@ -4608,7 +4648,7 @@ public class MessagingController implements Runnable {
             return;
         }
 
-        builder.setSmallIcon(R.drawable.ic_notify_new_mail_vector);
+        builder.setSmallIcon(R.drawable.notify_new_voicemail);
         builder.setColor(account.getChipColor());
 
         NotificationCompat.Builder publicNotification = new NotificationCompat.Builder(context);

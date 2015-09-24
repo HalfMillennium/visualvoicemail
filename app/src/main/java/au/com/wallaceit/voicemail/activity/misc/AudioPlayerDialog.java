@@ -1,6 +1,6 @@
 package au.com.wallaceit.voicemail.activity.misc;
 /*
- * Copyright 2013 Michael Boyde Wallace (http://wallaceit.com.au)
+ * Copyright 2015 Michael Boyde Wallace (http://wallaceit.com.au)
  * This file is part of Voicemail.
  *
  * Voicemail is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -211,5 +212,27 @@ public class AudioPlayerDialog extends Dialog {
         } else {
             mAudioManager.setSpeakerphoneOn(false);
         }
+    }
+
+    public void setOkButtonCallback(final OnClickListener clickListener){
+        Button okayButton = (Button) findViewById(R.id.okay_btn);
+        okayButton.setVisibility(View.VISIBLE);
+        okayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onClick(AudioPlayerDialog.this, 0);
+            }
+        });
+    }
+
+    public void setCancelButtonCallback(final OnClickListener clickListener){
+        Button okayButton = (Button) findViewById(R.id.cancel_btn);
+        okayButton.setVisibility(View.VISIBLE);
+        okayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onClick(AudioPlayerDialog.this, 0);
+            }
+        });
     }
 }

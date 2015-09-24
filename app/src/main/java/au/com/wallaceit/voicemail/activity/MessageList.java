@@ -42,6 +42,7 @@ import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.misc.AudioPlayerDialog;
+import au.com.wallaceit.voicemail.activity.misc.GreetingRecorderDialog;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
@@ -51,6 +52,7 @@ import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragme
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.helper.VoicemailAttachmentHelper;
 import au.com.wallaceit.voicemail.helper.VvmContacts;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.search.LocalSearch;
@@ -639,6 +641,19 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             case R.id.about:
                 VisualVoicemail.showAboutDialog(MessageList.this);
                 return true;
+
+            case R.id.show_greetings:
+                LocalSearch search = new LocalSearch("Greetings");
+                search.addAccountUuid(mAccount.getUuid());
+                search.addAllowedFolder("Greetings");
+                MessageList.actionDisplaySearch(this, search, false, true);
+                return true;
+
+            case R.id.create_greeting:
+                GreetingRecorderDialog recorderDialog = new GreetingRecorderDialog(MessageList.this);
+                recorderDialog.setCanceledOnTouchOutside(false);
+                recorderDialog.show();
+                return true;
         }
 
         if (!mSingleFolderMode) {
@@ -840,6 +855,11 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 menu.findItem(R.id.search).setVisible(true);
             }
         //}
+            if (mFolderName.equals("Greetings")){
+                menu.findItem(R.id.show_greetings).setVisible(false);
+            } else {
+                menu.findItem(R.id.create_greeting).setVisible(false);
+            }
     }
 
     protected void onAccountUnavailable() {
