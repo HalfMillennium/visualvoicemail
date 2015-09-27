@@ -18,9 +18,6 @@ import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.LocalStore;
-import au.com.wallaceit.voicemail.mailstore.LockableDatabase;
 
 class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
     /**
@@ -393,7 +390,7 @@ class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
                             boolean read = false;
                             boolean flagged = false;
                             boolean answered = false;
-                            boolean forwarded = false;
+                            boolean greetingOn = false;
 
                             if (flagList != null && flagList.length() > 0) {
                                 String[] flags = flagList.split(",");
@@ -415,8 +412,8 @@ class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
                                                 flagged = true;
                                                 break;
                                             }
-                                            case FORWARDED: {
-                                                forwarded = true;
+                                            case GREETING_ON: {
+                                                greetingOn = true;
                                                 break;
                                             }
                                             case SEEN: {
@@ -447,7 +444,7 @@ class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
                             cv.put("read", read);
                             cv.put("flagged", flagged);
                             cv.put("answered", answered);
-                            cv.put("forwarded", forwarded);
+                            cv.put("forwarded", greetingOn);
 
                             db.update("messages", cv, "id = ?", new String[] { Long.toString(id) });
 

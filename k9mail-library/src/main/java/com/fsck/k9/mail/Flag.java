@@ -11,7 +11,6 @@ public enum Flag {
     FLAGGED,
     DRAFT,
     RECENT,
-    FORWARDED,
     GREETING_ON,
 
     /*

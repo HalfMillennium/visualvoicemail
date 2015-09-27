@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessagingException;
 
 import org.apache.commons.io.IOUtils;
@@ -83,6 +84,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     private static final String EXTRA_MESSAGE_REFERENCE = "message_reference";
 
+    private static final String EXTRA_BACK_TO_INBOX = "back_to_inbox";
+
     // used for remote search
     public static final String EXTRA_SEARCH_ACCOUNT = "au.com.wallaceit.voicemail.search_account";
     private static final String EXTRA_SEARCH_FOLDER = "au.com.wallaceit.voicemail.search_folder";
@@ -90,6 +93,16 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
     private static final String STATE_DISPLAY_MODE = "displayMode";
     private static final String STATE_MESSAGE_LIST_WAS_DISPLAYED = "messageListWasDisplayed";
 
+    public static void actionDisplayGreetings(Context context, Account account) {
+        LocalSearch search = new LocalSearch("Greetings");
+        search.addAccountUuid(account.getUuid());
+        search.addAllowedFolder("Greetings");
+        Intent intent = new Intent(context, au.com.wallaceit.voicemail.activity.MessageList.class);
+        intent.putExtra(EXTRA_SEARCH, search);
+        intent.putExtra(EXTRA_NO_THREADING, true);
+        intent.putExtra(EXTRA_BACK_TO_INBOX, true);
+        context.startActivity(intent);
+    }
 
     public static void actionDisplaySearch(Context context, SearchSpecification search,
             boolean noThreading, boolean newTask) {
@@ -153,6 +166,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     private Account mAccount;
     private String mFolderName;
+    private boolean isGreetingsFolder = false;
+    private boolean backToInbox = false;
     private LocalSearch mSearch;
     private boolean mSingleFolderMode;
     private boolean mSingleAccountMode;
@@ -232,6 +247,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         mMessageReference = null;
         mSearch = null;
         mFolderName = null;
+        isGreetingsFolder = false;
+        backToInbox = false;
 
         if (!decodeExtras(intent)) {
             return;
@@ -397,6 +414,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
         if (mSingleFolderMode) {
             mFolderName = mSearch.getFolderNames().get(0);
+            if (mFolderName.equals("Greetings")){
+                isGreetingsFolder = true;
+                backToInbox = intent.getBooleanExtra(EXTRA_BACK_TO_INBOX, false);
+            }
         }
 
         // now we know if we are in single account mode and need a subtitle
@@ -478,7 +499,14 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (backToInbox){
+            LocalSearch search = new LocalSearch("INBOX");
+            search.addAccountUuid(mAccount.getUuid());
+            search.addAllowedFolder("INBOX");
+            MessageList.actionDisplaySearch(MessageList.this, search, true, false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**
@@ -643,10 +671,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 return true;
 
             case R.id.show_greetings:
-                LocalSearch search = new LocalSearch("Greetings");
-                search.addAccountUuid(mAccount.getUuid());
-                search.addAllowedFolder("Greetings");
-                MessageList.actionDisplaySearch(this, search, false, true);
+                MessageList.actionDisplayGreetings(this, mAccount);
                 return true;
 
             case R.id.create_greeting:
@@ -855,8 +880,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 menu.findItem(R.id.search).setVisible(true);
             }
         //}
-            if (mFolderName.equals("Greetings")){
+            if (isGreetingsFolder){
                 menu.findItem(R.id.show_greetings).setVisible(false);
+                menu.findItem(R.id.mark_all_as_read).setVisible(false);
+                menu.findItem(R.id.show_folder_list).setVisible(false);
             } else {
                 menu.findItem(R.id.create_greeting).setVisible(false);
             }
@@ -1109,6 +1136,8 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             fragmentManager.popBackStack();
         } else if (mMessageListFragment.isManualSearch()) {
             finish();
+        } else if (backToInbox) {
+            onBackPressed();
         } else if (!mSingleFolderMode) {
             onAccounts();
         } else {

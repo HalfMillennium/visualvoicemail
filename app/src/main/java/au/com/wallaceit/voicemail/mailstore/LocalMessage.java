@@ -18,11 +18,9 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeMessage;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.LocalStore;
+
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
-import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 public class LocalMessage extends MimeMessage {
     protected MessageReference mReference;
@@ -103,13 +101,13 @@ public class LocalMessage extends MimeMessage {
         boolean read = (cursor.getInt(18) == 1);
         boolean flagged = (cursor.getInt(19) == 1);
         boolean answered = (cursor.getInt(20) == 1);
-        boolean forwarded = (cursor.getInt(21) == 1);
+        boolean greetingOn = (cursor.getInt(21) == 1);
 
         setFlagInternal(Flag.DELETED, deleted);
         setFlagInternal(Flag.SEEN, read);
         setFlagInternal(Flag.FLAGGED, flagged);
         setFlagInternal(Flag.ANSWERED, answered);
-        setFlagInternal(Flag.FORWARDED, forwarded);
+        setFlagInternal(Flag.GREETING_ON, greetingOn);
 
         messagePartId = cursor.getLong(22);
         mimeType = cursor.getString(23);
@@ -252,7 +250,7 @@ public class LocalMessage extends MimeMessage {
                     cv.put("read", isSet(Flag.SEEN) ? 1 : 0);
                     cv.put("flagged", isSet(Flag.FLAGGED) ? 1 : 0);
                     cv.put("answered", isSet(Flag.ANSWERED) ? 1 : 0);
-                    cv.put("forwarded", isSet(Flag.FORWARDED) ? 1 : 0);
+                    cv.put("forwarded", isSet(Flag.GREETING_ON) ? 1 : 0);
 
                     db.update("messages", cv, "id = ?", new String[] { Long.toString(mId) });
 

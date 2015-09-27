@@ -71,7 +71,7 @@ public class EmailProvider extends ContentProvider {
         THREAD_AGGREGATION_FUNCS.put(MessageColumns.READ, "MIN");
         THREAD_AGGREGATION_FUNCS.put(MessageColumns.FLAGGED, "MAX");
         THREAD_AGGREGATION_FUNCS.put(MessageColumns.ANSWERED, "MIN");
-        THREAD_AGGREGATION_FUNCS.put(MessageColumns.FORWARDED, "MIN");
+        THREAD_AGGREGATION_FUNCS.put(MessageColumns.GREETING_ON, "MIN");
     }
 
     private static final String[] FIXUP_MESSAGES_COLUMNS = {
@@ -85,7 +85,7 @@ public class EmailProvider extends ContentProvider {
         MessageColumns.READ,
         MessageColumns.FLAGGED,
         MessageColumns.ANSWERED,
-        MessageColumns.FORWARDED
+        MessageColumns.GREETING_ON
     };
 
     private static final String FOLDERS_TABLE = "folders";
@@ -147,7 +147,7 @@ public class EmailProvider extends ContentProvider {
         public static final String READ = "read";
         public static final String FLAGGED = "flagged";
         public static final String ANSWERED = "answered";
-        public static final String FORWARDED = "forwarded";
+        public static final String GREETING_ON = "forwarded";
     }
 
     private interface InternalMessageColumns extends MessageColumns {

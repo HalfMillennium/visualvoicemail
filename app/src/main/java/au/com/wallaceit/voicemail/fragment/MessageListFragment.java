@@ -118,7 +118,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         MessageColumns.READ,
         MessageColumns.FLAGGED,
         MessageColumns.ANSWERED,
-        MessageColumns.FORWARDED,
+        MessageColumns.GREETING_ON,
         MessageColumns.ATTACHMENT_COUNT,
         MessageColumns.FOLDER_ID,
         MessageColumns.PREVIEW,
@@ -140,7 +140,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     private static final int READ_COLUMN = 8;
     private static final int FLAGGED_COLUMN = 9;
     //private static final int ANSWERED_COLUMN = 10;
-    //private static final int FORWARDED_COLUMN = 11;
+    private static final int GREETING_ON_COLUMN = 11;
     private static final int ATTACHMENT_COUNT_COLUMN = 12;
     private static final int FOLDER_ID_COLUMN = 13;
     //private static final int PREVIEW_COLUMN = 14;
@@ -344,6 +344,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
      * Stores the name of the folder that we want to open as soon as possible after load.
      */
     private String mFolderName;
+    private boolean isGreetingsFolder = false;
 
     //private boolean mRemoteSearchPerformed = false;
     //private Future<?> mRemoteSearchFuture = null;
@@ -726,16 +727,13 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             int adaptorPosition = listViewToAdapterPosition(position);
             MessageReference reference = getReferenceForPosition(adaptorPosition);
             mFragmentListener.playMessage(reference);
-            if (mPreferences.getPreferences().getBoolean("mark_message_as_read_on_view", true)) {
-                setFlag(adaptorPosition, Flag.SEEN, true);
-                Log.w(VisualVoicemail.LOG_TAG, "Marking read");
-            }
-            LocalMessage message = reference.restoreToLocalMessage(getActivity());
-            Set<Flag> flags = message.getFlags();
-            Iterator it = flags.iterator();
-            while (it.hasNext()){
-                Flag flag = (Flag) it.next();
-                Log.w(VisualVoicemail.LOG_TAG, flag.name());
+            if (mPreferences.getAccount(mAccount.getUuid()).isMarkMessageAsReadOnView()) {
+                LocalMessage message = reference.restoreToLocalMessage(getActivity());
+                // add the read flag if it's not present, stops redundant network call
+                if (!message.getFlags().contains(Flag.SEEN)) {
+                    setFlag(adaptorPosition, Flag.SEEN, true);
+                    Log.w(VisualVoicemail.LOG_TAG, "Marking read");
+                }
             }
         }
     }
@@ -915,6 +913,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             mSingleFolderMode = true;
             mFolderName = mSearch.getFolderNames().get(0);
             mCurrentFolder = getFolder(mFolderName, mAccount);
+            if (mFolderName.equals("Greetings")){
+                isGreetingsFolder = true;
+            }
         }
 
         mAllAccounts = false;
@@ -1443,11 +1444,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 break;
             }
             case R.id.flag: {
-                setFlag(adapterPosition, Flag.FLAGGED, true);
+                setFlag(adapterPosition, isGreetingsFolder?Flag.GREETING_ON:Flag.FLAGGED, true);
                 break;
             }
             case R.id.unflag: {
-                setFlag(adapterPosition, Flag.FLAGGED, false);
+                setFlag(adapterPosition, isGreetingsFolder?Flag.GREETING_ON:Flag.FLAGGED, false);
                 break;
             }
 
@@ -1551,7 +1552,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         String subject = cursor.getString(SUBJECT_COLUMN);
         boolean read = (cursor.getInt(READ_COLUMN) == 1);
-        boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
+        boolean flagged = isGreetingsFolder?(cursor.getInt(GREETING_ON_COLUMN) == 1):(cursor.getInt(FLAGGED_COLUMN) == 1);
 
         menu.setHeaderTitle(subject);
 
@@ -1579,18 +1580,20 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
         if (!mController.isMoveCapable(account)) {
             menu.findItem(R.id.move).setVisible(false);
-            //menu.findItem(R.id.archive).setVisible(false);
-            //menu.findItem(R.id.spam).setVisible(false);
         }
 
-        /*if (!account.hasArchiveFolder()) {
-            menu.findItem(R.id.archive).setVisible(false);
+        if (isGreetingsFolder){
+            menu.findItem(R.id.copy).setVisible(false);
+            menu.findItem(R.id.move).setVisible(false);
+            menu.findItem(R.id.mark_as_unread).setVisible(false);
+            menu.findItem(R.id.mark_as_read).setVisible(false);
+            menu.findItem(R.id.add_to_contacts).setVisible(false);
+            menu.findItem(R.id.call).setVisible(false);
+            menu.findItem(R.id.same_sender).setVisible(false);
+
+            menu.findItem(R.id.unflag).setTitle("Disable Greeting");
+            menu.findItem(R.id.flag).setTitle("Enable Greeting");
         }
-
-        if (!account.hasSpamFolder()) {
-            menu.findItem(R.id.spam).setVisible(false);
-        }*/
-
     }
 
     public void onSwipeRightToLeft(final MotionEvent e1, final MotionEvent e2) {
@@ -1831,7 +1834,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //mFontSizes.setViewTextSize(holder.threadCount, mFontSizes.getMessageListSubject()); // thread count is next to subject
             view.findViewById(R.id.selected_checkbox_wrapper).setVisibility((mCheckboxes) ? View.VISIBLE : View.GONE);
 
-            holder.flagged.setVisibility(mStars ? View.VISIBLE : View.GONE);
+            holder.flagged.setVisibility(mStars || isGreetingsFolder ? View.VISIBLE : View.GONE);
             holder.flagged.setOnClickListener(holder);
 
 
@@ -1893,8 +1896,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 }
             }
 
+            holder.position = cursor.getPosition();
+
             // greetings view
-            if (mFolderName.equals("Greetings")){
+            if (isGreetingsFolder){
                 LocalMessage message = getMessageAtPosition(cursor.getPosition());
                 try {
                     String[] headerVals = message.getHeader("X-CNS-Greeting-Type");
@@ -1910,11 +1915,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     holder.from.setText(greetingType);
                     holder.from_number.setText(greetingDesc);
 
-                    boolean flagged = message.getFlags().contains(Flag.GREETING_ON);
+                    boolean flagged = (cursor.getInt(GREETING_ON_COLUMN) == 1);
 
-                    if (mStars) {
-                        holder.flagged.setChecked(flagged);
-                    }
+                    holder.flagged.setChecked(flagged);
                 } catch (MessagingException e) {
                     e.printStackTrace();
                 }
@@ -1984,7 +1987,6 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             if (mStars) {
                 holder.flagged.setChecked(flagged);
             }
-            holder.position = cursor.getPosition();
 
             if (holder.contactBadge != null) {
                 if (contactLookupAddress != null) {
@@ -2117,7 +2119,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                         toggleMessageSelectWithAdapterPosition(position);
                         break;
                     case R.id.flagged:
-                        toggleMessageFlagWithAdapterPosition(position);
+                        if (isGreetingsFolder){
+                            toggleMessageGreetingWithAdapterPosition(position);
+                        } else {
+                            toggleMessageFlagWithAdapterPosition(position);
+                        }
                         break;
                 }
             }
@@ -2242,6 +2248,13 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         setFlag(adapterPosition, Flag.FLAGGED, !flagged);
     }
 
+    private void toggleMessageGreetingWithAdapterPosition(int adapterPosition) {
+        Cursor cursor = (Cursor) mAdapter.getItem(adapterPosition);
+        boolean flagged = (cursor.getInt(GREETING_ON_COLUMN) == 1);
+
+        setFlag(adapterPosition, Flag.GREETING_ON, !flagged);
+    }
+
     private void toggleMessageSelectWithAdapterPosition(int adapterPosition) {
         Cursor cursor = (Cursor) mAdapter.getItem(adapterPosition);
         long uniqueId = cursor.getLong(mUniqueIdColumn);
@@ -2303,7 +2316,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
             if (mSelected.contains(uniqueId)) {
                 boolean read = (cursor.getInt(READ_COLUMN) == 1);
-                boolean flagged = (cursor.getInt(FLAGGED_COLUMN) == 1);
+                boolean flagged = isGreetingsFolder?(cursor.getInt(GREETING_ON_COLUMN) == 1):(cursor.getInt(FLAGGED_COLUMN) == 1);
 
                 if (!flagged) {
                     isBatchFlag = true;
@@ -2802,14 +2815,16 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     //menu.findItem(R.id.archive).setVisible(false);
                     //menu.findItem(R.id.spam).setVisible(false);
                 }
+            }
 
-                /*if (!account.hasArchiveFolder()) {
-                    menu.findItem(R.id.archive).setVisible(false);
-                }
+            if (isGreetingsFolder){
+                menu.findItem(R.id.copy).setVisible(false);
+                menu.findItem(R.id.move).setVisible(false);
+                menu.findItem(R.id.mark_as_unread).setVisible(false);
+                menu.findItem(R.id.mark_as_read).setVisible(false);
 
-                if (!account.hasSpamFolder()) {
-                    menu.findItem(R.id.spam).setVisible(false);
-                }*/
+                menu.findItem(R.id.unflag).setTitle("Disable Greeting");
+                menu.findItem(R.id.flag).setTitle("Enable Greeting");
             }
         }
 
@@ -2820,7 +2835,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         }
 
         public void showMarkAsRead(boolean show) {
-            if (mActionMode != null) {
+            if (mActionMode != null && !isGreetingsFolder) {
                 mMarkAsRead.setVisible(show);
                 mMarkAsUnread.setVisible(!show);
             }
@@ -2858,11 +2873,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 break;
             }
             case R.id.flag: {
-                setFlagForSelected(Flag.FLAGGED, true);
+                setFlagForSelected(isGreetingsFolder?Flag.GREETING_ON:Flag.FLAGGED, true);
                 break;
             }
             case R.id.unflag: {
-                setFlagForSelected(Flag.FLAGGED, false);
+                setFlagForSelected(isGreetingsFolder?Flag.GREETING_ON:Flag.FLAGGED, false);
                 break;
             }
             case R.id.select_all: {
@@ -3183,7 +3198,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
     }
 
     public void onToggleFlagged() {
-        onToggleFlag(Flag.FLAGGED, FLAGGED_COLUMN);
+        if (isGreetingsFolder) {
+            onToggleGreeting();
+        } else {
+            onToggleFlag(Flag.FLAGGED, FLAGGED_COLUMN);
+        }
     }
 
     public void onToggleRead() {
@@ -3199,6 +3218,11 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         Cursor cursor = (Cursor) mAdapter.getItem(adapterPosition);
         boolean flagState = (cursor.getInt(flagColumn) == 1);
         setFlag(adapterPosition, flag, !flagState);
+    }
+
+    private void onToggleGreeting() {
+        int adapterPosition = getAdapterPositionForSelectedMessage();
+        toggleMessageGreetingWithAdapterPosition(adapterPosition);
     }
 
     public void onMove() {

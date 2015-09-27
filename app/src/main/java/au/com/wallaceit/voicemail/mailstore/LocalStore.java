@@ -21,12 +21,11 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Store;
-import au.com.wallaceit.voicemail.mailstore.*;
+
 import au.com.wallaceit.voicemail.mailstore.LocalFolder.DataLocation;
 import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
-import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
 import au.com.wallaceit.voicemail.search.LocalSearch;
@@ -143,8 +142,8 @@ public class LocalStore extends Store implements Serializable {
             case ANSWERED: {
                 return MessageColumns.ANSWERED;
             }
-            case FORWARDED: {
-                return MessageColumns.FORWARDED;
+            case GREETING_ON: {
+                return MessageColumns.GREETING_ON;
             }
             default: {
                 throw new IllegalArgumentException("Flag must be a special column flag");
@@ -813,7 +812,7 @@ public class LocalStore extends Store implements Serializable {
                 case SEEN:
                 case FLAGGED:
                 case ANSWERED:
-                case FORWARDED: {
+                case GREETING_ON: {
                     break;
                 }
                 default: {

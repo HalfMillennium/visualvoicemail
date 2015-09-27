@@ -825,8 +825,8 @@ public class ImapStore extends RemoteStore {
                     mPermanentFlagsIndex.add(Flag.SEEN);
                 } else if (flag.equals("\\flagged")) {
                     mPermanentFlagsIndex.add(Flag.FLAGGED);
-                } else if (flag.equals("$forwarded")) {
-                    mPermanentFlagsIndex.add(Flag.FORWARDED);
+                } else if (flag.equals("$CNS-Greeting-On")) {
+                    mPermanentFlagsIndex.add(Flag.GREETING_ON);
                 } else if (flag.equals("\\*")) {
                     mCanCreateKeywords = true;
                 }
@@ -1544,12 +1544,10 @@ public class ImapStore extends RemoteStore {
                             message.setFlagInternal(Flag.SEEN, true);
                         } else if (flag.equalsIgnoreCase("\\Flagged")) {
                             message.setFlagInternal(Flag.FLAGGED, true);
-                        } else if (flag.equalsIgnoreCase("$Forwarded")) {
-                            message.setFlagInternal(Flag.FORWARDED, true);
-                            /* a message contains FORWARDED FLAG -> so we can also create them */
-                            mPermanentFlagsIndex.add(Flag.FORWARDED);
-                        } else if (flag.equalsIgnoreCase("\\$CNS-Greeting-On")) {
+                        } else if (flag.equalsIgnoreCase("$CNS-Greeting-On")) {
                             message.setFlagInternal(Flag.GREETING_ON, true);
+                            /* a message contains GREETING_ON FLAG -> so we can also create them */
+                            mPermanentFlagsIndex.add(Flag.GREETING_ON);
                         }
                     }
                 }
@@ -1982,11 +1980,8 @@ public class ImapStore extends RemoteStore {
                     flagNames.add("\\Answered");
                 } else if (flag == Flag.FLAGGED) {
                     flagNames.add("\\Flagged");
-                } else if (flag == Flag.FORWARDED
-                        && (mCanCreateKeywords || mPermanentFlagsIndex.contains(Flag.FORWARDED))) {
-                    flagNames.add("$Forwarded");
                 } else if (flag == Flag.GREETING_ON) {
-                    flagNames.add("\\$CNS-Greeting-On");
+                    flagNames.add("$CNS-Greeting-On");
                 }
 
             }

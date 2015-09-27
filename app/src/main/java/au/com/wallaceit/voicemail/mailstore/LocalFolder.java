@@ -52,18 +52,9 @@ import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.SizeAware;
 import com.fsck.k9.mail.message.MessageHeaderParser;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.AttachmentViewInfo;
-import au.com.wallaceit.voicemail.mailstore.LocalBodyPart;
-import au.com.wallaceit.voicemail.mailstore.LocalMessage;
-import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
-import au.com.wallaceit.voicemail.mailstore.LocalStore;
+
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
-import au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor;
-import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
-import au.com.wallaceit.voicemail.mailstore.ThreadInfo;
-import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mime4j.util.MimeUtil;
@@ -1225,7 +1216,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             cv.put("read", message.isSet(Flag.SEEN) ? 1 : 0);
             cv.put("flagged", message.isSet(Flag.FLAGGED) ? 1 : 0);
             cv.put("answered", message.isSet(Flag.ANSWERED) ? 1 : 0);
-            cv.put("forwarded", message.isSet(Flag.FORWARDED) ? 1 : 0);
+            cv.put("forwarded", message.isSet(Flag.GREETING_ON) ? 1 : 0);
             cv.put("folder_id", mFolderId);
             cv.put("to_list", Address.pack(message.getRecipients(RecipientType.TO)));
             cv.put("cc_list", Address.pack(message.getRecipients(RecipientType.CC)));

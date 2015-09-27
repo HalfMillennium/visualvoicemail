@@ -29,8 +29,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -302,7 +300,7 @@ public class MessagingController implements Runnable {
     // Key is accountNumber
     private final ConcurrentMap<Integer, NotificationData> notificationData = new ConcurrentHashMap<Integer, NotificationData>();
 
-    private static final Set<Flag> SYNC_FLAGS = EnumSet.of(Flag.SEEN, Flag.FLAGGED, Flag.ANSWERED, Flag.FORWARDED, Flag.GREETING_ON);
+    private static final Set<Flag> SYNC_FLAGS = EnumSet.of(Flag.SEEN, Flag.FLAGGED, Flag.ANSWERED, Flag.GREETING_ON);
 
     private void suppressMessages(Account account, List<LocalMessage> messages) {
         EmailProviderCache cache = EmailProviderCache.getCache(account.getUuid(), context);

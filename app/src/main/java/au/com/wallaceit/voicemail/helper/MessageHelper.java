@@ -7,19 +7,14 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
 import au.com.wallaceit.voicemail.activity.MessageInfoHolder;
-import au.com.wallaceit.voicemail.helper.*;
-import au.com.wallaceit.voicemail.helper.Contacts;
+
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Flag;
-import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.Message.RecipientType;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -76,7 +71,7 @@ public class MessageHelper {
 
         target.read = message.isSet(Flag.SEEN);
         target.answered = message.isSet(Flag.ANSWERED);
-        target.forwarded = message.isSet(Flag.FORWARDED);
+        target.forwarded = message.isSet(Flag.GREETING_ON);
         target.flagged = message.isSet(Flag.FLAGGED);
 
         Address[] addrs = message.getFrom();
