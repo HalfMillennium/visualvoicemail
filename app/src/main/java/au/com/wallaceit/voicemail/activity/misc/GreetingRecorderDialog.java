@@ -71,6 +71,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.TempFileBody;
 
 public class GreetingRecorderDialog extends Dialog implements View.OnClickListener {
     private Account mAccount;
@@ -178,9 +179,10 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
         String contentType = "Audio/AMR";
         try {
             // add attachment
-            Body body = new FileBackedBody(new File(outputPath), MimeUtil.ENC_BASE64);
+            Body body = new TempFileBody(outputPath);
             MimeBodyPart bp = new MimeBodyPart(body);
             bp.addHeader(MimeHeader.HEADER_CONTENT_TYPE, String.format("%s; name=\"%s\"", contentType, "greeting.amr"));
+            bp.setEncoding(MimeUtil.ENC_BASE64);
             bp.addHeader(MimeHeader.HEADER_CONTENT_DISPOSITION, String.format("attachment; size=%d; filename=\"%s\"", new File(outputPath).length(), "greeting.amr"));
 
             MimeMultipart mp = new MimeMultipart();
