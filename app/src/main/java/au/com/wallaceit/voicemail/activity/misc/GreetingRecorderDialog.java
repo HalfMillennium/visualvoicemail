@@ -24,15 +24,20 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.util.Base64;
+import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Body;
+import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
@@ -42,12 +47,19 @@ import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
+import com.fsck.k9.mail.internet.RawDataBody;
+import com.fsck.k9.mail.internet.TextBody;
 
 import org.apache.james.mime4j.codec.EncoderUtil;
 import org.apache.james.mime4j.util.MimeUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +87,7 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
         setContentView(R.layout.recordview);
         mAccount = account;
         outputPath = getContext().getCacheDir() + "/tempgreeting.amr";
-        new File(outputPath).delete(); // remove last cached file; audio recorder appends
+        new File(outputPath).delete(); // remove last cached file
         recordButton = (Button) findViewById(R.id.record);
         recordButton.setOnClickListener(this);
         Button cancelButton = (Button) findViewById(R.id.cancel);
@@ -88,6 +100,7 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
         switch (v.getId()){
             case R.id.record:
                 if (isRecording){
+                    stopRecording();
                     showPreview();
                 } else {
                     micView.setImageResource(R.drawable.microphone_active);
@@ -131,66 +144,114 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
     }
 
     private void showTypeSelectDialog(){
-        CharSequence colors[] = new CharSequence[] {"Greeting", "Voice Signature"};
+        final CharSequence types[] = new CharSequence[] {"Normal Greeting", "Busy Greeting", "Extended Absence Greeting", "Voice Signature"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Save As..");
-        builder.setItems(colors, new DialogInterface.OnClickListener() {
+        builder.setItems(types, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dismiss();
                 String typeHeader;
-                if (which==1){
-                    typeHeader = "voice-signature";
-                } else {
-                    typeHeader = "normal-greeting";
+                switch (which){
+                    case 3:
+                        typeHeader = "voice-signature";
+                        break;
+                    case 2:
+                        typeHeader = "extended-absence-greeting";
+                        break;
+                    case 1:
+                        typeHeader = "busy-greeting";
+                        break;
+                    case 0:
+                    default:
+                        typeHeader = "normal-greeting";
+                        break;
                 }
-                saveGreetingToMessage(typeHeader);
+                saveGreetingToMessage(typeHeader, types[which].toString());
             }
         });
         builder.show();
     }
 
-    private void saveGreetingToMessage(String type){
+    private void saveGreetingToMessage(String type, String label){
         MimeMessage message = new MimeMessage();
-        String contentType = "audio/AMR";
+        String contentType = "Audio/AMR";
         try {
-            // create message
-            message.generateMessageId();
-            message.setSentDate(new Date(), true);
-            message.setHeader("X-AppleVM-Message-Version", "1.0");
-            message.setHeader("X-CNS-Greeting-Type", type);
             // add attachment
             Body body = new FileBackedBody(new File(outputPath), MimeUtil.ENC_BASE64);
-
             MimeBodyPart bp = new MimeBodyPart(body);
-            bp.addHeader(MimeHeader.HEADER_CONTENT_TYPE, String.format("%s;\r\n name=\"%s\"", contentType, EncoderUtil.encodeIfNecessary("message.amr", EncoderUtil.Usage.WORD_ENTITY, 7)));
-            bp.addHeader(MimeHeader.HEADER_CONTENT_DISPOSITION, String.format(Locale.US, "attachment;\r\n filename=\"%s\";\r\n size=%d", "message.amr", new File(outputPath).length()));
+            bp.addHeader(MimeHeader.HEADER_CONTENT_TYPE, String.format("%s; name=\"%s\"", contentType, "greeting.amr"));
+            bp.addHeader(MimeHeader.HEADER_CONTENT_DISPOSITION, String.format("attachment; size=%d; filename=\"%s\"", new File(outputPath).length(), "greeting.amr"));
 
             MimeMultipart mp = new MimeMultipart();
             mp.addBodyPart(bp);
             MimeMessageHelper.setBody(message, mp);
+
+            // set additional message headers
+            message.generateMessageId();
+            message.setSentDate(new Date(), true);
+            message.setFrom(new Address("user@voicemail"));
+            message.setRecipients(Message.RecipientType.TO, new Address[]{new Address("system@voicemail")});
+            message.setSubject(label);
+
+            message.setHeader("X-AppleVM-Message-Version", "1.0");
+            message.setHeader("X-CNS-Greeting-Type", type);
+
+            MediaPlayer player = MediaPlayer.create(getContext(), Uri.parse(outputPath));
+            int duration = player.getDuration();
+            duration = Math.round(duration/1000);
+            Log.w(VisualVoicemail.LOG_TAG, "Greeting Duration: "+duration);
+            message.setHeader("Content-Duration", String.valueOf(duration));
+
+            message.setFlag(Flag.SEEN, true);
         } catch (MessagingException e) {
             e.printStackTrace();
             return;
         }
         // save the message
-        List<Message> messages = Arrays.asList(new Message[]{message});
-        try {
-            LocalFolder folder = mAccount.getLocalStore().getFolder("Greetings");
-            folder.appendMessages(messages);
+        //List<Message> messages = Arrays.asList(new Message[]{message});
+        //try {
+            //LocalFolder folder = mAccount.getLocalStore().getFolder("Greetings");
+            //folder.appendMessages(messages);
             final MessagingController messagingController = MessagingController.getInstance(getContext().getApplicationContext());
             messagingController.saveGreeting(mAccount, message, -1);
-        } catch (MessagingException e) {
+
+        //} catch (MessagingException e) {
+            //e.printStackTrace();
+        //}
+    }
+
+    private String getGreetingBase64(){
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream((new File(outputPath)).getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output64.write(buffer, 0, bytesRead);
+            }
+            output64.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return output.toString();
     }
 
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-        mRecorder.setOutputFile(outputPath);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setAudioSamplingRate(8000);
+        mRecorder.setAudioEncodingBitRate(12200);
+        mRecorder.setOutputFile(outputPath);
 
         try {
             mRecorder.prepare();

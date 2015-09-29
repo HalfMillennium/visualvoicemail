@@ -1908,9 +1908,18 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     if (greetingType.equals("voice-signature")){
                         greetingType = "Voice Signature";
                         greetingDesc = "A short recording of your name";
+
                     } else if (greetingType.equals("normal-greeting")){
-                        greetingType = "Voice Greeting";
-                        greetingDesc = "A long customised greeting";
+                        greetingType = "Normal Greeting";
+                        greetingDesc = "Greeting that plays when no answer";
+
+                    } else if (greetingType.equals("busy-greeting")){
+                        greetingType = "Busy Greeting";
+                        greetingDesc = "Greeting that plays when busy";
+
+                    } else if (greetingType.equals("extended-absence-greeting")){
+                        greetingType = "Extended Absence Greeting";
+                        greetingDesc = "Overrides other Greetings when enabled";
                     }
                     holder.from.setText(greetingType);
                     holder.from_number.setText(greetingDesc);

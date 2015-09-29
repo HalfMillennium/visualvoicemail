@@ -22,12 +22,14 @@ package au.com.wallaceit.voicemail.helper;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fsck.k9.mail.FetchProfile;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
+import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 
@@ -150,9 +152,12 @@ public class VoicemailAttachmentHelper {
             List<LocalMessage> messages = Collections.singletonList(message);
             folder.fetch(messages, fp, null);
             folder.close();
-            Log.i(VisualVoicemail.LOG_TAG, "Message MIME "+message.getMimeType());
             Part part = walkMessagePartsForRecording(message);
-            Log.i(VisualVoicemail.LOG_TAG, "Attachment Returned " + (part == null ? "null" : "Valid Part: "+part.getDisposition()+" "+part.getMimeType()));
+
+            if (part!=null) {
+                Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", part.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));
+                Log.i(VisualVoicemail.LOG_TAG, "Attachment Disposition: " + TextUtils.join(";", part.getHeader(MimeHeader.HEADER_CONTENT_DISPOSITION)));
+            }
 
             return part;
         } catch (MessagingException e) {

@@ -1007,9 +1007,15 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
         if (attachmentHelper.loadVoicemailAttachment()) {
             LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
-            VvmContacts vvmContacts = new VvmContacts(MessageList.this);
-            String phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
-            String name = vvmContacts.getDisplayName(phone);
+            String phone, name;
+            if (message.getFolder().getName().equals("Greetings")) {
+                phone = "greeting";
+                name = "greeting";
+            } else {
+                VvmContacts vvmContacts = new VvmContacts(MessageList.this);
+                phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+                name = vvmContacts.getDisplayName(phone);
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy H:mm", Locale.ENGLISH);
             String dateStr = sdf.format(message.getSentDate());
             String mimetype = attachmentHelper.getAttachment().getMimeType();
