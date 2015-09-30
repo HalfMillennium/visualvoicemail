@@ -815,6 +815,7 @@ public class ImapStore extends RemoteStore {
          *            the imapflags as strings
          */
         private void parseFlags(ImapList flags) {
+            boolean greetingFlagAdded = false;
             for (Object flag : flags) {
                 flag = flag.toString().toLowerCase(Locale.US);
                 if (flag.equals("\\deleted")) {
@@ -825,8 +826,12 @@ public class ImapStore extends RemoteStore {
                     mPermanentFlagsIndex.add(Flag.SEEN);
                 } else if (flag.equals("\\flagged")) {
                     mPermanentFlagsIndex.add(Flag.FLAGGED);
-                } else if (flag.equals("$CNS-Greeting-On")) {
-                    mPermanentFlagsIndex.add(Flag.GREETING_ON);
+                } else if (flag.equals("$CNS-Greeting-On") || flag.equals("$AppleVM-ActiveGreeting")) {
+                    // some carriers use the non-standard "$AppleVM-ActiveGreeting" so we have to use both.
+                    if (!greetingFlagAdded) {
+                        mPermanentFlagsIndex.add(Flag.GREETING_ON);
+                        greetingFlagAdded = true;
+                    }
                 } else if (flag.equals("\\*")) {
                     mCanCreateKeywords = true;
                 }
@@ -1534,6 +1539,7 @@ public class ImapStore extends RemoteStore {
             if (fetchList.containsKey("FLAGS")) {
                 ImapList flags = fetchList.getKeyedList("FLAGS");
                 if (flags != null) {
+                    boolean greetingFlagAdded = false;
                     for (int i = 0, count = flags.size(); i < count; i++) {
                         String flag = flags.getString(i);
                         if (flag.equalsIgnoreCase("\\Deleted")) {
@@ -1544,10 +1550,13 @@ public class ImapStore extends RemoteStore {
                             message.setFlagInternal(Flag.SEEN, true);
                         } else if (flag.equalsIgnoreCase("\\Flagged")) {
                             message.setFlagInternal(Flag.FLAGGED, true);
-                        } else if (flag.equalsIgnoreCase("$CNS-Greeting-On")) {
-                            message.setFlagInternal(Flag.GREETING_ON, true);
-                            /* a message contains GREETING_ON FLAG -> so we can also create them */
-                            mPermanentFlagsIndex.add(Flag.GREETING_ON);
+                        } else if (flag.equalsIgnoreCase("$CNS-Greeting-On") || flag.equals("$AppleVM-ActiveGreeting")) { // catch non standard flag
+                            if (!greetingFlagAdded) {
+                                message.setFlagInternal(Flag.GREETING_ON, true);
+                                /* a message contains GREETING_ON FLAG -> so we can also create them */
+                                mPermanentFlagsIndex.add(Flag.GREETING_ON);
+                                greetingFlagAdded = true;
+                            }
                         }
                     }
                 }
@@ -1982,6 +1991,7 @@ public class ImapStore extends RemoteStore {
                     flagNames.add("\\Flagged");
                 } else if (flag == Flag.GREETING_ON) {
                     flagNames.add("$CNS-Greeting-On");
+                    flagNames.add("$AppleVM-ActiveGreeting"); // include non standard flag
                 }
 
             }
