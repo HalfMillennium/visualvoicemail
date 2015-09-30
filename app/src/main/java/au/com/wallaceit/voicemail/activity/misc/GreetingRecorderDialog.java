@@ -27,8 +27,6 @@ import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
-import android.util.Base64;
-import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -40,37 +38,22 @@ import com.fsck.k9.mail.Body;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.internet.BinaryTempFileBody;
-import com.fsck.k9.mail.internet.BinaryTempFileMessageBody;
 import com.fsck.k9.mail.internet.MimeBodyPart;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
-import com.fsck.k9.mail.internet.RawDataBody;
-import com.fsck.k9.mail.internet.TextBody;
 
-import org.apache.james.mime4j.codec.EncoderUtil;
 import org.apache.james.mime4j.util.MimeUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.controller.MessagingController;
-import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
-import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.TempFileBody;
 
 public class GreetingRecorderDialog extends Dialog implements View.OnClickListener {
@@ -145,7 +128,7 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
     }
 
     private void showTypeSelectDialog(){
-        final CharSequence types[] = new CharSequence[] {"Normal Greeting", "Busy Greeting", "Extended Absence Greeting", "Voice Signature"};
+        final CharSequence types[] = new CharSequence[] {"Normal Greeting", /*"Busy Greeting", "Extended Absence Greeting",*/ "Voice Signature"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Save As..");
         builder.setItems(types, new DialogInterface.OnClickListener() {
@@ -154,15 +137,18 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
                 dismiss();
                 String typeHeader;
                 switch (which){
-                    case 3:
+                    case 1:
                         typeHeader = "voice-signature";
                         break;
-                    case 2:
+                    // These standard greetings do not seem to be supported by vodafone, they are probably using other values or this functionality is not available
+                    // A call to GETMETADATA imap command will return supported greeting types if implemented on the server
+                    // http://www.gsma.com/newsroom/wp-content/uploads/2012/07/OMTP_VVM_Specification_1_3.pdf
+                    /*case 2:
                         typeHeader = "extended-absence-greeting";
                         break;
                     case 1:
                         typeHeader = "busy-greeting";
-                        break;
+                        break;*/
                     case 0:
                     default:
                         typeHeader = "normal-greeting";
@@ -221,29 +207,6 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
         //} catch (MessagingException e) {
             //e.printStackTrace();
         //}
-    }
-
-    private String getGreetingBase64(){
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream((new File(outputPath)).getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-        byte[] buffer = new byte[8192];
-        int bytesRead;
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        Base64OutputStream output64 = new Base64OutputStream(output, Base64.DEFAULT);
-        try {
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                output64.write(buffer, 0, bytesRead);
-            }
-            output64.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return output.toString();
     }
 
     private void startRecording() {

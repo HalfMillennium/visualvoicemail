@@ -37,7 +37,6 @@ public class AccountCreator {
             greetings.save();
             // remove outbox & drafts
             localStore.getFolder("Outbox").delete();
-            localStore.getFolder("Drafts").delete();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
