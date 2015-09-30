@@ -591,10 +591,12 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
             //mAccount.setSubscribedFoldersOnly(mSubscribedFoldersOnly.isChecked());
 
             // visual voicemail specific setup
-            mAccount.setRequiresCellular(mRequiresCellular.isChecked());
-            mAccount.setDescription(mAccountName.getText().toString());
-            mAccount.setPhoneNumber("");
-            mAccount = AccountCreator.initialVisualVoicemailSetup(AccountSetupIncoming.this, mAccount);
+            if (!Intent.ACTION_EDIT.equals(getIntent().getAction())) {
+                mAccount.setRequiresCellular(mRequiresCellular.isChecked());
+                mAccount.setDescription(mAccountName.getText().toString());
+                mAccount.setPhoneNumber("");
+                mAccount = AccountCreator.initialVisualVoicemailSetup(AccountSetupIncoming.this, mAccount);
+            }
 
             AccountSetupCheckSettings.actionCheckSettings(this, mAccount, CheckDirection.INCOMING);
         } catch (Exception e) {

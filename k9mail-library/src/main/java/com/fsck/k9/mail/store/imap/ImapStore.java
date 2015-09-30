@@ -86,7 +86,7 @@ public class ImapStore extends RemoteStore {
     private static final int NORMAL_DELAY_TIME = 5000;
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    private static final int FETCH_WINDOW_SIZE = 100;
+    private static final int FETCH_WINDOW_SIZE = 1; // fix for vodafone imap servers, only fetch one at a time with each FETCH command
     private Set<Flag> mPermanentFlagsIndex = EnumSet.noneOf(Flag.class);
     private ConnectivityManager mConnectivityManager;
 

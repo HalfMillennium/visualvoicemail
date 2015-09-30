@@ -25,13 +25,19 @@ public class AccountCreator {
     public static Account initialVisualVoicemailSetup(Context context, Account account){
         account.setTrashFolderName(context.getString(R.string.special_mailbox_name_trash));
         try {
-            // only sync inbox
+            // only sync inbox & greetings
             LocalStore localStore = account.getLocalStore();
             LocalFolder inbox = localStore.getFolder(account.getInboxFolderName());
             inbox.setSyncClass(Folder.FolderClass.FIRST_CLASS);
             inbox.setPushClass(Folder.FolderClass.FIRST_CLASS);
-            // remove outbox
+            inbox.save();
+            LocalFolder greetings = localStore.getFolder("Greetings");
+            greetings.setSyncClass(Folder.FolderClass.FIRST_CLASS);
+            greetings.setPushClass(Folder.FolderClass.FIRST_CLASS);
+            greetings.save();
+            // remove outbox & drafts
             localStore.getFolder("Outbox").delete();
+            localStore.getFolder("Drafts").delete();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
