@@ -23,7 +23,7 @@ import au.com.wallaceit.voicemail.service.*;
 import au.com.wallaceit.voicemail.service.BootReceiver;
 
 public class MailService extends CoreService {
-    private static final String ACTION_CHECK_MAIL = "com.fsck.k9.intent.action.MAIL_SERVICE_WAKEUP";
+    public static final String ACTION_CHECK_MAIL = "com.fsck.k9.intent.action.MAIL_SERVICE_WAKEUP";
     private static final String ACTION_RESET = "com.fsck.k9.intent.action.MAIL_SERVICE_RESET";
     private static final String ACTION_RESCHEDULE_POLL = "com.fsck.k9.intent.action.MAIL_SERVICE_RESCHEDULE_POLL";
     private static final String ACTION_CANCEL = "com.fsck.k9.intent.action.MAIL_SERVICE_CANCEL";
@@ -31,7 +31,7 @@ public class MailService extends CoreService {
     private static final String ACTION_RESTART_PUSHERS = "com.fsck.k9.intent.action.MAIL_SERVICE_RESTART_PUSHERS";
     private static final String CONNECTIVITY_CHANGE = "com.fsck.k9.intent.action.MAIL_SERVICE_CONNECTIVITY_CHANGE";
     private static final String CANCEL_CONNECTIVITY_NOTICE = "com.fsck.k9.intent.action.MAIL_SERVICE_CANCEL_CONNECTIVITY_NOTICE";
-    private static final int FLAG_FORCE_CHECK = 666;
+    public static final String FLAG_FORCE_CHECK = "com.fsck.k9.intent.action.MAIL_SERVICE_WAKEUP";
 
     private static long nextCheck = -1;
     private static boolean pushingRequested = false;
@@ -43,7 +43,7 @@ public class MailService extends CoreService {
         i.setClass(context, MailService.class);
         i.setAction(MailService.ACTION_CHECK_MAIL);
         if (forceCheckMail)
-            i.addFlags(FLAG_FORCE_CHECK);
+            i.putExtra(FLAG_FORCE_CHECK, true);
         addWakeLockId(context, i, wakeLockId, true);
         context.startService(i);
     }
@@ -129,7 +129,7 @@ public class MailService extends CoreService {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "***** MailService *****: checking mail");
             if (hasConnectivity && doBackground) {
-                PollService.startService(this, intent.getFlags()==FLAG_FORCE_CHECK);
+                PollService.startService(this, intent.hasExtra(FLAG_FORCE_CHECK));
             }
             reschedulePollInBackground(hasConnectivity, doBackground, startId, false);
         } else if (ACTION_CANCEL.equals(intent.getAction())) {

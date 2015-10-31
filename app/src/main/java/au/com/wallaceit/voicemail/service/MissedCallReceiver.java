@@ -18,6 +18,8 @@ package au.com.wallaceit.voicemail.service;
  *
  */
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +36,7 @@ import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 public class MissedCallReceiver extends BroadcastReceiver {
 
     private static String lastState = TelephonyManager.EXTRA_STATE_IDLE;
+    private static String CHECK_MAIL_INTENT = "au.com.wallaceit.voicemail";
 
     @Override
     public void onReceive(Context context, Intent intent){
@@ -56,26 +59,16 @@ public class MissedCallReceiver extends BroadcastReceiver {
             if (isEnabled) {
                 if (VisualVoicemail.DEBUG)
                     Log.w(VisualVoicemail.LOG_TAG, "Missed call check enabled, scheduling check");
-                PollTask pollTask = new PollTask(context);
-                Timer timer = new Timer();
-                timer.schedule(pollTask, 180000);
+                // setup intent for mail check, alarm service triggers the check directly
+                Intent mintent = new Intent(context, MailService.class);
+                mintent.setAction(MailService.ACTION_CHECK_MAIL);
+                mintent.putExtra(MailService.FLAG_FORCE_CHECK, true);
+                PendingIntent pintent = PendingIntent.getService(context, 0, mintent, 0);
+
+                AlarmManager alarmManager = (AlarmManager)(context.getSystemService(Context.ALARM_SERVICE));
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+180000, pintent); // takes a while for voicemail to come through.
             }
         }
         lastState = state;
-    }
-
-    class PollTask extends TimerTask {
-        private Context mContext;
-
-        public PollTask(Context context){
-            mContext = context;
-        }
-
-        @Override
-        public void run() {
-            if (VisualVoicemail.DEBUG)
-                Log.i(VisualVoicemail.LOG_TAG, "***** Missed Call Receiver *****: checking mail");
-            MailService.actionCheck(mContext, null, true);
-        }
     }
 }
