@@ -89,6 +89,7 @@ import au.com.wallaceit.voicemail.search.SearchAccount;
 import au.com.wallaceit.voicemail.search.SearchSpecification;
 import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
 import au.com.wallaceit.voicemail.service.NotificationActionService;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 /**
@@ -1140,6 +1141,9 @@ public class MessagingController implements Runnable {
             for (MessagingListener l : getListeners()) {
                 l.folderStatusChanged(account, folder, unreadMessageCount);
             }
+            // update home screen badge
+            if (folder.equals(account.getInboxFolderName()))
+                ShortcutBadger.with(context.getApplicationContext()).count(unreadMessageCount);
 
             /* Notify listeners that we're finally done. */
 

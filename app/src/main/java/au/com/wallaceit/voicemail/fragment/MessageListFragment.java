@@ -101,6 +101,7 @@ import au.com.wallaceit.voicemail.search.SearchSpecification;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
 import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class MessageListFragment extends Fragment implements OnItemClickListener,
@@ -1742,6 +1743,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         public void folderStatusChanged(Account account, String folder, int unreadMessageCount) {
             if (isSingleAccountMode() && isSingleFolderMode() && mAccount.equals(account) &&
                     mFolderName.equals(folder)) {
+                // update home badge if inbox unread count has changed
+                if (folder.equals(account.getInboxFolderName()) && mUnreadMessageCount!=unreadMessageCount)
+                    ShortcutBadger.with(mContext.getApplicationContext()).count(unreadMessageCount);
+
                 mUnreadMessageCount = unreadMessageCount;
             }
             super.folderStatusChanged(account, folder, unreadMessageCount);
