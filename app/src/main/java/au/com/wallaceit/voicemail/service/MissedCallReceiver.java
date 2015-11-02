@@ -36,7 +36,6 @@ import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 public class MissedCallReceiver extends BroadcastReceiver {
 
     private static String lastState = TelephonyManager.EXTRA_STATE_IDLE;
-    private static String CHECK_MAIL_INTENT = "au.com.wallaceit.voicemail";
 
     @Override
     public void onReceive(Context context, Intent intent){
@@ -66,7 +65,7 @@ public class MissedCallReceiver extends BroadcastReceiver {
                 PendingIntent pintent = PendingIntent.getService(context, 0, mintent, 0);
 
                 AlarmManager alarmManager = (AlarmManager)(context.getSystemService(Context.ALARM_SERVICE));
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+180000, pintent); // takes a while for voicemail to come through.
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+240000, pintent); // takes a while for voicemail to come through.
             }
         }
         lastState = state;
