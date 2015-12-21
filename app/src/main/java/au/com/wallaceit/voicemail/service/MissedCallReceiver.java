@@ -26,9 +26,11 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
@@ -54,7 +56,10 @@ public class MissedCallReceiver extends BroadcastReceiver {
             if (VisualVoicemail.DEBUG)
                 Log.w(VisualVoicemail.LOG_TAG, "Missed call detected...");
             // TODO: If the broadcast receivers do what they are suppose to (ie activate/deactivate) this may be redundant.
-            boolean isEnabled = Preferences.getPreferences(context).getAccounts().get(0).getAutomaticCheckMethod() == AccountSettings.PREFERENCE_AUTO_CHECK_MISSED_CALL;
+            List<Account> accounts = Preferences.getPreferences(context).getAccounts();
+            if (accounts.size()<1)
+                return;
+            boolean isEnabled = accounts.get(0).getAutomaticCheckMethod() == AccountSettings.PREFERENCE_AUTO_CHECK_MISSED_CALL;
             if (isEnabled) {
                 if (VisualVoicemail.DEBUG)
                     Log.w(VisualVoicemail.LOG_TAG, "Missed call check enabled, scheduling check");

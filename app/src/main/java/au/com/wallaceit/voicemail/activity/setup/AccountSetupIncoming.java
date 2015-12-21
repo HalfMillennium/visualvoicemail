@@ -303,7 +303,8 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
         if (!Intent.ACTION_EDIT.equals(getIntent().getAction())){
             findViewById(R.id.account_name_label).setVisibility(View.VISIBLE);
             mAccountName.setVisibility(View.VISIBLE);
-            mAccountName.setText(mAccount.getDescription());
+            String desc = mAccount.getDescription();
+            mAccountName.setText((desc!=null?desc:""));
             findViewById(R.id.account_requires_cellular_label).setVisibility(View.VISIBLE);
             mRequiresCellular.setVisibility(View.VISIBLE);
             mRequiresCellular.setChecked(true);
