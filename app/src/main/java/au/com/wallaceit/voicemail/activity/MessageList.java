@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 
 import org.apache.commons.io.IOUtils;
@@ -934,103 +935,125 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void openMessage(MessageReference messageReference) {
-        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
-        if (attachmentHelper.loadVoicemailAttachment()) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            // We explicitly set the ContentType in addition to the URI because some attachment viewers (such as Polaris office 3.0.x) choke on documents without a mime type
-            String contentType = attachmentHelper.getAttachment().getMimeType();
-            intent.setDataAndType(attachmentHelper.getAttachmentUriForSharing(), contentType);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            try {
-                // mContext.startActivity(intent);
-                this.startActivity(intent);
-            } catch (Exception e) {
-                Log.e(VisualVoicemail.LOG_TAG, "Could not display attachment of type " + contentType, e);
-                Toast toast = Toast.makeText(MessageList.this, getString(R.string.message_view_no_viewer, contentType), Toast.LENGTH_LONG);
-                toast.show();
+        final VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        attachmentHelper.loadVoicemailAttachment(new Runnable() {
+            @Override
+            public void run() {
+                if (attachmentHelper.getAttachment()!=null) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    // We explicitly set the ContentType in addition to the URI because some attachment viewers (such as Polaris office 3.0.x) choke on documents without a mime type
+                    String contentType = attachmentHelper.getAttachment().getMimeType();
+                    intent.setDataAndType(attachmentHelper.getAttachmentUriForSharing(), contentType);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    try {
+                        // mContext.startActivity(intent);
+                        MessageList.this.startActivity(intent);
+                    } catch (Exception e) {
+                        Log.e(VisualVoicemail.LOG_TAG, "Could not display attachment of type " + contentType, e);
+                        Toast toast = Toast.makeText(MessageList.this, getString(R.string.message_view_no_viewer, contentType), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                } else {
+                    Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
-        } else {
-            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
-            toast.show();
-        }
+        });
     }
 
     @Override
     public void playMessage(MessageReference messageReference) {
-        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
-        if (attachmentHelper.loadVoicemailAttachment()) {
-            AudioPlayerDialog dialog = new AudioPlayerDialog(MessageList.this, attachmentHelper.getCacheUri());
-            dialog.show();
-        } else {
-            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
-            toast.show();
-        }
+        final VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        attachmentHelper.loadVoicemailAttachment(new Runnable() {
+            @Override
+            public void run() {
+                if (attachmentHelper.getAttachment()!=null) {
+                    AudioPlayerDialog dialog = new AudioPlayerDialog(MessageList.this, attachmentHelper.getCacheUri());
+                    dialog.show();
+                } else {
+                    Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+        });
+
     }
 
     @Override
     public void saveMessage(MessageReference messageReference) {
-        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
-        if (attachmentHelper.loadVoicemailAttachment()) {
-            File directory = new File(VisualVoicemail.getAttachmentDefaultPath());
-            if (!directory.exists()) directory.mkdirs();
-            File file = Utility.createUniqueFile(directory, attachmentHelper.getUniqueAttachmentFilename());
-            try {
-                InputStream in = attachmentHelper.getAttachmentInputStream();
-                OutputStream out = new FileOutputStream(file);
-                IOUtils.copy(in, out);
-                out.flush();
-                out.close();
-                in.close();
-                // Notify that the file was saved
-                Toast.makeText(MessageList.this, String.format(getString(R.string.message_view_status_attachment_saved), file.toString()), Toast.LENGTH_LONG).show();
-                //new MediaScannerNotifier(MessageList.this, file.toString());
-                return;
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        final VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        attachmentHelper.loadVoicemailAttachment(new Runnable() {
+            @Override
+            public void run() {
+                if (attachmentHelper.getAttachment()!=null) {
+                    File directory = new File(VisualVoicemail.getAttachmentDefaultPath());
+                    if (!directory.exists()) directory.mkdirs();
+                    File file = Utility.createUniqueFile(directory, attachmentHelper.getUniqueAttachmentFilename());
+                    try {
+                        InputStream in = attachmentHelper.getAttachmentInputStream();
+                        OutputStream out = new FileOutputStream(file);
+                        IOUtils.copy(in, out);
+                        out.flush();
+                        out.close();
+                        in.close();
+                        // Notify that the file was saved
+                        Toast.makeText(MessageList.this, String.format(getString(R.string.message_view_status_attachment_saved), file.toString()), Toast.LENGTH_LONG).show();
+                        //new MediaScannerNotifier(MessageList.this, file.toString());
+                        return;
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(MessageList.this, "Failed to save the voicemail", Toast.LENGTH_LONG).show();
+                } else {
+                    Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
-            Toast.makeText(MessageList.this, "Failed to save the voicemail", Toast.LENGTH_LONG).show();
-        } else {
-            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
-            toast.show();
-        }
+        });
     }
 
     @Override
-    public void shareMessage(MessageReference messageReference) {
-        VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
-        if (attachmentHelper.loadVoicemailAttachment()) {
-            LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
-            String phone, name;
-            if (message.getFolder().getName().equals("Greetings")) {
-                phone = "greeting";
-                name = "greeting";
-            } else {
-                VvmContacts vvmContacts = new VvmContacts(MessageList.this);
-                phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
-                name = vvmContacts.getDisplayName(phone);
+    public void shareMessage(final MessageReference messageReference) {
+        final VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
+        attachmentHelper.loadVoicemailAttachment(new Runnable() {
+            @Override
+            public void run() {
+                if (attachmentHelper.getAttachment()!=null) {
+                    LocalMessage message = messageReference.restoreToLocalMessage(MessageList.this);
+                    String phone, name;
+                    if (message.getFolder().getName().equals("Greetings")) {
+                        phone = "greeting";
+                        name = "greeting";
+                    } else {
+                        VvmContacts vvmContacts = new VvmContacts(MessageList.this);
+                        phone = vvmContacts.extractPhoneFromVoicemailAddress(message.getFrom()[0]);
+                        name = vvmContacts.getDisplayName(phone);
+                    }
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy H:mm", Locale.ENGLISH);
+                    String dateStr = sdf.format(message.getSentDate());
+                    String mimetype = attachmentHelper.getAttachment().getMimeType();
+                    //Use a chooser to decide whether email or mms
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Voicemail from " + (phone.equals(name)?phone:name+" "+phone)+" at "+dateStr);
+                    intent.putExtra(Intent.EXTRA_STREAM,  attachmentHelper.getAttachmentUriForSharing());
+                    intent.setType(mimetype);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                    startActivity(intent);
+                } else {
+                    Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy H:mm", Locale.ENGLISH);
-            String dateStr = sdf.format(message.getSentDate());
-            String mimetype = attachmentHelper.getAttachment().getMimeType();
-            //Use a chooser to decide whether email or mms
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Voicemail from " + (phone.equals(name)?phone:name+" "+phone)+" at "+dateStr);
-            intent.putExtra(Intent.EXTRA_STREAM,  attachmentHelper.getAttachmentUriForSharing());
-            intent.setType(mimetype);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            startActivity(intent);
-        } else {
-            Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-            Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
-            toast.show();
-        }
+        });
+
     }
 
     @Override

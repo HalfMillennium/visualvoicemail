@@ -26,12 +26,16 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.fsck.k9.mail.FetchProfile;
+import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
+import com.fsck.k9.mail.store.RemoteStore;
+import com.fsck.k9.mail.store.imap.ImapStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -127,47 +131,61 @@ public class VoicemailAttachmentHelper {
         return localStore.getAttachmentInputStream(attachmentId);
     }
 
-    public boolean loadVoicemailAttachment(){
-        attachment = getVoicemailAttachment(reference);
-        if (attachment!=null && needsDownloading()){
-            downloadAttachmentPart((LocalPart) attachment, new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
-            return false;
-        }
-        return attachment!=null;
+    public void loadVoicemailAttachment(final Runnable callback){
+        getVoicemailAttachment(reference, callback);
     }
 
-    private Part getVoicemailAttachment(MessageReference messageReference) {
+    private void getVoicemailAttachment(MessageReference messageReference, final Runnable callback) {
         try {
             LocalMessage message = messageReference.restoreToLocalMessage(context);
             Account account = Preferences.getPreferences(context).getAccount(messageReference.getAccountUuid());
             LocalStore localStore = account.getLocalStore();
-            LocalFolder folder = localStore.getFolder(messageReference.getFolderName());
+            final LocalFolder folder = localStore.getFolder(messageReference.getFolderName());
             FetchProfile fp = new FetchProfile();
             fp.add(FetchProfile.Item.BODY);
             List<LocalMessage> messages = Collections.singletonList(message);
-            folder.fetch(messages, fp, null);
-            folder.close();
-            Part part = walkMessagePartsForRecording(message);
 
-            if (part!=null) {
-                Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", part.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));
-                Log.i(VisualVoicemail.LOG_TAG, "Attachment Disposition: " + TextUtils.join(";", part.getHeader(MimeHeader.HEADER_CONTENT_DISPOSITION)));
+            Log.w(VisualVoicemail.LOG_TAG, "Message load started");
+            try {
+                folder.fetch(messages, fp, null);
+                folder.close();
+            } catch (IllegalArgumentException ex){
+                callback.run();
+                Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, it's probably corrupt.");
+                return;
             }
 
-            return part;
+            attachment = walkMessagePartsForRecording(message);
+            if (attachment!=null) {
+                try {
+                    Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));
+                    Log.i(VisualVoicemail.LOG_TAG, "Attachment Disposition: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_DISPOSITION)));
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+
+                if (needsDownloading()) {
+                    Log.w(VisualVoicemail.LOG_TAG, "Attachment part not loaded, starting download");
+                    downloadAttachmentPart((LocalPart) attachment, new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.run();
+                        }
+                    });
+                } else {
+                    callback.run();
+                }
+                return;
+            }
+
+            Log.w(VisualVoicemail.LOG_TAG, "Attachment was null");
+
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
-    private Part walkMessagePartsForRecording(Part part) throws MessagingException
-    {
+    private Part walkMessagePartsForRecording(Part part) {
         if (part.getBody() instanceof MimeMultipart) {
             Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
             MimeMultipart mp = (MimeMultipart) part.getBody();
