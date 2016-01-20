@@ -171,6 +171,7 @@ public class VoicemailAttachmentHelper {
 
                             // Get the remote message and fully download it
                             Message remoteMessage = remoteFolder.getMessage(uid);
+                            fp.add(FetchProfile.Item.FLAGS);
                             remoteFolder.fetch(Collections.singletonList(remoteMessage), fp, null);
 
                             // Store the message locally and load the stored message into memory
