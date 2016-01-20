@@ -21,16 +21,19 @@ package au.com.wallaceit.voicemail.helper;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.fsck.k9.mail.FetchProfile;
+import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
+import com.fsck.k9.mail.Store;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
@@ -135,24 +138,68 @@ public class VoicemailAttachmentHelper {
         getVoicemailAttachment(reference, callback);
     }
 
-    private void getVoicemailAttachment(MessageReference messageReference, final Runnable callback) {
+    private void getVoicemailAttachment(final MessageReference messageReference, final Runnable callback) {
         try {
-            LocalMessage message = messageReference.restoreToLocalMessage(context);
-            Account account = Preferences.getPreferences(context).getAccount(messageReference.getAccountUuid());
+            final LocalMessage message = messageReference.restoreToLocalMessage(context);
+            final Account account = Preferences.getPreferences(context).getAccount(messageReference.getAccountUuid());
+            final String uid = message.getUid();
             LocalStore localStore = account.getLocalStore();
-            final LocalFolder folder = localStore.getFolder(messageReference.getFolderName());
-            FetchProfile fp = new FetchProfile();
+            final LocalFolder localFolder = localStore.getFolder(messageReference.getFolderName());
+            final FetchProfile fp = new FetchProfile();
+            fp.add(FetchProfile.Item.ENVELOPE);
             fp.add(FetchProfile.Item.BODY);
-            List<LocalMessage> messages = Collections.singletonList(message);
 
             Log.w(VisualVoicemail.LOG_TAG, "Message load started");
+
             try {
-                folder.fetch(messages, fp, null);
-                folder.close();
+                localFolder.fetch(Collections.singletonList(message), fp, null);
             } catch (IllegalArgumentException ex){
-                callback.run();
-                Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, it's probably corrupt.");
+                Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, trying to download the message again");
+                Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", message.getHeaderNames().toArray()));
+                Log.w(VisualVoicemail.LOG_TAG, message.getMimeType());
+                Log.w(VisualVoicemail.LOG_TAG, "Body missing: "+String.valueOf(message.isBodyMissing()));
+                Log.w(VisualVoicemail.LOG_TAG, "Attachments: "+String.valueOf(message.getAttachmentCount()));
+                // download message again
+                class LoadMessageTask extends AsyncTask<String, Long, Boolean>{
+                    @Override
+                    protected Boolean doInBackground(String... params) {
+                        try {
+                            //message.destroy(); // clean corrupt message
+                            Store remoteStore = account.getRemoteStore();
+                            Folder remoteFolder = remoteStore.getFolder(localFolder.getName());
+                            remoteFolder.open(Folder.OPEN_MODE_RO);
+
+                            // Get the remote message and fully download it
+                            Message remoteMessage = remoteFolder.getMessage(uid);
+                            remoteFolder.fetch(Collections.singletonList(remoteMessage), fp, null);
+
+                            // Store the message locally and load the stored message into memory
+                            localFolder.open(Folder.OPEN_MODE_RW);
+                            localFolder.appendMessages(Collections.singletonList(remoteMessage));
+                            localFolder.close();
+
+                            return true;
+                        } catch (MessagingException ex){
+                            return false;
+                        }
+                    }
+
+                    protected void onPostExecute(Boolean result) {
+                        //if (!result){
+                            callback.run(); // error
+                        //} else {
+                            //getVoicemailAttachment(messageReference, callback);
+                        //}
+                    }
+                }
+
+                LoadMessageTask loadMessageTask = new LoadMessageTask();
+                loadMessageTask.execute();
+
                 return;
+
+                //callback.run();
+                //return;
             }
 
             attachment = walkMessagePartsForRecording(message);

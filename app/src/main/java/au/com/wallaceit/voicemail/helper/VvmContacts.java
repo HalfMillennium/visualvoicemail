@@ -93,10 +93,14 @@ public class VvmContacts {
                 phone = email.substring(0, idx);
         }
 
+        // Hacky fix for the bug caused by a workaround for a bug causing voicemails not to download completely
+        if (phone.indexOf("61")==0)
+            phone = "+" + phone;
         // Note the phone number may not be numeric
-        if (!isPhoneNumberValid(phone))
-            return email;
+        //if (!isPhoneNumberValid(phone))
+            //return email;
 
+        //System.out.println(phone);
         return phone;
     }
 

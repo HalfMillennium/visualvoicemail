@@ -747,6 +747,11 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             "LocalStore.getMessages(int, int, MessageRetrievalListener) not yet implemented");
     }
 
+    @Override
+    public boolean areMoreMessagesAvailable(int indexOfOldestMessage, Date earliestDate) throws IOException, MessagingException {
+        return false;
+    }
+
     void populateHeaders(final LocalMessage message) throws MessagingException {
         this.localStore.database.execute(false, new DbCallback<Void>() {
             @Override

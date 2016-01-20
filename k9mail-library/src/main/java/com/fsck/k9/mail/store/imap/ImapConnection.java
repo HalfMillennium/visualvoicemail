@@ -1,6 +1,5 @@
 package com.fsck.k9.mail.store.imap;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -375,6 +374,14 @@ class ImapConnection {
         }
     }
 
+    protected void saslAuthPlainWithLoginFallback() throws IOException, MessagingException {
+        try {
+            saslAuthPlain();
+        } catch (AuthenticationFailedException e) {
+            login();
+        }
+    }
+
     protected ImapResponse readContinuationResponse(String tag)
             throws IOException, MessagingException {
         ImapResponse response;
@@ -521,7 +528,7 @@ class ImapConnection {
 
             case PLAIN:
                 if (hasCapability(CAPABILITY_AUTH_PLAIN)) {
-                    saslAuthPlain();
+                    saslAuthPlainWithLoginFallback();
                 } else if (!hasCapability(CAPABILITY_LOGINDISABLED)) {
                     login();
                 } else {

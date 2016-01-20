@@ -41,7 +41,6 @@ public class MimeUtility {
     { "3gp", "video/3gpp"},
     { "aab", "application/x-authorware-bin"},
     { "aac", "audio/x-aac"},
-    { "amr", "audio/amr"},
     { "aam", "application/x-authorware-map"},
     { "a", "application/octet-stream"},
     { "aas", "application/x-authorware-seg"},

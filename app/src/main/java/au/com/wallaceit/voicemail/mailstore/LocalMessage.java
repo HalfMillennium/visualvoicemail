@@ -136,11 +136,6 @@ public class LocalMessage extends MimeMessage {
     }
 
     @Override
-    public String getPreview() {
-        return mPreview;
-    }
-
-    @Override
     public String getSubject() {
         return mSubject;
     }

@@ -1369,7 +1369,7 @@ public class MessagingController implements Runnable {
          * Now do the large messages that require more round trips.
          */
         fp.clear();
-        fp.add(FetchProfile.Item.STRUCTURE);
+        fp.add(FetchProfile.Item.BODY);
         downloadLargeMessages(account, remoteFolder, localFolder, largeMessages, progress, unreadBeforeStart,  newMessages, todo, fp);
         largeMessages.clear();
 
@@ -1651,7 +1651,7 @@ public class MessagingController implements Runnable {
                  * wishes to download it.
                  */
                 fp.clear();
-                fp.add(FetchProfile.Item.BODY_SANE);
+                fp.add(FetchProfile.Item.BODY);
                 /*
                  *  TODO a good optimization here would be to make sure that all Stores set
                  *  the proper size after this fetch and compare the before and after size. If

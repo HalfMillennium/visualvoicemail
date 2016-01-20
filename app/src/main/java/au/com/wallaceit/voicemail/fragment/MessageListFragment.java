@@ -1490,6 +1490,14 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             case R.id.call:
                 onCall(getMessageAtPosition(adapterPosition));
                 break;
+
+            case R.id.delete_local:
+                try {
+                    getMessageAtPosition(adapterPosition).destroy();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
 
         mContextMenuUniqueId = 0;
@@ -2891,7 +2899,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 break;
             }
             case R.id.unflag: {
-                setFlagForSelected(isGreetingsFolder?Flag.GREETING_ON:Flag.FLAGGED, false);
+                setFlagForSelected(isGreetingsFolder ? Flag.GREETING_ON : Flag.FLAGGED, false);
                 break;
             }
             case R.id.select_all: {

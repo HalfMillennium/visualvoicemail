@@ -884,5 +884,6 @@
     <string name="record_action">Record</string>
     <string name="greetings">Greetings</string>
     <string name="new_greeting">New Greeting</string>
+    <string name="delete_local_action">Clear Message Data</string>
 
 </resources>
