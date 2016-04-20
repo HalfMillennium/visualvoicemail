@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -35,6 +34,8 @@ import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.StatsColumns;
 import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
@@ -394,7 +395,7 @@ public class Account implements BaseAccount, StoreConfig {
      */
     private synchronized void loadAccount(Preferences preferences) {
 
-        SharedPreferences prefs = preferences.getPreferences();
+        Storage prefs = preferences.getStorage();
 
         mStoreUri = Base64.decode(prefs.getString(mUuid + ".storeUri", null));
         mLocalStorageProviderId = prefs.getString(mUuid + ".localStorageProvider", StorageManager.getInstance(VisualVoicemail.app).getDefaultProviderId());
@@ -512,7 +513,7 @@ public class Account implements BaseAccount, StoreConfig {
 
     protected synchronized void delete(Preferences preferences) {
         // Get the list of account UUIDs
-        String[] uuids = preferences.getPreferences().getString("accountUuids", "").split(",");
+        String[] uuids = preferences.getStorage().getString("accountUuids", "").split(",");
 
         // Create a list of all account UUIDs excluding this account
         List<String> newUuids = new ArrayList<String>(uuids.length);
@@ -522,7 +523,7 @@ public class Account implements BaseAccount, StoreConfig {
             }
         }
 
-        SharedPreferences.Editor editor = preferences.getPreferences().edit();
+        StorageEditor editor = preferences.getStorage().edit();
 
         // Only change the 'accountUuids' value if this account's UUID was listed before
         if (newUuids.size() < uuids.length) {
@@ -637,8 +638,8 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public void move(Preferences preferences, boolean moveUp) {
-        String[] uuids = preferences.getPreferences().getString("accountUuids", "").split(",");
-        SharedPreferences.Editor editor = preferences.getPreferences().edit();
+        String[] uuids = preferences.getStorage().getString("accountUuids", "").split(",");
+        StorageEditor editor = preferences.getStorage().edit();
         String[] newUuids = new String[uuids.length];
         if (moveUp) {
             for (int i = 0; i < uuids.length; i++) {
@@ -669,9 +670,9 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized void save(Preferences preferences) {
-        SharedPreferences.Editor editor = preferences.getPreferences().edit();
+        StorageEditor editor = preferences.getStorage().edit();
 
-        if (!preferences.getPreferences().getString("accountUuids", "").contains(mUuid)) {
+        if (!preferences.getStorage().getString("accountUuids", "").contains(mUuid)) {
             /*
              * When the account is first created we assign it a unique account number. The
              * account number will be unique to that account for the lifetime of the account.
@@ -697,7 +698,7 @@ public class Account implements BaseAccount, StoreConfig {
             }
             mAccountNumber++;
 
-            String accountUuids = preferences.getPreferences().getString("accountUuids", "");
+            String accountUuids = preferences.getStorage().getString("accountUuids", "");
             accountUuids += (accountUuids.length() != 0 ? "," : "") + mUuid;
             editor.putString("accountUuids", accountUuids);
         }

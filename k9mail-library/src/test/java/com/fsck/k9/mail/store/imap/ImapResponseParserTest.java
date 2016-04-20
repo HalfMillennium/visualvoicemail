@@ -4,10 +4,7 @@ package com.fsck.k9.mail.store.imap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import com.fsck.k9.mail.filter.FixedLengthInputStream;
 import com.fsck.k9.mail.filter.PeekableInputStream;
@@ -16,11 +13,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static com.fsck.k9.mail.store.imap.ImapResponseParser.parseCapabilities;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @RunWith(RobolectricTestRunner.class)
@@ -116,7 +113,7 @@ public class ImapResponseParserTest {
         assertEquals(responses.get(1), untaggedHandler.responses.get(2));
     }
 
-    @Test(expected = ImapException.class)
+    @Test(expected = NegativeImapResponseException.class)
     public void testReadStatusResponseWithErrorResponse() throws Exception {
         ImapResponseParser parser = createParser("* COMMAND BAR BAZ\r\nTAG ERROR COMMAND errored\r\n");
 
@@ -284,53 +281,6 @@ public class ImapResponseParserTest {
         parser.readResponse();
     }
 
-    @Test
-    public void testParseCapabilities() throws Exception {
-        ImapResponse capabilityResponse = createResponse("CAPABILITY", "FOO", "BAR");
-        List<ImapResponse> responses = Collections.singletonList(capabilityResponse);
-
-        Set<String> capabilities = parseCapabilities(responses);
-
-        assertEquals(2, capabilities.size());
-        assertTrue(capabilities.contains("FOO"));
-        assertTrue(capabilities.contains("BAR"));
-    }
-
-    @Test
-    public void testParseCapabilitiesWithInvalidResponse() throws Exception {
-        ImapResponse capabilityResponse = createResponse("FOO", "BAZ");
-        List<ImapResponse> responses = Collections.singletonList(capabilityResponse);
-
-        Set<String> capabilities = parseCapabilities(responses);
-
-        assertTrue(capabilities.isEmpty());
-    }
-
-    @Test
-    public void testParseCapabilitiesWithMultipleResponses() throws Exception {
-        ImapResponse responseOne = createResponse("CAPABILITY", "foo");
-        ImapResponse responseTwo = createResponse("capability", "bar");
-        List<ImapResponse> responses = Arrays.asList(responseOne, responseTwo);
-
-        Set<String> capabilities = parseCapabilities(responses);
-
-        assertEquals(2, capabilities.size());
-        assertTrue(capabilities.contains("FOO"));
-        assertTrue(capabilities.contains("BAR"));
-    }
-
-    @Test
-    public void testOkResponseWithCapabilities() throws Exception {
-        ImapResponseParser parser = createParser("* OK [CAPABILITY foo bar]\r\n");
-        List<ImapResponse> responses = Collections.singletonList(parser.readResponse());
-
-        Set<String> capabilities = parseCapabilities(responses);
-
-        assertEquals(2, capabilities.size());
-        assertTrue(capabilities.contains("FOO"));
-        assertTrue(capabilities.contains("BAR"));
-    }
-
     @Test(expected = IOException.class)
     public void testParseUntaggedResponseWithoutSpace() throws Exception {
         ImapResponseParser parser = createParser("*\r\n");
@@ -361,6 +311,18 @@ public class ImapResponseParserTest {
         ImapResponse responseTwo = parser.readResponse();
 
         assertEquals("TAG", responseTwo.getTag());
+    }
+
+    @Test
+    public void readResponse_withListAsFirstToken_shouldThrow() throws Exception {
+        ImapResponseParser parser = createParser("* [1 2] 3\r\n");
+
+        try {
+            parser.readResponse();
+            fail("Expected exception");
+        } catch (IOException e) {
+            assertEquals("Unexpected non-string token: [1, 2]", e.getMessage());
+        }
     }
 
     @Test
@@ -400,12 +362,6 @@ public class ImapResponseParserTest {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(response.getBytes());
         PeekableInputStream peekableInputStream = new PeekableInputStream(byteArrayInputStream);
         return new ImapResponseParser(peekableInputStream);
-    }
-
-    private ImapResponse createResponse(Object... tokens) {
-        ImapResponse response = ImapResponse.newUntaggedResponse(null);
-        response.addAll(Arrays.asList(tokens));
-        return response;
     }
 
 

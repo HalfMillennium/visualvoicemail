@@ -886,4 +886,7 @@
     <string name="new_greeting">New Greeting</string>
     <string name="delete_local_action">Clear Message Data</string>
 
+    <string name="notification_authentication_error_title">Authentication failed</string>
+    <string name="notification_authentication_error_text">Authentication failed for <xliff:g id="account">%s</xliff:g>. Update your server settings.</string>
+
 </resources>

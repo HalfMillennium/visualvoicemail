@@ -30,15 +30,12 @@ import com.fsck.k9.mail.FetchProfile;
 import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.Store;
 import com.fsck.k9.mail.internet.MimeHeader;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.mail.store.imap.ImapStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +46,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import au.com.wallaceit.voicemail.Account;
@@ -140,9 +136,9 @@ public class VoicemailAttachmentHelper {
 
     private void getVoicemailAttachment(final MessageReference messageReference, final Runnable callback) {
         try {
-            final LocalMessage message = messageReference.restoreToLocalMessage(context);
+            final LocalMessage localMessage = messageReference.restoreToLocalMessage(context);
             final Account account = Preferences.getPreferences(context).getAccount(messageReference.getAccountUuid());
-            final String uid = message.getUid();
+            final String uid = localMessage.getUid();
             LocalStore localStore = account.getLocalStore();
             final LocalFolder localFolder = localStore.getFolder(messageReference.getFolderName());
             final FetchProfile fp = new FetchProfile();
@@ -152,14 +148,16 @@ public class VoicemailAttachmentHelper {
             Log.w(VisualVoicemail.LOG_TAG, "Message load started");
 
             try {
-                localFolder.fetch(Collections.singletonList(message), fp, null);
+                localFolder.fetch(Collections.singletonList(localMessage), fp, null);
             } catch (IllegalArgumentException ex){
                 Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, trying to download the message again");
-                Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", message.getHeaderNames().toArray()));
-                Log.w(VisualVoicemail.LOG_TAG, message.getMimeType());
-                Log.w(VisualVoicemail.LOG_TAG, "Body missing: "+String.valueOf(message.isBodyMissing()));
-                Log.w(VisualVoicemail.LOG_TAG, "Attachments: "+String.valueOf(message.getAttachmentCount()));
-                // download message again
+                Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", localMessage.getHeaderNames().toArray()));
+                Log.w(VisualVoicemail.LOG_TAG, localMessage.getMimeType());
+                Log.w(VisualVoicemail.LOG_TAG, "Body missing: " + String.valueOf(localMessage.isBodyMissing()));
+                Log.w(VisualVoicemail.LOG_TAG, "Attachments: " + String.valueOf(localMessage.getAttachmentCount()));
+                // force download the body of the message, for some reason using read only mode on the server prevents an imap response parsing error.
+                localMessage.setFlag(Flag.X_DOWNLOADED_FULL, false);
+                //controller.loadMessageForViewRemoteSynchronous(account, messageReference.getFolderName(), uid, null, true, false);
                 class LoadMessageTask extends AsyncTask<String, Long, Boolean>{
                     @Override
                     protected Boolean doInBackground(String... params) {
@@ -170,27 +168,29 @@ public class VoicemailAttachmentHelper {
                             remoteFolder.open(Folder.OPEN_MODE_RO);
 
                             // Get the remote message and fully download it
-                            Message remoteMessage = remoteFolder.getMessage(uid);
-                            fp.add(FetchProfile.Item.FLAGS);
+                            final Message remoteMessage = remoteFolder.getMessage(uid);
                             remoteFolder.fetch(Collections.singletonList(remoteMessage), fp, null);
 
-                            // Store the message locally and load the stored message into memory
+                            localMessage.setBody(remoteMessage.getBody());
+                            localMessage.setFlag(Flag.X_DOWNLOADED_FULL, true);
+
                             localFolder.open(Folder.OPEN_MODE_RW);
-                            localFolder.appendMessages(Collections.singletonList(remoteMessage));
+                            localFolder.appendMessages(Collections.singletonList(localMessage));
                             localFolder.close();
 
                             return true;
-                        } catch (MessagingException ex){
+                        } catch (MessagingException ex1){
                             return false;
                         }
                     }
 
                     protected void onPostExecute(Boolean result) {
-                        //if (!result){
-                            callback.run(); // error
-                        //} else {
-                            //getVoicemailAttachment(messageReference, callback);
-                        //}
+                        Log.w(VisualVoicemail.LOG_TAG, "Download complete, body still missing: " + String.valueOf(localMessage.isBodyMissing()));
+                        if (result && !localMessage.isBodyMissing()) {
+                            getVoicemailAttachment(messageReference, callback);
+                        } else {
+                            callback.run();
+                        }
                     }
                 }
 
@@ -198,12 +198,9 @@ public class VoicemailAttachmentHelper {
                 loadMessageTask.execute();
 
                 return;
-
-                //callback.run();
-                //return;
             }
 
-            attachment = walkMessagePartsForRecording(message);
+            attachment = walkMessagePartsForRecording(localMessage);
             if (attachment!=null) {
                 try {
                     Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));

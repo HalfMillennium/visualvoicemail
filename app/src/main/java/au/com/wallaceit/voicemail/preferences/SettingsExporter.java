@@ -126,7 +126,7 @@ public class SettingsExporter {
             Log.i(VisualVoicemail.LOG_TAG, "Exporting preferences");
 
             Preferences preferences = Preferences.getPreferences(context);
-            SharedPreferences storage = preferences.getPreferences();
+            Storage storage = preferences.getStorage();
 
             Set<String> exportAccounts;
             if (accountUuids == null) {

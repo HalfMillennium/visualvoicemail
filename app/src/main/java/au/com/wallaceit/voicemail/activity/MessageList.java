@@ -955,7 +955,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     }
                 } else {
                     Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try again", Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
@@ -973,7 +973,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     dialog.show();
                 } else {
                     Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try again", Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
@@ -1012,7 +1012,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     Toast.makeText(MessageList.this, "Failed to save the voicemail", Toast.LENGTH_LONG).show();
                 } else {
                     Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try again", Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
@@ -1048,7 +1048,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                     startActivity(intent);
                 } else {
                     Log.e(VisualVoicemail.LOG_TAG, "Error loading voicemail");
-                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try refreshing", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(MessageList.this, "Error loading voicemail, please try again", Toast.LENGTH_LONG);
                     toast.show();
                 }
             }

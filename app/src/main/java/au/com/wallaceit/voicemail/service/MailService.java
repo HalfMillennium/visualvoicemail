@@ -19,6 +19,9 @@ import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Pusher;
+
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.service.*;
 import au.com.wallaceit.voicemail.service.BootReceiver;
 
@@ -190,8 +193,8 @@ public class MailService extends CoreService {
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "Saving lastCheckEnd = " + new Date(lastCheckEnd));
         Preferences prefs = Preferences.getPreferences(context);
-        SharedPreferences sPrefs = prefs.getPreferences();
-        SharedPreferences.Editor editor = sPrefs.edit();
+        Storage sPrefs = prefs.getStorage();
+        StorageEditor editor = sPrefs.edit();
         editor.putLong(LAST_CHECK_END, lastCheckEnd);
         editor.commit();
     }
@@ -257,7 +260,7 @@ public class MailService extends CoreService {
         }
 
         Preferences prefs = Preferences.getPreferences(MailService.this);
-        SharedPreferences sPrefs = prefs.getPreferences();
+        Storage sPrefs = prefs.getStorage();
         int previousInterval = sPrefs.getInt(PREVIOUS_INTERVAL, -1);
         long lastCheckEnd = sPrefs.getLong(LAST_CHECK_END, -1);
 
@@ -277,7 +280,7 @@ public class MailService extends CoreService {
                 shortestInterval = account.getAutomaticCheckIntervalMinutes();
             }
         }
-        SharedPreferences.Editor editor = sPrefs.edit();
+        StorageEditor editor = sPrefs.edit();
         editor.putInt(PREVIOUS_INTERVAL, shortestInterval);
         editor.commit();
 

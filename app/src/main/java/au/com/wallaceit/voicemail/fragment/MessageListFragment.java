@@ -1,6 +1,7 @@
 package au.com.wallaceit.voicemail.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -54,6 +55,8 @@ import com.fsck.k9.mail.MessagingException;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +94,8 @@ import au.com.wallaceit.voicemail.helper.VvmContacts;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.notification.NotificationController;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
 import au.com.wallaceit.voicemail.provider.EmailProvider.SpecialColumns;
@@ -727,9 +732,20 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }*/
             int adaptorPosition = listViewToAdapterPosition(position);
             MessageReference reference = getReferenceForPosition(adaptorPosition);
-            mFragmentListener.playMessage(reference);
+            LocalMessage message = null;
+            if (reference.getFolderName().equals("K9mail-errors")) {
+                message = reference.restoreToLocalMessage(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Error Info");
+                builder.setMessage(message.getSubject());
+                builder.create().show();
+            } else {
+                mFragmentListener.playMessage(reference);
+            }
+
             if (mPreferences.getAccount(mAccount.getUuid()).isMarkMessageAsReadOnView()) {
-                LocalMessage message = reference.restoreToLocalMessage(getActivity());
+                if (message==null)
+                    message = reference.restoreToLocalMessage(getActivity());
                 // add the read flag if it's not present, stops redundant network call
                 if (!message.getFlags().contains(Flag.SEEN)) {
                     setFlag(adaptorPosition, Flag.SEEN, true);
@@ -1054,8 +1070,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             accountsWithNotification = mPreferences.getAccounts();
         }
 
+        NotificationController mNotifyController = NotificationController.newInstance(mContext);
         for (Account accountWithNotification : accountsWithNotification) {
-            mController.notifyAccountCancel(appContext, accountWithNotification);
+            mNotifyController.clearNewMailNotifications(accountWithNotification);
         }
 
         if (mAccount != null && mFolderName != null && !mSearch.isManualSearch()) {
@@ -1202,7 +1219,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             VisualVoicemail.setSortAscending(mSortType, mSortAscending);
             mSortDateAscending = VisualVoicemail.isSortAscending(SortType.SORT_DATE);
 
-            Editor editor = mPreferences.getPreferences().edit();
+            StorageEditor editor = mPreferences.getStorage().edit();
             VisualVoicemail.save(editor);
             editor.commit();
         }
@@ -1915,7 +1932,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             if (isGreetingsFolder){
                 LocalMessage message = getMessageAtPosition(cursor.getPosition());
                 try {
-                    String[] headerVals = message.getHeader("X-CNS-Greeting-Type");
+                    String[] headerVals = message!=null?message.getHeader("X-CNS-Greeting-Type"):new String[0];
                     String greetingType = headerVals.length>0?headerVals[0]:"Unknown";
                     String greetingDesc = "";
                     if (greetingType.equals("voice-signature")){
@@ -1962,21 +1979,29 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //boolean fromMe = mMessageHelper.toMe(account, fromAddrs);
             //boolean toMe = mMessageHelper.toMe(account, toAddrs);
             //boolean ccMe = mMessageHelper.toMe(account, ccAddrs);
-
-            // try to extract phone number from voicemail address
             Address contactLookupAddress = null;
-            String fromName= "Unknown";
-            String fromNumber = "";
-            if (fromAddrs.length > 0) {
-                contactLookupAddress = fromAddrs[0];
-                fromNumber = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
-                fromName = vvmContacts.getDisplayName(fromNumber);
-                contactLookupAddress.setAddress(fromNumber);
-                contactLookupAddress.setPersonal(fromName);
-            }
+            CharSequence displayNumber, displayName;
 
-            CharSequence displayNumber = vvmContacts.getFormattedPhone(fromNumber, !read);
-            CharSequence displayName = vvmContacts.getFormattedDisplayName(fromName, !read);
+            if (cursor.getString(FOLDER_NAME_COLUMN).equals("K9mail-errors")) {
+                String subject = cursor.getString(SUBJECT_COLUMN);
+                displayNumber = subject;
+                int colindex = subject.indexOf(":");
+                displayName = colindex>-1 ? subject.substring(0, colindex) : subject;
+            } else {
+                // try to extract phone number from voicemail address
+                String fromName = "Unknown";
+                String fromNumber = "";
+                if (fromAddrs.length > 0) {
+                    contactLookupAddress = fromAddrs[0];
+                    fromNumber = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
+                    fromName = vvmContacts.getDisplayName(fromNumber);
+                    contactLookupAddress.setAddress(fromNumber);
+                    contactLookupAddress.setPersonal(fromName);
+                }
+
+                displayNumber = vvmContacts.getFormattedPhone(fromNumber, !read);
+                displayName = vvmContacts.getFormattedDisplayName(fromName, !read);
+            }
             //CharSequence displayDate = DateUtils.getRelativeTimeSpanString(context, cursor.getLong(DATE_COLUMN));
             Date sentDate = new Date(cursor.getLong(DATE_COLUMN));
             CharSequence displayRelativeDate = mMessageHelper.formatRelativeDate(sentDate);

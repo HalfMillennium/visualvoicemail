@@ -30,6 +30,8 @@ import au.com.wallaceit.voicemail.activity.K9ListActivity;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+
 import com.fsck.k9.mail.Folder;
 
 
@@ -262,12 +264,13 @@ public class ChooseFolder extends K9ListActivity {
             }
             mHandler.progress(false);
         }
+
         @Override
-        public void listFolders(Account account, List<? extends Folder> folders) {
+        public void listFolders(Account account, List<LocalFolder> folders) {
             if (!account.equals(mAccount)) {
                 return;
             }
-            FolderMode aMode = mMode;
+            Account.FolderMode aMode = mMode;
 
             List<String> newFolders = new ArrayList<String>();
             List<String> topFolders = new ArrayList<String>();
@@ -278,18 +281,18 @@ public class ChooseFolder extends K9ListActivity {
                 // Inbox needs to be compared case-insensitively
                 if (mHideCurrentFolder && (name.equals(mFolder) || (
                         mAccount.getInboxFolderName().equalsIgnoreCase(mFolder) &&
-                        mAccount.getInboxFolderName().equalsIgnoreCase(name)))) {
+                                mAccount.getInboxFolderName().equalsIgnoreCase(name)))) {
                     continue;
                 }
                 Folder.FolderClass fMode = folder.getDisplayClass();
 
                 if ((aMode == FolderMode.FIRST_CLASS &&
                         fMode != Folder.FolderClass.FIRST_CLASS) || (
-                            aMode == FolderMode.FIRST_AND_SECOND_CLASS &&
-                            fMode != Folder.FolderClass.FIRST_CLASS &&
-                            fMode != Folder.FolderClass.SECOND_CLASS) || (
-                            aMode == FolderMode.NOT_SECOND_CLASS &&
-                            fMode == Folder.FolderClass.SECOND_CLASS)) {
+                        aMode == FolderMode.FIRST_AND_SECOND_CLASS &&
+                                fMode != Folder.FolderClass.FIRST_CLASS &&
+                                fMode != Folder.FolderClass.SECOND_CLASS) || (
+                        aMode == FolderMode.NOT_SECOND_CLASS &&
+                                fMode == Folder.FolderClass.SECOND_CLASS)) {
                     continue;
                 }
 
@@ -350,7 +353,7 @@ public class ChooseFolder extends K9ListActivity {
                         }
                     } else if (name.equals(mFolder) || (
                             mAccount.getInboxFolderName().equalsIgnoreCase(mFolder) &&
-                            mAccount.getInboxFolderName().equalsIgnoreCase(name))) {
+                                    mAccount.getInboxFolderName().equalsIgnoreCase(name))) {
                         selectedFolder = position;
                     }
                     position++;

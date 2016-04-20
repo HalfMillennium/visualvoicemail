@@ -64,7 +64,7 @@ public class FolderSettings {
         return Settings.convert(settings, SETTINGS);
     }
 
-    public static Map<String, String> getFolderSettings(SharedPreferences storage, String uuid,
+    public static Map<String, String> getFolderSettings(Storage storage, String uuid,
             String folderName) {
         Map<String, String> result = new HashMap<String, String>();
         String prefix = uuid + "." + folderName + ".";

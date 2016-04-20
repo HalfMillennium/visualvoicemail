@@ -20,7 +20,6 @@ import au.com.wallaceit.voicemail.Account.FolderMode;
 
 import com.fsck.k9.mail.NetworkType;
 
-import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import au.com.wallaceit.voicemail.helper.Utility;
@@ -29,17 +28,15 @@ import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.store.RemoteStore;
-import com.fsck.k9.mail.store.imap.ImapStore.ImapStoreSettings;
-import com.fsck.k9.mail.store.webdav.WebDavStore.WebDavStoreSettings;
+import com.fsck.k9.mail.store.imap.ImapStoreSettings;
+import com.fsck.k9.mail.store.webdav.WebDavStoreSettings;
+
 import au.com.wallaceit.voicemail.account.AccountCreator;
 import au.com.wallaceit.voicemail.service.MailService;
 import au.com.wallaceit.voicemail.view.ClientCertificateSpinner;
 import au.com.wallaceit.voicemail.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -49,6 +49,8 @@ import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.provider.UnreadWidgetProvider;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
 import au.com.wallaceit.voicemail.service.BootReceiver;
@@ -478,7 +480,7 @@ public class VisualVoicemail extends Application {
      *
      * @param editor Preferences to save into
      */
-    public static void save(Editor editor) {
+    public static void save(StorageEditor editor) {
         editor.putBoolean("enableDebugLogging", VisualVoicemail.DEBUG);
         editor.putBoolean("enableSensitiveLogging", VisualVoicemail.DEBUG_SENSITIVE);
         editor.putString("backgroundOperations", VisualVoicemail.backgroundOps.name());
@@ -700,7 +702,7 @@ public class VisualVoicemail extends Application {
      * @param prefs Preferences to load
      */
     public static void loadPrefs(Preferences prefs) {
-        SharedPreferences sprefs = prefs.getPreferences();
+        Storage sprefs = prefs.getStorage();
         DEBUG = sprefs.getBoolean("enableDebugLogging", false);
         if (!DEBUG && sIsDebuggable && Debug.isDebuggerConnected()) {
             // If the debugger is attached, we're probably (surprise surprise) debugging something.

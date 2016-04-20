@@ -8,10 +8,9 @@ import android.content.Context;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.AccountStats;
 import au.com.wallaceit.voicemail.BaseAccount;
-import au.com.wallaceit.voicemail.controller.MessagingController;
-import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.Part;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 
 /**
@@ -35,7 +34,7 @@ public class MessagingListener {
 
     public void listFoldersStarted(Account account) {}
 
-    public void listFolders(Account account, List<? extends Folder> folders) {}
+    public void listFolders(Account account, List<LocalFolder> folders) {}
 
     public void listFoldersFinished(Account account) {}
 

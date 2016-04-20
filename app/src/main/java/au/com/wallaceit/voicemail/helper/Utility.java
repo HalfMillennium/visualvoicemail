@@ -5,15 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
+import com.fsck.k9.mail.Address;
+
 import au.com.wallaceit.voicemail.VisualVoicemail;
+
+import org.apache.james.mime4j.util.MimeUtil;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -43,6 +51,15 @@ public class Utility {
     public static boolean arrayContains(Object[] a, Object o) {
         for (Object element : a) {
             if (element.equals(o)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAnyMimeType(String o, String... a) {
+        for (String element : a) {
+            if (MimeUtil.isSameMimeType(element, o)) {
                 return true;
             }
         }

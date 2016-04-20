@@ -1,8 +1,6 @@
 package au.com.wallaceit.voicemail.mailstore;
 
 import com.fsck.k9.mail.Part;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.LocalMessageExtractor;
 
 import java.util.List;
 

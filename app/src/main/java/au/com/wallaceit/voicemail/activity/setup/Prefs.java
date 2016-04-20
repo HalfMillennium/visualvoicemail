@@ -34,7 +34,10 @@ import au.com.wallaceit.voicemail.activity.setup.FontSizeSettings;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.FileBrowserHelper;
 import au.com.wallaceit.voicemail.helper.FileBrowserHelper.FileBrowserFailOverCallback;
+import au.com.wallaceit.voicemail.notification.NotificationController;
 import au.com.wallaceit.voicemail.preferences.CheckBoxListPreference;
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.preferences.TimePickerPreference;
 
 import au.com.wallaceit.voicemail.service.MailService;
@@ -215,7 +218,7 @@ public class Prefs extends K9PreferenceActivity {
 
         mConfirmActions = (CheckBoxListPreference) findPreference(PREFERENCE_CONFIRM_ACTIONS);
 
-        boolean canDeleteFromNotification = MessagingController.platformSupportsExtendedNotifications();
+        boolean canDeleteFromNotification = NotificationController.platformSupportsExtendedNotifications();
         CharSequence[] confirmActionEntries = new CharSequence[canDeleteFromNotification ? 5 : 4];
         boolean[] confirmActionValues = new boolean[canDeleteFromNotification ? 5 : 4];
         int index = 0;
@@ -341,7 +344,7 @@ public class Prefs extends K9PreferenceActivity {
 
         mNotificationQuickDelete = setupListPreference(PREFERENCE_NOTIF_QUICK_DELETE,
                 VisualVoicemail.getNotificationQuickDeleteBehaviour().toString());
-        if (!MessagingController.platformSupportsExtendedNotifications()) {
+        if (!NotificationController.platformSupportsExtendedNotifications()) {
             PreferenceScreen prefs = (PreferenceScreen) findPreference("notification_preferences");
             prefs.removePreference(mNotificationQuickDelete);
             mNotificationQuickDelete = null;
@@ -349,7 +352,7 @@ public class Prefs extends K9PreferenceActivity {
 
         mLockScreenNotificationVisibility = setupListPreference(PREFERENCE_LOCK_SCREEN_NOTIFICATION_VISIBILITY,
             VisualVoicemail.getLockScreenNotificationVisibility().toString());
-        if (!MessagingController.platformSupportsLockScreenNotifications()) {
+        if (!NotificationController.platformSupportsLockScreenNotifications()) {
             ((PreferenceScreen) findPreference("notification_preferences"))
                 .removePreference(mLockScreenNotificationVisibility);
             mLockScreenNotificationVisibility = null;
@@ -442,7 +445,7 @@ public class Prefs extends K9PreferenceActivity {
     }
 
     private void saveSettings() {
-        SharedPreferences preferences = Preferences.getPreferences(this).getPreferences();
+        Storage preferences = Preferences.getPreferences(this).getStorage();
 
         VisualVoicemail.setK9Language(mLanguage.getValue());
 
@@ -461,7 +464,7 @@ public class Prefs extends K9PreferenceActivity {
         int index = 0;
         VisualVoicemail.setConfirmDelete(mConfirmActions.getCheckedItems()[index++]);
         VisualVoicemail.setConfirmDeleteStarred(mConfirmActions.getCheckedItems()[index++]);
-        if (MessagingController.platformSupportsExtendedNotifications()) {
+        if (NotificationController.platformSupportsExtendedNotifications()) {
             VisualVoicemail.setConfirmDeleteFromNotification(mConfirmActions.getCheckedItems()[index++]);
         }
         VisualVoicemail.setConfirmSpam(mConfirmActions.getCheckedItems()[index++]);
@@ -521,7 +524,7 @@ public class Prefs extends K9PreferenceActivity {
         VisualVoicemail.setHideUserAgent(mHideUserAgent.isChecked());
         VisualVoicemail.setHideTimeZone(mHideTimeZone.isChecked());
 
-        Editor editor = preferences.edit();
+        StorageEditor editor = preferences.edit();
         VisualVoicemail.save(editor);
         editor.commit();
 

@@ -23,7 +23,6 @@ import java.util.Stack;
 import java.util.UUID;
 
 import android.content.ContentValues;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -52,10 +51,13 @@ import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.SizeAware;
 import com.fsck.k9.mail.message.MessageHeaderParser;
-
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
-
+import au.com.wallaceit.voicemail.message.preview.MessagePreviewCreator;
+import au.com.wallaceit.voicemail.message.preview.PreviewResult;
+import au.com.wallaceit.voicemail.message.preview.PreviewResult.PreviewType;
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mime4j.util.MimeUtil;
 
@@ -64,7 +66,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     private static final long serialVersionUID = -1973296520918624767L;
     private static final int MAX_BODY_SIZE_FOR_DATABASE = 16 * 1024;
-    private static final long INVALID_MESSAGE_PART_ID = -1;
+    static final long INVALID_MESSAGE_PART_ID = -1;
 
     private final LocalStore localStore;
 
@@ -82,6 +84,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     // mLastUid is used during syncs. It holds the highest UID within the local folder so we
     // know whether or not an unread message added to the local folder is actually "new" or not.
     private Integer mLastUid = null;
+    private MoreMessages moreMessages = MoreMessages.UNKNOWN;
 
     public LocalFolder(LocalStore localStore, String name) {
         super();
@@ -180,17 +183,19 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         // does a DB update on setLastChecked
         super.setLastChecked(cursor.getLong(LocalStore.FOLDER_LAST_CHECKED_INDEX));
         super.setLastPush(cursor.getLong(LocalStore.FOLDER_LAST_PUSHED_INDEX));
-        mInTopGroup = (cursor.getInt(LocalStore.FOLDER_TOP_GROUP_INDEX)) == 1 ? true : false;
-        mIntegrate = (cursor.getInt(LocalStore.FOLDER_INTEGRATE_INDEX) == 1) ? true : false;
+        mInTopGroup = cursor.getInt(LocalStore.FOLDER_TOP_GROUP_INDEX) == 1;
+        mIntegrate = cursor.getInt(LocalStore.FOLDER_INTEGRATE_INDEX) == 1;
         String noClass = FolderClass.NO_CLASS.toString();
         String displayClass = cursor.getString(LocalStore.FOLDER_DISPLAY_CLASS_INDEX);
-        mDisplayClass = FolderClass.valueOf((displayClass == null) ? noClass : displayClass);
+        mDisplayClass = Folder.FolderClass.valueOf((displayClass == null) ? noClass : displayClass);
         String notifyClass = cursor.getString(LocalStore.FOLDER_NOTIFY_CLASS_INDEX);
-        mNotifyClass = FolderClass.valueOf((notifyClass == null) ? noClass : notifyClass);
+        mNotifyClass = Folder.FolderClass.valueOf((notifyClass == null) ? noClass : notifyClass);
         String pushClass = cursor.getString(LocalStore.FOLDER_PUSH_CLASS_INDEX);
-        mPushClass = FolderClass.valueOf((pushClass == null) ? noClass : pushClass);
+        mPushClass = Folder.FolderClass.valueOf((pushClass == null) ? noClass : pushClass);
         String syncClass = cursor.getString(LocalStore.FOLDER_SYNC_CLASS_INDEX);
-        mSyncClass = FolderClass.valueOf((syncClass == null) ? noClass : syncClass);
+        mSyncClass = Folder.FolderClass.valueOf((syncClass == null) ? noClass : syncClass);
+        String moreMessagesValue = cursor.getString(LocalStore.MORE_MESSAGES_INDEX);
+        moreMessages = MoreMessages.fromDatabaseName(moreMessagesValue);
     }
 
     @Override
@@ -216,7 +221,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 Cursor cursor = null;
                 try {
                     cursor = db.rawQuery("SELECT id FROM folders where folders.name = ?",
-                            new String[] { au.com.wallaceit.voicemail.mailstore.LocalFolder.this.getName() });
+                            new String[] { LocalFolder.this.getName() });
                     if (cursor.moveToFirst()) {
                         int folderId = cursor.getInt(0);
                         return (folderId > 0);
@@ -240,7 +245,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (exists()) {
             throw new MessagingException("Folder " + mName + " already exists.");
         }
-        List<au.com.wallaceit.voicemail.mailstore.LocalFolder> foldersToCreate = new ArrayList<au.com.wallaceit.voicemail.mailstore.LocalFolder>(1);
+        List<LocalFolder> foldersToCreate = new ArrayList<LocalFolder>(1);
         foldersToCreate.add(this);
         this.localStore.createFolders(foldersToCreate, visibleLimit);
 
@@ -276,7 +281,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                     try {
                         cursor = db.rawQuery(
                                 "SELECT COUNT(id) FROM messages " +
-                                "WHERE (empty IS NULL OR empty != 1) AND deleted = 0 and folder_id = ?",
+                                "WHERE empty = 0 AND deleted = 0 and folder_id = ?",
                                 new String[] { Long.toString(mFolderId) });
                         cursor.moveToFirst();
                         return cursor.getInt(0);   //messagecount
@@ -302,7 +307,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public Integer doDbWork(final SQLiteDatabase db) throws WrappedException {
                     int unreadMessageCount = 0;
                     Cursor cursor = db.query("messages", new String[] { "COUNT(id)" },
-                            "folder_id = ? AND (empty IS NULL OR empty != 1) AND deleted = 0 AND read=0",
+                            "folder_id = ? AND empty = 0 AND deleted = 0 AND read=0",
                             new String[] { Long.toString(mFolderId) }, null, null, null);
 
                     try {
@@ -333,7 +338,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public Integer doDbWork(final SQLiteDatabase db) throws WrappedException {
                     int flaggedMessageCount = 0;
                     Cursor cursor = db.query("messages", new String[] { "COUNT(id)" },
-                            "folder_id = ? AND (empty IS NULL OR empty != 1) AND deleted = 0 AND flagged = 1",
+                            "folder_id = ? AND empty = 0 AND deleted = 0 AND flagged = 1",
                             new String[] { Long.toString(mFolderId) }, null, null, null);
 
                     try {
@@ -356,7 +361,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void setLastChecked(final long lastChecked) throws MessagingException {
         try {
             open(OPEN_MODE_RW);
-            au.com.wallaceit.voicemail.mailstore.LocalFolder.super.setLastChecked(lastChecked);
+            LocalFolder.super.setLastChecked(lastChecked);
         } catch (MessagingException e) {
             throw new WrappedException(e);
         }
@@ -367,7 +372,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void setLastPush(final long lastChecked) throws MessagingException {
         try {
             open(OPEN_MODE_RW);
-            au.com.wallaceit.voicemail.mailstore.LocalFolder.super.setLastPush(lastChecked);
+            LocalFolder.super.setLastPush(lastChecked);
         } catch (MessagingException e) {
             throw new WrappedException(e);
         }
@@ -398,8 +403,22 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
 
     public void setVisibleLimit(final int visibleLimit) throws MessagingException {
+        updateMoreMessagesOnVisibleLimitChange(visibleLimit, mVisibleLimit);
+
         mVisibleLimit = visibleLimit;
         updateFolderColumn("visible_limit", mVisibleLimit);
+    }
+
+    private void updateMoreMessagesOnVisibleLimitChange(int newVisibleLimit, int oldVisibleLimit)
+            throws MessagingException {
+
+        boolean growVisibleLimit = newVisibleLimit > oldVisibleLimit;
+        boolean shrinkVisibleLimit = newVisibleLimit < oldVisibleLimit;
+        boolean moreMessagesWereAvailable = getMoreMessages() == MoreMessages.TRUE;
+
+        if (growVisibleLimit || (shrinkVisibleLimit && !moreMessagesWereAvailable)) {
+            setMoreMessages(MoreMessages.UNKNOWN);
+        }
     }
 
     @Override
@@ -495,6 +514,19 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         updateFolderColumn("integrate", mIntegrate ? 1 : 0);
     }
 
+    public boolean hasMoreMessages() {
+        return moreMessages != MoreMessages.FALSE;
+    }
+
+    public MoreMessages getMoreMessages() {
+        return moreMessages;
+    }
+
+    public void setMoreMessages(MoreMessages moreMessages) throws MessagingException {
+        this.moreMessages = moreMessages;
+        updateFolderColumn("more_messages", moreMessages.getDatabaseName());
+    }
+
     private String getPrefId(String name) {
         if (prefId == null) {
             prefId = this.localStore.uUid + "." + name;
@@ -511,7 +543,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void delete() throws MessagingException {
         String id = getPrefId();
 
-        SharedPreferences.Editor editor = this.localStore.getPreferences().edit();
+        StorageEditor editor = this.localStore.getStorage().edit();
 
         editor.remove(id + ".displayMode");
         editor.remove(id + ".syncMode");
@@ -523,12 +555,12 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     }
 
     public void save() throws MessagingException {
-        SharedPreferences.Editor editor = this.localStore.getPreferences().edit();
+        StorageEditor editor = this.localStore.getStorage().edit();
         save(editor);
         editor.commit();
     }
 
-    public void save(SharedPreferences.Editor editor) throws MessagingException {
+    public void save(StorageEditor editor) throws MessagingException {
         String id = getPrefId();
 
         // there can be a lot of folders.  For the defaults, let's not save prefs, saving space, except for INBOX
@@ -564,10 +596,10 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     public void refresh(String name, PreferencesHolder prefHolder) {
         String id = getPrefId(name);
 
-        SharedPreferences preferences = this.localStore.getPreferences();
+        Storage storage = this.localStore.getStorage();
 
         try {
-            prefHolder.displayClass = FolderClass.valueOf(preferences.getString(id + ".displayMode",
+            prefHolder.displayClass = FolderClass.valueOf(storage.getString(id + ".displayMode",
                                       prefHolder.displayClass.name()));
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "Unable to load displayMode for " + getName(), e);
@@ -577,7 +609,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
 
         try {
-            prefHolder.syncClass = FolderClass.valueOf(preferences.getString(id  + ".syncMode",
+            prefHolder.syncClass = FolderClass.valueOf(storage.getString(id  + ".syncMode",
                                    prefHolder.syncClass.name()));
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "Unable to load syncMode for " + getName(), e);
@@ -588,7 +620,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
 
         try {
-            prefHolder.notifyClass = FolderClass.valueOf(preferences.getString(id  + ".notifyMode",
+            prefHolder.notifyClass = FolderClass.valueOf(storage.getString(id  + ".notifyMode",
                                    prefHolder.notifyClass.name()));
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "Unable to load notifyMode for " + getName(), e);
@@ -598,7 +630,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
 
         try {
-            prefHolder.pushClass = FolderClass.valueOf(preferences.getString(id  + ".pushMode",
+            prefHolder.pushClass = FolderClass.valueOf(storage.getString(id  + ".pushMode",
                                    prefHolder.pushClass.name()));
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "Unable to load pushMode for " + getName(), e);
@@ -606,8 +638,8 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (prefHolder.pushClass == FolderClass.NONE) {
             prefHolder.pushClass = FolderClass.INHERITED;
         }
-        prefHolder.inTopGroup = preferences.getBoolean(id + ".inTopGroup", prefHolder.inTopGroup);
-        prefHolder.integrate = preferences.getBoolean(id + ".integrate", prefHolder.integrate);
+        prefHolder.inTopGroup = storage.getBoolean(id + ".inTopGroup", prefHolder.inTopGroup);
+        prefHolder.integrate = storage.getBoolean(id + ".integrate", prefHolder.integrate);
     }
 
     @Override
@@ -624,6 +656,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                                 LocalMessage localMessage = (LocalMessage) message;
 
                                 loadMessageParts(db, localMessage);
+                                localMessage.loadHeadersIfNecessary();
                             }
                         }
                     } catch (MessagingException e) {
@@ -748,8 +781,9 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     }
 
     @Override
-    public boolean areMoreMessagesAvailable(int indexOfOldestMessage, Date earliestDate) throws IOException, MessagingException {
-        return false;
+    public boolean areMoreMessagesAvailable(int indexOfOldestMessage, Date earliestDate)
+            throws IOException, MessagingException {
+        throw new IllegalStateException("Not implemented");
     }
 
     void populateHeaders(final LocalMessage message) throws MessagingException {
@@ -809,7 +843,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public LocalMessage doDbWork(final SQLiteDatabase db) throws WrappedException, UnavailableStorageException {
                     try {
                         open(OPEN_MODE_RW);
-                        LocalMessage message = new LocalMessage(LocalFolder.this.localStore, uid, au.com.wallaceit.voicemail.mailstore.LocalFolder.this);
+                        LocalMessage message = new LocalMessage(LocalFolder.this.localStore, uid, LocalFolder.this);
                         Cursor cursor = null;
 
                         try {
@@ -839,24 +873,23 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
     }
 
-    @Override
-    public List<LocalMessage> getMessages(MessageRetrievalListener listener) throws MessagingException {
+    public List<LocalMessage> getMessages(MessageRetrievalListener<LocalMessage> listener) throws MessagingException {
         return getMessages(listener, true);
     }
 
-    @Override
-    public List<LocalMessage> getMessages(final MessageRetrievalListener listener, final boolean includeDeleted) throws MessagingException {
+    public List<LocalMessage> getMessages(final MessageRetrievalListener<LocalMessage> listener,
+            final boolean includeDeleted) throws MessagingException {
         try {
             return  localStore.database.execute(false, new DbCallback<List<LocalMessage>>() {
                 @Override
                 public List<LocalMessage> doDbWork(final SQLiteDatabase db) throws WrappedException, UnavailableStorageException {
                     try {
                         open(OPEN_MODE_RW);
-                        return au.com.wallaceit.voicemail.mailstore.LocalFolder.this.localStore.getMessages(listener, au.com.wallaceit.voicemail.mailstore.LocalFolder.this,
+                        return LocalFolder.this.localStore.getMessages(listener, LocalFolder.this,
                                 "SELECT " + LocalStore.GET_MESSAGES_COLS +
                                 "FROM messages " +
                                 "LEFT JOIN threads ON (threads.message_id = messages.id) " +
-                                "WHERE (empty IS NULL OR empty != 1) AND " +
+                                "WHERE empty = 0 AND " +
                                 (includeDeleted ? "" : "deleted = 0 AND ") +
                                 "folder_id = ? ORDER BY date DESC",
                                 new String[] { Long.toString(mFolderId) });
@@ -870,9 +903,8 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
     }
 
-    @Override
     public List<LocalMessage> getMessages(String[] uids, MessageRetrievalListener<LocalMessage> listener)
-    throws MessagingException {
+            throws MessagingException {
         open(OPEN_MODE_RW);
         if (uids == null) {
             return getMessages(listener);
@@ -889,7 +921,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     @Override
     public Map<String, String> copyMessages(List<? extends Message> msgs, Folder folder) throws MessagingException {
-        if (!(folder instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder)) {
+        if (!(folder instanceof LocalFolder)) {
             throw new MessagingException("copyMessages called with incorrect Folder");
         }
         return ((LocalFolder) folder).appendMessages(msgs, true);
@@ -897,11 +929,11 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     @Override
     public Map<String, String> moveMessages(final List<? extends Message> msgs, final Folder destFolder) throws MessagingException {
-        if (!(destFolder instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder)) {
+        if (!(destFolder instanceof LocalFolder)) {
             throw new MessagingException("moveMessages called with non-LocalFolder");
         }
 
-        final au.com.wallaceit.voicemail.mailstore.LocalFolder lDestFolder = (LocalFolder)destFolder;
+        final LocalFolder lDestFolder = (LocalFolder)destFolder;
 
         final Map<String, String> uidMap = new HashMap<String, String>();
 
@@ -927,7 +959,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                             uidMap.put(oldUID, newUid);
 
                             // Message threading in the target folder
-                            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = lDestFolder.doMessageThreading(db, message);
+                            ThreadInfo threadInfo = lDestFolder.doMessageThreading(db, message);
 
                             /*
                              * "Move" the message into the new folder
@@ -1084,7 +1116,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         }
     }
 
-    private au.com.wallaceit.voicemail.mailstore.ThreadInfo getThreadInfo(SQLiteDatabase db, String messageId, boolean onlyEmpty) {
+    private ThreadInfo getThreadInfo(SQLiteDatabase db, String messageId, boolean onlyEmpty) {
         if (messageId == null) {
             return null;
         }
@@ -1107,7 +1139,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                     long rootId = (cursor.isNull(2)) ? -1 : cursor.getLong(2);
                     long parentId = (cursor.isNull(3)) ? -1 : cursor.getLong(3);
 
-                    return new au.com.wallaceit.voicemail.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
+                    return new ThreadInfo(threadId, msgId, messageId, rootId, parentId);
                 }
             } finally {
                 cursor.close();
@@ -1127,8 +1159,6 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
      * that the messages supplied as parameters are actually {@link LocalMessage} instances (in
      * fact, in most cases, they are not). Therefore, if you want to make local changes only to a
      * message, retrieve the appropriate local message instance first (if it already exists).
-     * @param messages
-     * @param copy
      * @return uidMap of srcUids -> destUids
      */
     private Map<String, String> appendMessages(final List<? extends Message> messages, final boolean copy)
@@ -1196,16 +1226,20 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
         if (oldMessageId == -1) {
             // This is a new message. Do the message threading.
-            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = doMessageThreading(db, message);
+            ThreadInfo threadInfo = doMessageThreading(db, message);
             oldMessageId = threadInfo.msgId;
             rootId = threadInfo.rootId;
             parentId = threadInfo.parentId;
         }
 
         try {
-            au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor messageExtractor = new au.com.wallaceit.voicemail.mailstore.MessageInfoExtractor(localStore.context, message);
-            String preview = messageExtractor.getMessageTextPreview();
-            int attachmentCount = messageExtractor.getAttachmentCount();
+            MessagePreviewCreator previewCreator = localStore.getMessagePreviewCreator();
+            PreviewResult previewResult = previewCreator.createPreview(message);
+            PreviewType previewType = previewResult.getPreviewType();
+            DatabasePreviewType databasePreviewType = DatabasePreviewType.fromPreviewType(previewType);
+
+            AttachmentCounter attachmentCounter = localStore.getAttachmentCounter();
+            int attachmentCount = attachmentCounter.getAttachmentCount(message);
 
             long rootMessagePartId = saveMessageParts(db, message);
 
@@ -1226,13 +1260,19 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             cv.put("to_list", Address.pack(message.getRecipients(RecipientType.TO)));
             cv.put("cc_list", Address.pack(message.getRecipients(RecipientType.CC)));
             cv.put("bcc_list", Address.pack(message.getRecipients(RecipientType.BCC)));
-            cv.put("preview", preview);
             cv.put("reply_to_list", Address.pack(message.getReplyTo()));
             cv.put("attachment_count", attachmentCount);
             cv.put("internal_date", message.getInternalDate() == null
                     ? System.currentTimeMillis() : message.getInternalDate().getTime());
             cv.put("mime_type", message.getMimeType());
             cv.put("empty", 0);
+
+            cv.put("preview_type", databasePreviewType.getDatabaseValue());
+            if (previewResult.isPreviewTextAvailable()) {
+                cv.put("preview", previewResult.getPreviewText());
+            } else {
+                cv.putNull("preview");
+            }
 
             String messageId = message.getMessageId();
             if (messageId != null) {
@@ -1258,7 +1298,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 db.update("messages", cv, "id = ?", new String[] { Long.toString(oldMessageId) });
             }
         } catch (Exception e) {
-            throw new MessagingException("Error appending message", e);
+            throw new MessagingException("Error appending message: " + message.getSubject(), e);
         }
     }
 
@@ -1532,8 +1572,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     /**
      * Changes the stored uid of the given message (using it's internal id as a key) to
      * the uid in the message.
-     * @param message
-     * @throws MessagingException
+     * @throws com.fsck.k9.mail.MessagingException
      */
     public void changeUid(final LocalMessage message) throws MessagingException {
         open(OPEN_MODE_RW);
@@ -1601,7 +1640,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 "SELECT " + LocalStore.GET_MESSAGES_COLS +
                 "FROM messages " +
                 "LEFT JOIN threads ON (threads.message_id = messages.id) " +
-                "WHERE (empty IS NULL OR empty != 1) AND (folder_id = ? and date < ?)",
+                "WHERE empty = 0 AND (folder_id = ? and date < ?)",
                 new String[] { Long.toString(mFolderId), Long.toString(cutoff) });
 
         for (Message message : messages) {
@@ -1622,7 +1661,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                 public Void doDbWork(final SQLiteDatabase db) throws WrappedException {
                     try {
                         Cursor cursor = db.query("messages", new String[] { "message_part_id" },
-                                "folder_id = ? AND (empty IS NULL OR empty != 1)",
+                                "folder_id = ? AND empty = 0",
                                 folderIdArg, null, null, null);
                         try {
                             while (cursor.moveToNext()) {
@@ -1636,6 +1675,8 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
                         db.execSQL("DELETE FROM threads WHERE message_id IN " +
                                 "(SELECT id FROM messages WHERE folder_id = ?)", folderIdArg);
                         db.execSQL("DELETE FROM messages WHERE folder_id = ?", folderIdArg);
+
+                        setMoreMessages(MoreMessages.UNKNOWN);
 
                         return null;
                     } catch (MessagingException e) {
@@ -1683,7 +1724,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof au.com.wallaceit.voicemail.mailstore.LocalFolder) {
+        if (o instanceof LocalFolder) {
             return ((LocalFolder)o).mName.equals(mName);
         }
         return super.equals(o);
@@ -1815,7 +1856,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         });
     }
 
-    private au.com.wallaceit.voicemail.mailstore.ThreadInfo doMessageThreading(SQLiteDatabase db, Message message)
+    private ThreadInfo doMessageThreading(SQLiteDatabase db, Message message)
             throws MessagingException {
         long rootId = -1;
         long parentId = -1;
@@ -1823,7 +1864,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         String messageId = message.getMessageId();
 
         // If there's already an empty message in the database, update that
-        au.com.wallaceit.voicemail.mailstore.ThreadInfo msgThreadInfo = getThreadInfo(db, messageId, true);
+        ThreadInfo msgThreadInfo = getThreadInfo(db, messageId, true);
 
         // Get the message IDs from the "References" header line
         String[] referencesArray = message.getHeader("References");
@@ -1850,11 +1891,11 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         if (messageIds == null) {
             // This is not a reply, nothing to do for us.
             return (msgThreadInfo != null) ?
-                    msgThreadInfo : new au.com.wallaceit.voicemail.mailstore.ThreadInfo(-1, -1, messageId, -1, -1);
+                    msgThreadInfo : new ThreadInfo(-1, -1, messageId, -1, -1);
         }
 
         for (String reference : messageIds) {
-            au.com.wallaceit.voicemail.mailstore.ThreadInfo threadInfo = getThreadInfo(db, reference, false);
+            ThreadInfo threadInfo = getThreadInfo(db, reference, false);
 
             if (threadInfo == null) {
                 // Create placeholder message in 'messages' table
@@ -1915,7 +1956,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
             msgId = -1;
         }
 
-        return new au.com.wallaceit.voicemail.mailstore.ThreadInfo(threadId, msgId, messageId, rootId, parentId);
+        return new ThreadInfo(threadId, msgId, messageId, rootId, parentId);
     }
 
     public List<Message> extractNewMessages(final List<Message> messages)
@@ -1995,7 +2036,7 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
     }
 
     // Note: The contents of the 'message_parts' table depend on these values.
-    private static class MessagePartType {
+    static class MessagePartType {
         static final int UNKNOWN = 0;
         static final int ALTERNATIVE_PLAIN = 1;
         static final int ALTERNATIVE_HTML = 2;
@@ -2011,5 +2052,31 @@ public class LocalFolder extends Folder<LocalMessage> implements Serializable {
         static final int IN_DATABASE = 1;
         static final int ON_DISK = 2;
         static final int CHILD_PART_CONTAINS_DATA = 3;
+    }
+
+    public enum MoreMessages {
+        UNKNOWN("unknown"),
+        FALSE("false"),
+        TRUE("true");
+
+        private final String databaseName;
+
+        MoreMessages(String databaseName) {
+            this.databaseName = databaseName;
+        }
+
+        public static MoreMessages fromDatabaseName(String databaseName) {
+            for (MoreMessages value : MoreMessages.values()) {
+                if (value.databaseName.equals(databaseName)) {
+                    return value;
+                }
+            }
+
+            throw new IllegalArgumentException("Unknown value: " + databaseName);
+        }
+
+        public String getDatabaseName() {
+            return databaseName;
+        }
     }
 }

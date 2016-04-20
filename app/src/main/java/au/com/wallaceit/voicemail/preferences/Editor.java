@@ -75,9 +75,9 @@ public class Editor implements android.content.SharedPreferences.Editor {
         Log.i(VisualVoicemail.LOG_TAG, "Committing preference changes");
         Runnable committer = new Runnable() {
             public void run() {
-                if (removeAll) {
+                /*if (removeAll) {
                     storage.removeAll();
-                }
+                }*/
                 for (String removeKey : removals) {
                     storage.remove(removeKey);
                 }

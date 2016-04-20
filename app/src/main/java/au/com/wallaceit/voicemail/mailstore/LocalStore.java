@@ -1,11 +1,9 @@
 
 package au.com.wallaceit.voicemail.mailstore;
 
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -21,11 +19,13 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Store;
-
 import au.com.wallaceit.voicemail.mailstore.LocalFolder.DataLocation;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder.MoreMessages;
 import au.com.wallaceit.voicemail.mailstore.StorageManager.StorageProvider;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.message.preview.MessagePreviewCreator;
+import au.com.wallaceit.voicemail.preferences.Storage;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
 import au.com.wallaceit.voicemail.search.LocalSearch;
@@ -68,14 +68,14 @@ public class LocalStore extends Store implements Serializable {
     /**
      * Lock objects indexed by account UUID.
      *
-     * @see #getInstance(Account, Application)
+     * @see #getInstance(Account, Context)
      */
     private static ConcurrentMap<String, Object> sAccountLocks = new ConcurrentHashMap<String, Object>();
 
     /**
      * Local stores indexed by UUID because the Uri may change due to migration to/from SD-card.
      */
-    private static ConcurrentMap<String, au.com.wallaceit.voicemail.mailstore.LocalStore> sLocalStores = new ConcurrentHashMap<String, au.com.wallaceit.voicemail.mailstore.LocalStore>();
+    private static ConcurrentMap<String, LocalStore> sLocalStores = new ConcurrentHashMap<String, LocalStore>();
 
     /*
      * a String containing the columns getMessages expects to work with
@@ -85,11 +85,11 @@ public class LocalStore extends Store implements Serializable {
         "subject, sender_list, date, uid, flags, messages.id, to_list, cc_list, " +
         "bcc_list, reply_to_list, attachment_count, internal_date, messages.message_id, " +
         "folder_id, preview, threads.id, threads.root, deleted, read, flagged, answered, " +
-        "forwarded, message_part_id, mime_type ";
+        "forwarded, message_part_id, mime_type, preview_type ";
 
     static final String GET_FOLDER_COLS =
         "folders.id, name, visible_limit, last_updated, status, push_state, last_pushed, " +
-        "integrate, top_group, poll_class, push_class, display_class, notify_class";
+        "integrate, top_group, poll_class, push_class, display_class, notify_class, more_messages";
 
     static final int FOLDER_ID_INDEX = 0;
     static final int FOLDER_NAME_INDEX = 1;
@@ -104,6 +104,7 @@ public class LocalStore extends Store implements Serializable {
     static final int FOLDER_PUSH_CLASS_INDEX = 10;
     static final int FOLDER_DISPLAY_CLASS_INDEX = 11;
     static final int FOLDER_NOTIFY_CLASS_INDEX = 12;
+    static final int MORE_MESSAGES_INDEX = 13;
 
     static final String[] UID_CHECK_PROJECTION = { "uid" };
 
@@ -128,7 +129,7 @@ public class LocalStore extends Store implements Serializable {
      */
     private static final int THREAD_FLAG_UPDATE_BATCH_SIZE = 500;
 
-    public static final int DB_VERSION = 51;
+    public static final int DB_VERSION = 55;
 
 
     public static String getColumnNameForFlag(Flag flag) {
@@ -160,15 +161,15 @@ public class LocalStore extends Store implements Serializable {
 
     private ContentResolver mContentResolver;
     private final Account mAccount;
+    private final MessagePreviewCreator messagePreviewCreator;
+    private final AttachmentCounter attachmentCounter;
 
     /**
      * local://localhost/path/to/database/uuid.db
-     * This constructor is only used by {@link Store#getLocalInstance(Account, Context)}
-     * @param account
-     * @param context
+     * This constructor is only used by {@link LocalStore#getInstance(Account, Context)}
      * @throws UnavailableStorageException if not {@link StorageProvider#isReady(Context)}
      */
-    public LocalStore(final Account account, final Context context) throws MessagingException {
+    private LocalStore(final Account account, final Context context) throws MessagingException {
         mAccount = account;
         database = new LockableDatabase(context, account.getUuid(), new StoreSchemaDefinition(this));
 
@@ -176,6 +177,9 @@ public class LocalStore extends Store implements Serializable {
         mContentResolver = context.getContentResolver();
         database.setStorageProviderId(account.getLocalStorageProviderId());
         uUid = account.getUuid();
+
+        messagePreviewCreator = MessagePreviewCreator.newInstance();
+        attachmentCounter = new AttachmentCounter();
 
         database.open();
     }
@@ -186,7 +190,7 @@ public class LocalStore extends Store implements Serializable {
      * @throws UnavailableStorageException
      *          if not {@link StorageProvider#isReady(Context)}
      */
-    public static au.com.wallaceit.voicemail.mailstore.LocalStore getInstance(Account account, Context context)
+    public static LocalStore getInstance(Account account, Context context)
             throws MessagingException {
 
         String accountUuid = account.getUuid();
@@ -194,18 +198,15 @@ public class LocalStore extends Store implements Serializable {
         // Create new per-account lock object if necessary
         sAccountLocks.putIfAbsent(accountUuid, new Object());
 
-        // Get the account's lock object
-        Object lock = sAccountLocks.get(accountUuid);
-
         // Use per-account locks so DatabaseUpgradeService always knows which account database is
         // currently upgraded.
-        synchronized (lock) {
-            au.com.wallaceit.voicemail.mailstore.LocalStore store = sLocalStores.get(accountUuid);
+        synchronized (sAccountLocks.get(accountUuid)) {
+            LocalStore store = sLocalStores.get(accountUuid);
 
             if (store == null) {
                 // Creating a LocalStore instance will create or upgrade the database if
                 // necessary. This could take some time.
-                store = new au.com.wallaceit.voicemail.mailstore.LocalStore(account, context);
+                store = new LocalStore(account, context);
 
                 sLocalStores.put(accountUuid, store);
             }
@@ -235,8 +236,8 @@ public class LocalStore extends Store implements Serializable {
         return mAccount;
     }
 
-    protected SharedPreferences getPreferences() {
-        return Preferences.getPreferences(context).getPreferences();
+    protected Storage getStorage() {
+        return Preferences.getPreferences(context).getStorage();
     }
 
     public long getSize() throws MessagingException {
@@ -360,7 +361,7 @@ public class LocalStore extends Store implements Serializable {
 
     // TODO this takes about 260-300ms, seems slow.
     @Override
-    public List <? extends Folder > getPersonalNamespaces(boolean forceListAll) throws MessagingException {
+    public List<LocalFolder> getPersonalNamespaces(boolean forceListAll) throws MessagingException {
         final List<LocalFolder> folders = new LinkedList<LocalFolder>();
         try {
             database.execute(false, new DbCallback < List <? extends Folder >> () {
@@ -443,6 +444,7 @@ public class LocalStore extends Store implements Serializable {
     public void resetVisibleLimits(int visibleLimit) throws MessagingException {
         final ContentValues cv = new ContentValues();
         cv.put("visible_limit", Integer.toString(visibleLimit));
+        cv.put("more_messages", MoreMessages.UNKNOWN.getDatabaseName());
         database.execute(false, new DbCallback<Void>() {
             @Override
             public Void doDbWork(final SQLiteDatabase db) throws WrappedException {
@@ -550,7 +552,7 @@ public class LocalStore extends Store implements Serializable {
         return true;
     }
 
-    public List<LocalMessage> searchForMessages(MessageRetrievalListener retrievalListener,
+    public List<LocalMessage> searchForMessages(MessageRetrievalListener<LocalMessage> retrievalListener,
                                         LocalSearch search) throws MessagingException {
 
         StringBuilder query = new StringBuilder();
@@ -566,7 +568,7 @@ public class LocalStore extends Store implements Serializable {
         String sqlQuery = "SELECT " + GET_MESSAGES_COLS + "FROM messages " +
                 "LEFT JOIN threads ON (threads.message_id = messages.id) " +
                 "LEFT JOIN folders ON (folders.id = messages.folder_id) WHERE " +
-                "((empty IS NULL OR empty != 1) AND deleted = 0)" +
+                "(empty = 0 AND deleted = 0)" +
                 ((!TextUtils.isEmpty(where)) ? " AND (" + where + ")" : "") +
                 " ORDER BY date DESC";
 
@@ -582,7 +584,7 @@ public class LocalStore extends Store implements Serializable {
      * call the MessageRetrievalListener for each one
      */
     List<LocalMessage> getMessages(
-        final MessageRetrievalListener listener,
+        final MessageRetrievalListener<LocalMessage> listener,
         final LocalFolder folder,
         final String queryString, final String[] placeHolders
     ) throws MessagingException {
@@ -648,9 +650,9 @@ public class LocalStore extends Store implements Serializable {
             @Override
             public AttachmentInfo doDbWork(final SQLiteDatabase db) throws WrappedException {
                 Cursor cursor = db.query("message_parts",
-                        new String[] { "display_name", "decoded_body_size", "mime_type" },
+                        new String[]{"display_name", "decoded_body_size", "mime_type"},
                         "id = ?",
-                        new String[] { attachmentId },
+                        new String[]{attachmentId},
                         null, null, null);
                 try {
                     if (!cursor.moveToFirst()) {
@@ -678,9 +680,9 @@ public class LocalStore extends Store implements Serializable {
             @Override
             public InputStream doDbWork(final SQLiteDatabase db) throws WrappedException {
                 Cursor cursor = db.query("message_parts",
-                        new String[] { "data_location", "data", "encoding" },
+                        new String[]{"data_location", "data", "encoding"},
                         "id = ?",
-                        new String[] { attachmentId },
+                        new String[]{attachmentId},
                         null, null, null);
                 try {
                     if (!cursor.moveToFirst()) {
@@ -803,7 +805,7 @@ public class LocalStore extends Store implements Serializable {
     }
 
 
-    String serializeFlags(Iterable<Flag> flags) {
+    static String serializeFlags(Iterable<Flag> flags) {
         List<Flag> extraFlags = new ArrayList<Flag>();
 
         for (Flag flag : flags) {
@@ -827,6 +829,14 @@ public class LocalStore extends Store implements Serializable {
     // TODO: database should not be exposed!
     public LockableDatabase getDatabase() {
         return database;
+    }
+
+    public MessagePreviewCreator getMessagePreviewCreator() {
+        return messagePreviewCreator;
+    }
+
+    public AttachmentCounter getAttachmentCounter() {
+        return attachmentCounter;
     }
 
     void notifyChange() {
@@ -879,7 +889,7 @@ public class LocalStore extends Store implements Serializable {
                 database.execute(true, new DbCallback<Void>() {
                     @Override
                     public Void doDbWork(final SQLiteDatabase db) throws WrappedException,
-                            au.com.wallaceit.voicemail.mailstore.UnavailableStorageException {
+                            UnavailableStorageException {
 
                         selectionCallback.doDbWork(db, selection.toString(),
                                 selectionArgs.toArray(EMPTY_STRING_ARRAY));
@@ -900,7 +910,7 @@ public class LocalStore extends Store implements Serializable {
     }
 
     /**
-     * Defines the behavior of {@link au.com.wallaceit.voicemail.mailstore.LocalStore#doBatchSetSelection(BatchSetSelection, int)}.
+     * Defines the behavior of {@link LocalStore#doBatchSetSelection(BatchSetSelection, int)}.
      */
     public interface BatchSetSelection {
         /**
@@ -979,7 +989,7 @@ public class LocalStore extends Store implements Serializable {
             public void doDbWork(SQLiteDatabase db, String selectionSet, String[] selectionArgs)
                     throws UnavailableStorageException {
 
-                db.update("messages", cv, "(empty IS NULL OR empty != 1) AND id" + selectionSet,
+                db.update("messages", cv, "empty = 0 AND id" + selectionSet,
                         selectionArgs);
             }
 
@@ -1031,7 +1041,7 @@ public class LocalStore extends Store implements Serializable {
                         " WHERE id IN (" +
                         "SELECT m.id FROM threads t " +
                         "LEFT JOIN messages m ON (t.message_id = m.id) " +
-                        "WHERE (m.empty IS NULL OR m.empty != 1) AND m.deleted = 0 " +
+                        "WHERE m.empty = 0 AND m.deleted = 0 " +
                         "AND t.root" + selectionSet + ")",
                         selectionArgs);
             }
@@ -1084,7 +1094,7 @@ public class LocalStore extends Store implements Serializable {
                             "FROM threads t " +
                             "LEFT JOIN messages m ON (t.message_id = m.id) " +
                             "LEFT JOIN folders f ON (m.folder_id = f.id) " +
-                            "WHERE (m.empty IS NULL OR m.empty != 1) AND m.deleted = 0 " +
+                            "WHERE m.empty = 0 AND m.deleted = 0 " +
                             "AND t.root" + selectionSet;
 
                     getDataFromCursor(db.rawQuery(sql, selectionArgs));
@@ -1094,7 +1104,7 @@ public class LocalStore extends Store implements Serializable {
                             "SELECT m.uid, f.name " +
                             "FROM messages m " +
                             "LEFT JOIN folders f ON (m.folder_id = f.id) " +
-                            "WHERE (m.empty IS NULL OR m.empty != 1) AND m.id" + selectionSet;
+                            "WHERE m.empty = 0 AND m.id" + selectionSet;
 
                     getDataFromCursor(db.rawQuery(sql, selectionArgs));
                 }

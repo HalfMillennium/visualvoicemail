@@ -9,6 +9,8 @@ import android.preference.*;
 import au.com.wallaceit.voicemail.*;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
 import au.com.wallaceit.voicemail.activity.setup.SliderPreference;
+import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 
 /**
  * Activity to configure the font size of the information displayed in the
@@ -179,8 +181,8 @@ public class FontSizeSettings extends K9PreferenceActivity {
 
         fontSizes.setMessageComposeInput(Integer.parseInt(mMessageComposeInput.getValue()));
 
-        SharedPreferences preferences = Preferences.getPreferences(this).getPreferences();
-        Editor editor = preferences.edit();
+        Storage preferences = Preferences.getPreferences(this).getStorage();
+        StorageEditor editor = preferences.edit();
         fontSizes.save(editor);
         editor.commit();
     }

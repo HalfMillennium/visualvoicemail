@@ -20,7 +20,7 @@ public class SmsReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "SMS broadcast received...");
-        boolean isEnabled = Preferences.getPreferences(context).getPreferences().getInt(AccountSettings.PREFERENCE_AUTO_CHECK, 1) == AccountSettings.PREFERENCE_AUTO_CHECK_SMS;
+        boolean isEnabled = Preferences.getPreferences(context).getStorage().getInt(AccountSettings.PREFERENCE_AUTO_CHECK, 1) == AccountSettings.PREFERENCE_AUTO_CHECK_SMS;
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "SMS detection enabled: " + isEnabled);
         if (isEnabled) {

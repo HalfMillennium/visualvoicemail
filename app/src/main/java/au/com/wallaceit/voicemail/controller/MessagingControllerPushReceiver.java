@@ -5,8 +5,6 @@ import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.controller.*;
-import au.com.wallaceit.voicemail.controller.MessagingListener;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Folder;
 
@@ -45,7 +43,7 @@ public class MessagingControllerPushReceiver implements PushReceiver {
         if (VisualVoicemail.DEBUG)
             Log.v(VisualVoicemail.LOG_TAG, "syncFolder(" + folder.getName() + ")");
         final CountDownLatch latch = new CountDownLatch(1);
-        controller.synchronizeMailbox(account, folder.getName(), new au.com.wallaceit.voicemail.controller.MessagingListener() {
+        controller.synchronizeMailbox(account, folder.getName(), new MessagingListener() {
             @Override
             public void synchronizeMailboxFinished(Account account, String folder,
             int totalMessagesInMailbox, int numNewMessages) {
@@ -78,11 +76,16 @@ public class MessagingControllerPushReceiver implements PushReceiver {
     public void pushError(String errorMessage, Exception e) {
         String errMess = errorMessage;
 
-        controller.notifyUserIfCertificateProblem(context, e, account, true);
+        controller.notifyUserIfCertificateProblem(account, e, true);
         if (errMess == null && e != null) {
             errMess = e.getMessage();
         }
         controller.addErrorMessage(account, errMess, e);
+    }
+
+    @Override
+    public void authenticationFailed() {
+        controller.handleAuthenticationFailure(account, true);
     }
 
     public String getPushState(String folderName) {

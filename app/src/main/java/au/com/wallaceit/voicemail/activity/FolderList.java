@@ -69,8 +69,6 @@ public class FolderList extends K9ListActivity {
 
     private static final boolean REFRESH_REMOTE = true;
 
-    private ListView mListView;
-
     private FolderListAdapter mAdapter;
 
     private LayoutInflater mInflater;
@@ -254,14 +252,14 @@ public class FolderList extends K9ListActivity {
         mActionBar = getActionBar();
         initializeActionBar();
         setContentView(R.layout.folder_list);
-        mListView = getListView();
+        ListView mListView = getListView();
         mListView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mListView.setLongClickable(true);
         mListView.setFastScrollEnabled(true);
         mListView.setScrollingCacheEnabled(false);
         mListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onOpenFolder(((FolderInfoHolder)mAdapter.getItem(position)).name);
+                onOpenFolder(((FolderInfoHolder) mAdapter.getItem(position)).name);
             }
         });
         registerForContextMenu(mListView);
@@ -381,7 +379,6 @@ public class FolderList extends K9ListActivity {
 
         onRefresh(!REFRESH_REMOTE);
 
-        MessagingController.getInstance(getApplication()).notifyAccountCancel(this, mAccount);
         mAdapter.mListener.onResume(this);
     }
 
@@ -712,14 +709,14 @@ public class FolderList extends K9ListActivity {
             }
 
             @Override
-            public void listFolders(Account account, List<? extends Folder> folders) {
+            public void listFolders(Account account, List<LocalFolder> folders) {
                 if (account.equals(mAccount)) {
 
                     List<FolderInfoHolder> newFolders = new LinkedList<FolderInfoHolder>();
                     List<FolderInfoHolder> topFolders = new LinkedList<FolderInfoHolder>();
 
-                    FolderMode aMode = account.getFolderDisplayMode();
-                    for (Folder folder : folders) {
+                    Account.FolderMode aMode = account.getFolderDisplayMode();
+                    for (LocalFolder folder : folders) {
                         Folder.FolderClass fMode = folder.getDisplayClass();
 
                         if (((aMode == FolderMode.FIRST_CLASS && fMode != Folder.FolderClass.FIRST_CLASS)
@@ -783,7 +780,7 @@ public class FolderList extends K9ListActivity {
 
             private void refreshFolder(Account account, String folderName) {
                 // There has to be a cheaper way to get at the localFolder object than this
-                Folder localFolder = null;
+                LocalFolder localFolder = null;
                 try {
                     if (account != null && folderName != null) {
                         if (!account.isAvailable(FolderList.this)) {
@@ -902,7 +899,7 @@ public class FolderList extends K9ListActivity {
                 return  getItemView(position, convertView, parent);
             } else {
                 Log.e(VisualVoicemail.LOG_TAG, "getView with illegal positon=" + position
-                      + " called! count is only " + getCount());
+                        + " called! count is only " + getCount());
                 return null;
             }
         }
@@ -961,8 +958,8 @@ public class FolderList extends K9ListActivity {
                 }
 
                 folderStatus = getString(folder.pushActive
-                        ? R.string.last_refresh_time_format_with_push
-                        : R.string.last_refresh_time_format,
+                                ? R.string.last_refresh_time_format_with_push
+                                : R.string.last_refresh_time_format,
                         formattedDate);
             } else {
                 folderStatus = null;
@@ -977,16 +974,16 @@ public class FolderList extends K9ListActivity {
             }
 
             if(folder.unreadMessageCount == -1) {
-               folder.unreadMessageCount = 0;
+                folder.unreadMessageCount = 0;
                 try {
                     folder.unreadMessageCount  = folder.folder.getUnreadMessageCount();
                 } catch (Exception e) {
                     Log.e(VisualVoicemail.LOG_TAG, "Unable to get unreadMessageCount for " + mAccount.getDescription() + ":"
-                          + folder.name);
+                            + folder.name);
                 }
             }
             if (folder.unreadMessageCount > 0) {
-                holder.newMessageCount.setText(Integer.toString(folder.unreadMessageCount));
+                holder.newMessageCount.setText(String.format("%d", folder.unreadMessageCount));
                 holder.newMessageCountWrapper.setOnClickListener(
                         createUnreadSearch(mAccount, folder));
                 holder.newMessageCountWrapper.setVisibility(View.VISIBLE);
@@ -1002,13 +999,13 @@ public class FolderList extends K9ListActivity {
                     folder.flaggedMessageCount = folder.folder.getFlaggedMessageCount();
                 } catch (Exception e) {
                     Log.e(VisualVoicemail.LOG_TAG, "Unable to get flaggedMessageCount for " + mAccount.getDescription() + ":"
-                          + folder.name);
+                            + folder.name);
                 }
 
-                    }
+            }
 
             if (VisualVoicemail.messageListStars() && folder.flaggedMessageCount > 0) {
-                holder.flaggedMessageCount.setText(Integer.toString(folder.flaggedMessageCount));
+                holder.flaggedMessageCount.setText(String.format("%d", folder.flaggedMessageCount));
                 holder.flaggedMessageCountWrapper.setOnClickListener(
                         createFlaggedSearch(mAccount, folder));
                 holder.flaggedMessageCountWrapper.setVisibility(View.VISIBLE);

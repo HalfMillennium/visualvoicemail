@@ -18,6 +18,7 @@ public class AttachmentViewInfo {
      * <p/>
      * Note: All content providers must support an alternative MIME type appended as last URI segment.
      *
+     * @see au.com.wallaceit.voicemail.ui.messageview.AttachmentController#getAttachmentUriForMimeType(AttachmentViewInfo, String)
      */
     public final Uri uri;
     public final boolean firstClassAttachment;

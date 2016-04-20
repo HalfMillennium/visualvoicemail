@@ -96,7 +96,7 @@ public class DateFormatter
             try
             {
                 Preferences prefs = Preferences.getPreferences(context);
-                sChosenFormat = prefs.getPreferences().getString(PREF_KEY, DEFAULT_FORMAT);
+                sChosenFormat = prefs.getStorage().getString(PREF_KEY, DEFAULT_FORMAT);
             }
             catch (Exception e)
             {

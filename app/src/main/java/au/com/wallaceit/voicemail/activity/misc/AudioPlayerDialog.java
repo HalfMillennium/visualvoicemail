@@ -64,7 +64,7 @@ public class AudioPlayerDialog extends Dialog {
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.setMode(AudioManager.STREAM_VOICE_CALL);
-        mSpeakerphone = mPreferences.getPreferences().getBoolean("playerSpeaker", true);
+        mSpeakerphone = mPreferences.getStorage().getBoolean("playerSpeaker", true);
         mUri = uri;
 
         progressText = (TextView) findViewById(R.id.player_progress_text);
@@ -202,7 +202,7 @@ public class AudioPlayerDialog extends Dialog {
         mMediaPlayer.release();
         mAudioManager.setMode(AudioManager.MODE_NORMAL);
         mAudioManager.setSpeakerphoneOn(true);
-        mPreferences.getPreferences().edit().putBoolean("playerSpeaker", mSpeakerphone).apply();
+        mPreferences.getStorage().edit().putBoolean("playerSpeaker", mSpeakerphone).commit();
         dismiss();
     }
 

@@ -3,8 +3,6 @@ package au.com.wallaceit.voicemail.mailstore;
 
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeBodyPart;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.LocalPart;
 
 
 public class LocalBodyPart extends MimeBodyPart implements LocalPart {

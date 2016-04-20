@@ -298,7 +298,7 @@ public class GlobalSettings {
         return Settings.convert(settings, SETTINGS);
     }
 
-    public static Map<String, String> getGlobalSettings(SharedPreferences storage) {
+    public static Map<String, String> getGlobalSettings(Storage storage) {
         Map<String, String> result = new HashMap<String, String>();
         for (String key : SETTINGS.keySet()) {
             String value = storage.getString(key, null);

@@ -3,8 +3,6 @@ package au.com.wallaceit.voicemail.mailstore;
 import android.content.Context;
 import android.net.Uri;
 
-import au.com.wallaceit.voicemail.R;
-import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
@@ -16,7 +14,6 @@ import com.fsck.k9.mail.internet.Viewable;
 import au.com.wallaceit.voicemail.provider.AttachmentProvider;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.fsck.k9.mail.internet.MimeUtility.getHeaderParameter;
@@ -34,19 +31,17 @@ public class LocalMessageExtractor {
     private static final int FILENAME_PREFIX_LENGTH = FILENAME_PREFIX.length();
     private static final String FILENAME_SUFFIX = " ";
     private static final int FILENAME_SUFFIX_LENGTH = FILENAME_SUFFIX.length();
-    //private static final OpenPgpResultAnnotation NO_ANNOTATIONS = null;
+    private static final OpenPgpResultAnnotation NO_ANNOTATIONS = null;
 
     private LocalMessageExtractor() {}
     /**
      * Extract the viewable textual parts of a message and return the rest as attachments.
      *
-     * @param context A {@link Context} instance that will be used to get localized strings.
-     * @param viewables
-     * @param attachments
+     * @param context A {@link android.content.Context} instance that will be used to get localized strings.
      * @return A {@link ViewableContainer} instance containing the textual parts of the message as
      *         plain text and HTML, and a list of message parts considered attachments.
      *
-     * @throws MessagingException
+     * @throws com.fsck.k9.mail.MessagingException
      *          In case of an error.
      */
     public static ViewableContainer extractTextAndAttachments(Context context, List<Viewable> viewables,
@@ -78,10 +73,10 @@ public class LocalMessageExtractor {
                     Message innerMessage =  header.getMessage();
 
                     addTextDivider(text, containerPart, !hideDivider);
-                    addMessageHeaderText(context, text, innerMessage);
+                    //addMessageHeaderText(context, text, innerMessage);
 
                     addHtmlDivider(html, containerPart, !hideDivider);
-                    addMessageHeaderHtml(context, html, innerMessage);
+                    //addMessageHeaderHtml(context, html, innerMessage);
 
                     hideDivider = true;
                 } else if (viewable instanceof Alternative) {
@@ -122,10 +117,10 @@ public class LocalMessageExtractor {
     }
 
     /**
-     * Use the contents of a {@link Viewable} to create the HTML to be displayed.
+     * Use the contents of a {@link com.fsck.k9.mail.internet.Viewable} to create the HTML to be displayed.
      *
      * <p>
-     * This will use {@link HtmlConverter#textToHtml(String)} to convert plain text parts
+     * This will use {@link au.com.wallaceit.voicemail.helper.HtmlConverter#textToHtml(String)} to convert plain text parts
      * to HTML if necessary.
      * </p>
      *
@@ -278,123 +273,6 @@ public class LocalMessageExtractor {
     }
 
     /**
-     * Extract important header values from a message to display inline (plain text version).
-     *
-     * @param context
-     *         A {@link Context} instance that will be used to get localized strings.
-     * @param text
-     *         The {@link StringBuilder} that will receive the (plain text) output.
-     * @param message
-     *         The message to extract the header values from.
-     *
-     * @throws MessagingException
-     *          In case of an error.
-     */
-    private static void addMessageHeaderText(Context context, StringBuilder text, Message message)
-            throws MessagingException {
-        // From: <sender>
-        /*Address[] from = message.getFrom();
-        if (from != null && from.length > 0) {
-            text.append(context.getString(R.string.message_compose_quote_header_from));
-            text.append(' ');
-            text.append(Address.toString(from));
-            text.append("\r\n");
-        }
-
-        // To: <recipients>
-        Address[] to = message.getRecipients(Message.RecipientType.TO);
-        if (to != null && to.length > 0) {
-            text.append(context.getString(R.string.message_compose_quote_header_to));
-            text.append(' ');
-            text.append(Address.toString(to));
-            text.append("\r\n");
-        }
-
-        // Cc: <recipients>
-        Address[] cc = message.getRecipients(Message.RecipientType.CC);
-        if (cc != null && cc.length > 0) {
-            text.append(context.getString(R.string.message_compose_quote_header_cc));
-            text.append(' ');
-            text.append(Address.toString(cc));
-            text.append("\r\n");
-        }
-
-        // Date: <date>
-        Date date = message.getSentDate();
-        if (date != null) {
-            text.append(context.getString(R.string.message_compose_quote_header_send_date));
-            text.append(' ');
-            text.append(date.toString());
-            text.append("\r\n");
-        }
-
-        // Subject: <subject>
-        String subject = message.getSubject();
-        text.append(context.getString(R.string.message_compose_quote_header_subject));
-        text.append(' ');
-        if (subject == null) {
-            text.append(context.getString(R.string.general_no_subject));
-        } else {
-            text.append(subject);
-        }
-        text.append("\r\n\r\n");*/
-    }
-
-    /**
-     * Extract important header values from a message to display inline (HTML version).
-     *
-     * @param context
-     *         A {@link Context} instance that will be used to get localized strings.
-     * @param html
-     *         The {@link StringBuilder} that will receive the (HTML) output.
-     * @param message
-     *         The message to extract the header values from.
-     *
-     * @throws MessagingException
-     *          In case of an error.
-     */
-    private static void addMessageHeaderHtml(Context context, StringBuilder html, Message message)
-            throws MessagingException {
-
-        /*html.append("<table style=\"border: 0\">");
-
-        // From: <sender>
-        Address[] from = message.getFrom();
-        if (from != null && from.length > 0) {
-            addTableRow(html, context.getString(R.string.message_compose_quote_header_from),
-                    Address.toString(from));
-        }
-
-        // To: <recipients>
-        Address[] to = message.getRecipients(Message.RecipientType.TO);
-        if (to != null && to.length > 0) {
-            addTableRow(html, context.getString(R.string.message_compose_quote_header_to),
-                    Address.toString(to));
-        }
-
-        // Cc: <recipients>
-        Address[] cc = message.getRecipients(Message.RecipientType.CC);
-        if (cc != null && cc.length > 0) {
-            addTableRow(html, context.getString(R.string.message_compose_quote_header_cc),
-                    Address.toString(cc));
-        }
-
-        // Date: <date>
-        Date date = message.getSentDate();
-        if (date != null) {
-            addTableRow(html, context.getString(R.string.message_compose_quote_header_send_date),
-                    date.toString());
-        }
-
-        // Subject: <subject>
-        String subject = message.getSubject();
-        addTableRow(html, context.getString(R.string.message_compose_quote_header_subject),
-                (subject == null) ? context.getString(R.string.general_no_subject) : subject);
-
-        html.append("</table>");*/
-    }
-
-    /**
      * Output an HTML table two column row with some hardcoded style.
      *
      * @param html
@@ -439,18 +317,6 @@ public class LocalMessageExtractor {
         } else {
             throw new RuntimeException("Not supported");
         }
-        /*else {
-            Body body = part.getBody();
-            if (body instanceof DecryptedTempFileBody) {
-                DecryptedTempFileBody decryptedTempFileBody = (DecryptedTempFileBody) body;
-                File file = decryptedTempFileBody.getFile();
-                Uri uri = K9FileProvider.getUriForFile(context, file, part.getMimeType());
-                long size = file.length();
-                return extractAttachmentInfo(part, uri, size);
-            } else {
-                throw new RuntimeException("Not supported");
-            }
-        }*/
     }
 
     public static AttachmentViewInfo extractAttachmentInfo(Part part) throws MessagingException {

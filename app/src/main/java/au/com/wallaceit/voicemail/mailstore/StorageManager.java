@@ -19,8 +19,6 @@ import android.util.Log;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 
 /**
  * Manager for different {@link StorageProvider} -classes that abstract access
@@ -82,7 +80,7 @@ public class StorageManager {
          * @param context
          *            TODO
          * @return Whether this provider supports the current device.
-         * @see au.com.wallaceit.voicemail.mailstore.StorageManager#getAvailableProviders()
+         * @see StorageManager#getAvailableProviders()
          */
         boolean isSupported(Context context);
 
@@ -170,7 +168,7 @@ public class StorageManager {
      *
      * <p>
      * Moreover, this class validates the denoted storage path against mount
-     * points using {@link au.com.wallaceit.voicemail.mailstore.StorageManager#isMountPoint(File)}.
+     * points using {@link StorageManager#isMountPoint(File)}.
      * </p>
      */
     public abstract static class FixedStorageProviderBase implements StorageProvider {
@@ -494,11 +492,11 @@ public class StorageManager {
      */
     private List<StorageListener> mListeners = new ArrayList<StorageListener>();
 
-    private static transient au.com.wallaceit.voicemail.mailstore.StorageManager instance;
+    private static transient StorageManager instance;
 
-    public static synchronized au.com.wallaceit.voicemail.mailstore.StorageManager getInstance(final Context context) {
+    public static synchronized StorageManager getInstance(final Context context) {
         if (instance == null) {
-            instance = new au.com.wallaceit.voicemail.mailstore.StorageManager(context.getApplicationContext());
+            instance = new StorageManager(context.getApplicationContext());
         }
         return instance;
     }
@@ -619,7 +617,7 @@ public class StorageManager {
     /**
      * @return A map of available providers names, indexed by their ID. Never
      *         <code>null</code>.
-     * @see au.com.wallaceit.voicemail.mailstore.StorageManager
+     * @see StorageManager
      * @see StorageProvider#isSupported(Context)
      */
     public Map<String, String> getAvailableProviders() {
@@ -729,7 +727,7 @@ public class StorageManager {
     public void lockProvider(final String providerId) throws UnavailableStorageException {
         final StorageProvider provider = getProvider(providerId);
         if (provider == null) {
-            throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("StorageProvider not found: " + providerId);
+            throw new UnavailableStorageException("StorageProvider not found: " + providerId);
         }
         // lock provider
         final SynchronizationAid sync = mProviderLocks.get(provider);
@@ -738,7 +736,7 @@ public class StorageManager {
             if (locked) {
                 sync.readLock.unlock();
             }
-            throw new au.com.wallaceit.voicemail.mailstore.UnavailableStorageException("StorageProvider is unmounting");
+            throw new UnavailableStorageException("StorageProvider is unmounting");
         } else if (locked && !provider.isReady(context)) {
             sync.readLock.unlock();
             throw new UnavailableStorageException("StorageProvider not ready");

@@ -245,7 +245,7 @@ public class AccountSettings {
         return Settings.convert(settings, SETTINGS);
     }
 
-    public static Map<String, String> getAccountSettings(SharedPreferences storage, String uuid) {
+    public static Map<String, String> getAccountSettings(Storage storage, String uuid) {
         Map<String, String> result = new HashMap<String, String>();
         String prefix = uuid + ".";
         for (String key : SETTINGS.keySet()) {

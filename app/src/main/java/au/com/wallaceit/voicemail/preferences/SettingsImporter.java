@@ -16,13 +16,11 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings;
-import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
 import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
@@ -181,11 +179,11 @@ public class SettingsImporter {
             Imported imported = parseSettings(inputStream, globalSettings, accountUuids, false);
 
             Preferences preferences = Preferences.getPreferences(context);
-            SharedPreferences storage = preferences.getPreferences();
+            Storage storage = preferences.getStorage();
 
             if (globalSettings) {
                 try {
-                    SharedPreferences.Editor editor = storage.edit();
+                    StorageEditor editor = storage.edit();
                     if (imported.globalSettings != null) {
                         importGlobalSettings(storage, editor, imported.contentVersion,
                                 imported.globalSettings);
@@ -215,7 +213,7 @@ public class SettingsImporter {
                         if (imported.accounts.containsKey(accountUuid)) {
                             ImportedAccount account = imported.accounts.get(accountUuid);
                             try {
-                                SharedPreferences.Editor editor = storage.edit();
+                                StorageEditor editor = storage.edit();
 
                                 AccountDescriptionPair importResult = importAccount(context,
                                         editor, imported.contentVersion, account, overwrite);
@@ -273,7 +271,7 @@ public class SettingsImporter {
                         }
                     }
 
-                    SharedPreferences.Editor editor = storage.edit();
+                    StorageEditor editor = storage.edit();
 
                     String defaultAccountUuid = storage.getString("defaultAccountUuid", null);
                     if (defaultAccountUuid == null) {
@@ -301,8 +299,8 @@ public class SettingsImporter {
         }
     }
 
-    private static void importGlobalSettings(SharedPreferences storage,
-            SharedPreferences.Editor editor, int contentVersion, ImportedSettings settings) {
+    private static void importGlobalSettings(Storage storage,
+            StorageEditor editor, int contentVersion, ImportedSettings settings) {
 
         // Validate global settings
         Map<String, Object> validatedSettings = au.com.wallaceit.voicemail.preferences.GlobalSettings.validate(contentVersion,
@@ -330,7 +328,7 @@ public class SettingsImporter {
     }
 
     private static AccountDescriptionPair importAccount(Context context,
-            SharedPreferences.Editor editor, int contentVersion, ImportedAccount account,
+            StorageEditor editor, int contentVersion, ImportedAccount account,
             boolean overwrite) throws InvalidSettingValueException {
 
         AccountDescription original = new AccountDescription(account.name, account.uuid);
@@ -428,7 +426,7 @@ public class SettingsImporter {
         Map<String, String> writeSettings;
         if (mergeImportedAccount) {
             writeSettings = new HashMap<String, String>(
-                    AccountSettings.getAccountSettings(prefs.getPreferences(), uuid));
+                    AccountSettings.getAccountSettings(prefs.getStorage(), uuid));
             writeSettings.putAll(stringSettings);
         } else {
             writeSettings = stringSettings;
@@ -468,7 +466,7 @@ public class SettingsImporter {
         return new AccountDescriptionPair(original, imported, mergeImportedAccount);
     }
 
-    private static void importFolder(SharedPreferences.Editor editor, int contentVersion,
+    private static void importFolder(StorageEditor editor, int contentVersion,
             String uuid, ImportedFolder folder, boolean overwrite, Preferences prefs) {
 
         // Validate folder settings
@@ -486,7 +484,7 @@ public class SettingsImporter {
         // Merge folder settings if necessary
         Map<String, String> writeSettings;
         if (overwrite) {
-            writeSettings = FolderSettings.getFolderSettings(prefs.getPreferences(),
+            writeSettings = FolderSettings.getFolderSettings(prefs.getStorage(),
                     uuid, folder.name);
             writeSettings.putAll(stringSettings);
         } else {
@@ -537,7 +535,7 @@ public class SettingsImporter {
     }*/
 
     /**
-     * Write to an {@link SharedPreferences.Editor} while logging what is written if debug logging
+     * Write to an {@link StorageEditor} while logging what is written if debug logging
      * is enabled.
      *
      * @param editor
@@ -547,7 +545,7 @@ public class SettingsImporter {
      * @param value
      *         The new value for the preference.
      */
-    private static void putString(SharedPreferences.Editor editor, String key, String value) {
+    private static void putString(StorageEditor editor, String key, String value) {
         if (VisualVoicemail.DEBUG) {
             String outputValue = value;
             if (!VisualVoicemail.DEBUG_SENSITIVE &&

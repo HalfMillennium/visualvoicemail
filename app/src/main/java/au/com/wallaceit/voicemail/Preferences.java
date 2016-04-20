@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import au.com.wallaceit.voicemail.Account;
 import com.fsck.k9.mail.store.RemoteStore;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
-import au.com.wallaceit.voicemail.preferences.Editor;
 import au.com.wallaceit.voicemail.preferences.Storage;
+import au.com.wallaceit.voicemail.preferences.StorageEditor;
 
 public class Preferences {
 
@@ -43,7 +41,7 @@ public class Preferences {
         mContext = context;
         if (mStorage.isEmpty()) {
             Log.i(VisualVoicemail.LOG_TAG, "Preferences storage is zero-size, importing from Android-style preferences");
-            Editor editor = mStorage.edit();
+            StorageEditor editor = mStorage.edit();
             editor.copy(context.getSharedPreferences("AndroidMail.Main", Context.MODE_PRIVATE));
             editor.commit();
         }
@@ -52,18 +50,20 @@ public class Preferences {
     public synchronized void loadAccounts() {
         accounts = new HashMap<String, Account>();
         accountsInOrder = new LinkedList<Account>();
-        String accountUuids = getPreferences().getString("accountUuids", null);
+        String accountUuids = getStorage().getString("accountUuids", null);
         if ((accountUuids != null) && (accountUuids.length() != 0)) {
             String[] uuids = accountUuids.split(",");
             for (String uuid : uuids) {
-                Account newAccount = new Account(mContext, this, uuid);
+                Account newAccount = new Account(mContext, preferences, uuid);
                 accounts.put(uuid, newAccount);
                 accountsInOrder.add(newAccount);
             }
         }
         if ((newAccount != null) && newAccount.getAccountNumber() != -1) {
             accounts.put(newAccount.getUuid(), newAccount);
-            accountsInOrder.add(newAccount);
+            if (!accountsInOrder.contains(newAccount)) {
+                accountsInOrder.add(newAccount);
+            }
             newAccount = null;
         }
     }
@@ -79,7 +79,7 @@ public class Preferences {
             loadAccounts();
         }
 
-        return Collections.unmodifiableList(accountsInOrder);
+        return Collections.unmodifiableList(new ArrayList<Account>(accountsInOrder));
     }
 
     /**
@@ -146,7 +146,7 @@ public class Preferences {
      * there are no accounts on the system the method returns null.
      */
     public Account getDefaultAccount() {
-        String defaultAccountUuid = getPreferences().getString("defaultAccountUuid", null);
+        String defaultAccountUuid = getStorage().getString("defaultAccountUuid", null);
         Account defaultAccount = getAccount(defaultAccountUuid);
 
         if (defaultAccount == null) {
@@ -161,15 +161,15 @@ public class Preferences {
     }
 
     public void setDefaultAccount(Account account) {
-        getPreferences().edit().putString("defaultAccountUuid", account.getUuid()).commit();
+        getStorage().edit().putString("defaultAccountUuid", account.getUuid()).commit();
     }
 
-    public SharedPreferences getPreferences() {
+    public Storage getStorage() {
         return mStorage;
     }
 
-    public static <T extends Enum<T>> T getEnumStringPref(SharedPreferences prefs, String key, T defaultEnum) {
-        String stringPref = prefs.getString(key, null);
+    public static <T extends Enum<T>> T getEnumStringPref(Storage storage, String key, T defaultEnum) {
+        String stringPref = storage.getString(key, null);
 
         if (stringPref == null) {
             return defaultEnum;

@@ -1,12 +1,13 @@
 package au.com.wallaceit.voicemail.controller;
 
+import android.os.SystemClock;
 import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -21,9 +22,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.app.KeyguardManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,26 +31,21 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.Process;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
-import android.text.TextUtils;
-import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 
-import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
-import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
+import au.com.wallaceit.voicemail.AccountStats;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.Accounts;
-import au.com.wallaceit.voicemail.activity.FolderList;
-import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
-import au.com.wallaceit.voicemail.activity.setup.AccountSetupIncoming;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
-import au.com.wallaceit.voicemail.helper.Contacts;
-
+import com.fsck.k9.mail.AuthenticationFailedException;
+import com.fsck.k9.mail.CertificateValidationException;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.Address;
@@ -62,25 +55,28 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Folder.FolderType;
 
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.CertificateValidationException;
+import com.fsck.k9.mail.Message.RecipientType;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.PushReceiver;
 import com.fsck.k9.mail.Pusher;
 import com.fsck.k9.mail.Store;
+import com.fsck.k9.mail.Transport;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.MimeMessage;
 import com.fsck.k9.mail.internet.MimeMessageHelper;
+import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.internet.TextBody;
-
-import au.com.wallaceit.voicemail.helper.VvmContacts;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder.MoreMessages;
 import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
 import com.fsck.k9.mail.MessageRetrievalListener;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 import au.com.wallaceit.voicemail.mailstore.LocalStore.PendingCommand;
+import com.fsck.k9.mail.store.pop3.Pop3Store;
 import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
+import au.com.wallaceit.voicemail.notification.NotificationController;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
 import au.com.wallaceit.voicemail.provider.EmailProvider.StatsColumns;
 import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
@@ -88,7 +84,6 @@ import au.com.wallaceit.voicemail.search.LocalSearch;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 import au.com.wallaceit.voicemail.search.SearchSpecification;
 import au.com.wallaceit.voicemail.search.SqlQueryBuilder;
-import au.com.wallaceit.voicemail.service.NotificationActionService;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 
@@ -131,44 +126,22 @@ public class MessagingController implements Runnable {
      * So 25k gives good performance and a reasonable data footprint. Sounds good to me.
      */
 
-    private static final String PENDING_COMMAND_MOVE_OR_COPY = "com.fsck.k9.MessagingController.moveOrCopy";
-    private static final String PENDING_COMMAND_MOVE_OR_COPY_BULK = "com.fsck.k9.MessagingController.moveOrCopyBulk";
-    private static final String PENDING_COMMAND_MOVE_OR_COPY_BULK_NEW = "com.fsck.k9.MessagingController.moveOrCopyBulkNew";
-    private static final String PENDING_COMMAND_EMPTY_TRASH = "com.fsck.k9.MessagingController.emptyTrash";
-    private static final String PENDING_COMMAND_SET_FLAG_BULK = "com.fsck.k9.MessagingController.setFlagBulk";
-    private static final String PENDING_COMMAND_SET_FLAG = "com.fsck.k9.MessagingController.setFlag";
-    private static final String PENDING_COMMAND_APPEND = "com.fsck.k9.MessagingController.append";
-    private static final String PENDING_COMMAND_MARK_ALL_AS_READ = "com.fsck.k9.MessagingController.markAllAsRead";
-    private static final String PENDING_COMMAND_EXPUNGE = "com.fsck.k9.MessagingController.expunge";
-
-    public static class UidReverseComparator implements Comparator<Message> {
-        @Override
-        public int compare(Message o1, Message o2) {
-            if (o1 == null || o2 == null || o1.getUid() == null || o2.getUid() == null) {
-                return 0;
-            }
-            int id1, id2;
-            try {
-                id1 = Integer.parseInt(o1.getUid());
-                id2 = Integer.parseInt(o2.getUid());
-            } catch (NumberFormatException e) {
-                return 0;
-            }
-            //reversed intentionally.
-            if (id1 < id2)
-                return 1;
-            if (id1 > id2)
-                return -1;
-            return 0;
-        }
-    }
+    private static final String PENDING_COMMAND_MOVE_OR_COPY = "au.com.wallaceit.voicemail.MessagingController.moveOrCopy";
+    private static final String PENDING_COMMAND_MOVE_OR_COPY_BULK = "au.com.wallaceit.voicemail.MessagingController.moveOrCopyBulk";
+    private static final String PENDING_COMMAND_MOVE_OR_COPY_BULK_NEW = "au.com.wallaceit.voicemail.MessagingController.moveOrCopyBulkNew";
+    private static final String PENDING_COMMAND_EMPTY_TRASH = "au.com.wallaceit.voicemail.MessagingController.emptyTrash";
+    private static final String PENDING_COMMAND_SET_FLAG_BULK = "au.com.wallaceit.voicemail.MessagingController.setFlagBulk";
+    private static final String PENDING_COMMAND_SET_FLAG = "au.com.wallaceit.voicemail.MessagingController.setFlag";
+    private static final String PENDING_COMMAND_APPEND = "au.com.wallaceit.voicemail.MessagingController.append";
+    private static final String PENDING_COMMAND_MARK_ALL_AS_READ = "au.com.wallaceit.voicemail.MessagingController.markAllAsRead";
+    private static final String PENDING_COMMAND_EXPUNGE = "au.com.wallaceit.voicemail.MessagingController.expunge";
 
     /**
      * Maximum number of unsynced messages to store at once
      */
     private static final int UNSYNC_CHUNK_SIZE = 5;
 
-    private static au.com.wallaceit.voicemail.controller.MessagingController inst = null;
+    private static MessagingController inst = null;
     private BlockingQueue<Command> mCommands = new PriorityBlockingQueue<Command>();
 
     private Thread mThread;
@@ -186,120 +159,9 @@ public class MessagingController implements Runnable {
 
     private boolean mBusy;
 
-    private Context context;
-
-    /**
-     * A holder class for pending notification data
-     *
-     * This class holds all pieces of information for constructing
-     * a notification with message preview.
-     */
-    private static class NotificationData {
-        /** Number of unread messages before constructing the notification */
-        int unreadBeforeNotification;
-        /**
-         * List of messages that should be used for the inbox-style overview.
-         * It's sorted from newest to oldest message.
-         * Don't modify this list directly, but use {@link #addMessage(LocalMessage)} and
-         * {@link #removeMatchingMessage(Context, MessageReference)} instead.
-         */
-        LinkedList<LocalMessage> messages;
-        /**
-         * List of references for messages that the user is still to be notified of,
-         * but which don't fit into the inbox style anymore. It's sorted from newest
-         * to oldest message.
-         */
-        LinkedList<MessageReference> droppedMessages;
-
-        /**
-         * Maximum number of messages to keep for the inbox-style overview.
-         * As of Jellybean, phone notifications show a maximum of 5 lines, while tablet
-         * notifications show 7 lines. To make sure no lines are silently dropped,
-         * we default to 5 lines.
-         */
-        private final static int MAX_MESSAGES = 5;
-
-        /**
-         * Constructs a new data instance.
-         *
-         * @param unread Number of unread messages prior to instance construction
-         */
-        public NotificationData(int unread) {
-            unreadBeforeNotification = unread;
-            droppedMessages = new LinkedList<MessageReference>();
-            messages = new LinkedList<LocalMessage>();
-        }
-
-        /**
-         * Adds a new message to the list of pending messages for this notification.
-         *
-         * The implementation will take care of keeping a meaningful amount of
-         * messages in {@link #messages}.
-         *
-         * @param m The new message to add.
-         */
-        public void addMessage(LocalMessage m) {
-            while (messages.size() >= MAX_MESSAGES) {
-                LocalMessage dropped = messages.removeLast();
-                droppedMessages.addFirst(dropped.makeMessageReference());
-            }
-            messages.addFirst(m);
-        }
-
-        /**
-         * Remove a certain message from the message list.
-         *
-         * @param context A context.
-         * @param ref Reference of the message to remove
-         * @return true if message was found and removed, false otherwise
-         */
-        public boolean removeMatchingMessage(Context context, MessageReference ref) {
-            for (MessageReference dropped : droppedMessages) {
-                if (dropped.equals(ref)) {
-                    droppedMessages.remove(dropped);
-                    return true;
-                }
-            }
-
-            for (LocalMessage message : messages) {
-                if (message.makeMessageReference().equals(ref)) {
-                    if (messages.remove(message) && !droppedMessages.isEmpty()) {
-                        LocalMessage restoredMessage = droppedMessages.getFirst().restoreToLocalMessage(context);
-                        if (restoredMessage != null) {
-                            messages.addLast(restoredMessage);
-                            droppedMessages.removeFirst();
-                        }
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /**
-         * Adds a list of references for all pending messages for the notification to the supplied
-         * List.
-         */
-        public void supplyAllMessageRefs(List<MessageReference> refs) {
-            for (LocalMessage m : messages) {
-                refs.add(m.makeMessageReference());
-            }
-            refs.addAll(droppedMessages);
-        }
-
-        /**
-         * Gets the total number of messages the user is to be notified of.
-         *
-         * @return Amount of new messages the notification notifies for
-         */
-        public int getNewMessageCount() {
-            return messages.size() + droppedMessages.size();
-        }
-    };
-
-    // Key is accountNumber
-    private final ConcurrentMap<Integer, NotificationData> notificationData = new ConcurrentHashMap<Integer, NotificationData>();
+    private final Context context;
+    private final NotificationController notificationController;
+    private volatile boolean stopped = false;
 
     private static final Set<Flag> SYNC_FLAGS = EnumSet.of(Flag.SEEN, Flag.FLAGGED, Flag.ANSWERED, Flag.GREETING_ON);
 
@@ -355,9 +217,9 @@ public class MessagingController implements Runnable {
         cache.removeValueForThreads(messageIds, columnName);
     }
 
-
-    private MessagingController(Context context) {
+    MessagingController(Context context, NotificationController notificationController) {
         this.context = context;
+        this.notificationController = notificationController;
         mThread = new Thread(this);
         mThread.setName("MessagingController");
         mThread.start();
@@ -366,9 +228,17 @@ public class MessagingController implements Runnable {
         }
     }
 
+    void stop() throws InterruptedException {
+        stopped = true;
+        mThread.interrupt();
+        mThread.join(1000L);
+    }
+
     public synchronized static MessagingController getInstance(Context context) {
         if (inst == null) {
-            inst = new MessagingController(context.getApplicationContext());
+            Context appContext = context.getApplicationContext();
+            NotificationController notificationController = NotificationController.newInstance(appContext);
+            inst = new MessagingController(appContext, notificationController);
         }
         return inst;
     }
@@ -380,7 +250,7 @@ public class MessagingController implements Runnable {
     @Override
     public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        while (true) {
+        while (!stopped) {
             String commandDescription = null;
             try {
                 final Command command = mCommands.take();
@@ -447,10 +317,7 @@ public class MessagingController implements Runnable {
                 queue.put(command);
                 return;
             } catch (InterruptedException ie) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException ne) {
-                }
+                SystemClock.sleep(200);
                 e = ie;
             }
         }
@@ -527,12 +394,12 @@ public class MessagingController implements Runnable {
         for (MessagingListener l : getListeners(listener)) {
             l.listFoldersStarted(account);
         }
-        List <? extends Folder > localFolders = null;
+        List<LocalFolder> localFolders = null;
         if (!account.isAvailable(context)) {
             Log.i(VisualVoicemail.LOG_TAG, "not listing folders of unavailable account");
         } else {
             try {
-                Store localStore = account.getLocalStore();
+                LocalStore localStore = account.getLocalStore();
                 localFolders = localStore.getPersonalNamespaces(false);
 
                 if (refreshRemote || localFolders.isEmpty()) {
@@ -568,7 +435,7 @@ public class MessagingController implements Runnable {
         put("doRefreshRemote", listener, new Runnable() {
             @Override
             public void run() {
-                List <? extends Folder > localFolders = null;
+                List<LocalFolder> localFolders = null;
                 try {
                     Store store = account.getRemoteStore();
 
@@ -944,7 +811,8 @@ public class MessagingController implements Runnable {
      * TODO Break this method up into smaller chunks.
      * @param providedRemoteFolder TODO
      */
-    private void synchronizeMailboxSynchronous(final Account account, final String folder, final MessagingListener listener, Folder providedRemoteFolder) {
+    void synchronizeMailboxSynchronous(final Account account, final String folder, final MessagingListener listener,
+            Folder providedRemoteFolder) {
         Folder remoteFolder = null;
         LocalFolder tLocalFolder = null;
 
@@ -1046,6 +914,8 @@ public class MessagingController implements Runnable {
 
             }
 
+            notificationController.clearAuthenticationErrorNotification(account, true);
+
             /*
              * Get the remote message count.
              */
@@ -1065,9 +935,9 @@ public class MessagingController implements Runnable {
             final Date earliestDate = account.getEarliestPollDate();
 
 
+            int remoteStart = 1;
             if (remoteMessageCount > 0) {
                 /* Message numbers start at 1.  */
-                int remoteStart;
                 if (visibleLimit > 0) {
                     remoteStart = Math.max(0, remoteMessageCount - visibleLimit) + 1;
                 } else {
@@ -1106,13 +976,14 @@ public class MessagingController implements Runnable {
                     l.synchronizeMailboxHeadersFinished(account, folder, headerProgress.get(), remoteUidMap.size());
                 }
 
-            } else if (remoteMessageCount < 0) {
+            } else if(remoteMessageCount < 0) {
                 throw new Exception("Message count " + remoteMessageCount + " for folder " + folder);
             }
 
             /*
              * Remove any messages that are in the local store but no longer on the remote store or are too old
              */
+            MoreMessages moreMessages = localFolder.getMoreMessages();
             if (account.syncRemoteDeletions()) {
                 List<Message> destroyMessages = new ArrayList<Message>();
                 for (Message localMessage : localMessages) {
@@ -1121,16 +992,23 @@ public class MessagingController implements Runnable {
                     }
                 }
 
+                if (!destroyMessages.isEmpty()) {
+                    moreMessages = MoreMessages.UNKNOWN;
 
-                localFolder.destroyMessages(destroyMessages);
+                    localFolder.destroyMessages(destroyMessages);
 
-                for (Message destroyMessage : destroyMessages) {
-                    for (MessagingListener l : getListeners(listener)) {
-                        l.synchronizeMailboxRemovedMessage(account, folder, destroyMessage);
+                    for (Message destroyMessage : destroyMessages) {
+                        for (MessagingListener l : getListeners(listener)) {
+                            l.synchronizeMailboxRemovedMessage(account, folder, destroyMessage);
+                        }
                     }
                 }
             }
             localMessages = null;
+
+            if (moreMessages == MoreMessages.UNKNOWN) {
+                updateMoreMessages(remoteFolder, localFolder, earliestDate, remoteStart);
+            }
 
             /*
              * Now we download the actual content of messages.
@@ -1172,6 +1050,12 @@ public class MessagingController implements Runnable {
             if (VisualVoicemail.DEBUG)
                 Log.i(VisualVoicemail.LOG_TAG, "Done synchronizing folder " + account.getDescription() + ":" + folder);
 
+        } catch (AuthenticationFailedException e) {
+            handleAuthenticationFailure(account, true);
+
+            for (MessagingListener l : getListeners(listener)) {
+                l.synchronizeMailboxFailed(account, folder, "Authentication failure");
+            }
         } catch (Exception e) {
             Log.e(VisualVoicemail.LOG_TAG, "synchronizeMailbox", e);
             // If we don't set the last checked, it can try too often during
@@ -1190,7 +1074,7 @@ public class MessagingController implements Runnable {
             for (MessagingListener l : getListeners(listener)) {
                 l.synchronizeMailboxFailed(account, folder, rootMessage);
             }
-            notifyUserIfCertificateProblem(context, e, account, true);
+            notifyUserIfCertificateProblem(account, e, true);
             addErrorMessage(account, null, e);
             Log.e(VisualVoicemail.LOG_TAG, "Failed synchronizing folder " + account.getDescription() + ":" + folder + " @ " + new Date());
 
@@ -1202,6 +1086,23 @@ public class MessagingController implements Runnable {
             closeFolder(tLocalFolder);
         }
 
+    }
+
+    void handleAuthenticationFailure(Account account, boolean incoming) {
+        notificationController.showAuthenticationErrorNotification(account, incoming);
+    }
+
+    private void updateMoreMessages(Folder remoteFolder, LocalFolder localFolder, Date earliestDate, int remoteStart)
+            throws MessagingException, IOException {
+
+        if (remoteStart == 1) {
+            localFolder.setMoreMessages(MoreMessages.FALSE);
+        } else {
+            boolean moreMessagesAvailable = remoteFolder.areMoreMessagesAvailable(remoteStart, earliestDate);
+
+            MoreMessages newMoreMessages = (moreMessagesAvailable) ? MoreMessages.TRUE : MoreMessages.FALSE;
+            localFolder.setMoreMessages(newMoreMessages);
+        }
     }
 
 
@@ -1325,7 +1226,6 @@ public class MessagingController implements Runnable {
             if (VisualVoicemail.DEBUG)
                 Log.d(VisualVoicemail.LOG_TAG, "SYNC: About to fetch " + unsyncedMessages.size() + " unsynced messages for folder " + folder);
 
-
             fetchUnsyncedMessages(account, remoteFolder, unsyncedMessages, smallMessages, largeMessages, progress, todo, fp);
 
             String updatedPushState = localFolder.getPushState();
@@ -1340,10 +1240,7 @@ public class MessagingController implements Runnable {
             if (VisualVoicemail.DEBUG) {
                 Log.d(VisualVoicemail.LOG_TAG, "SYNC: Synced unsynced messages for folder " + folder);
             }
-
-
         }
-
         if (VisualVoicemail.DEBUG)
             Log.d(VisualVoicemail.LOG_TAG, "SYNC: Have "
                   + largeMessages.size() + " large messages and "
@@ -1351,26 +1248,24 @@ public class MessagingController implements Runnable {
                   + unsyncedMessages.size() + " unsynced messages");
 
         unsyncedMessages.clear();
-
         /*
          * Grab the content of the small messages first. This is going to
          * be very fast and at very worst will be a single up of a few bytes and a single
          * download of 625k.
          */
         FetchProfile fp = new FetchProfile();
+        //TODO: Only fetch small and large messages if we have some
         fp.add(FetchProfile.Item.BODY);
         //        fp.add(FetchProfile.Item.FLAGS);
         //        fp.add(FetchProfile.Item.ENVELOPE);
-
         downloadSmallMessages(account, remoteFolder, localFolder, smallMessages, progress, unreadBeforeStart, newMessages, todo, fp);
         smallMessages.clear();
-
         /*
          * Now do the large messages that require more round trips.
          */
-        fp.clear();
-        fp.add(FetchProfile.Item.BODY);
-        downloadLargeMessages(account, remoteFolder, localFolder, largeMessages, progress, unreadBeforeStart,  newMessages, todo, fp);
+        fp = new FetchProfile();
+        fp.add(FetchProfile.Item.STRUCTURE);
+        downloadLargeMessages(account, remoteFolder, localFolder, largeMessages, progress, unreadBeforeStart, newMessages, todo, fp);
         largeMessages.clear();
 
         /*
@@ -1483,7 +1378,6 @@ public class MessagingController implements Runnable {
         final String folder = remoteFolder.getName();
 
         final Date earliestDate = account.getEarliestPollDate();
-
         remoteFolder.fetch(unsyncedMessages, fp,
         new MessageRetrievalListener<T>() {
             @Override
@@ -1501,6 +1395,7 @@ public class MessagingController implements Runnable {
                         }
                         progress.incrementAndGet();
                         for (MessagingListener l : getListeners()) {
+                            //TODO: This might be the source of poll count errors in the UI. Is todo always the same as ofTotal
                             l.synchronizeMailboxProgress(account, folder, progress.get(), todo);
                         }
                         return;
@@ -1598,7 +1493,7 @@ public class MessagingController implements Runnable {
 
                     if (shouldNotifyForMessage(account, localFolder, message)) {
                         // Notify with the localMessage so that we don't have to recalculate the content preview.
-                        notifyAccount(context, account, localMessage, unreadBeforeStart);
+                        notificationController.addNewMailNotification(account, localMessage, unreadBeforeStart);
                     }
 
                 } catch (MessagingException me) {
@@ -1650,8 +1545,8 @@ public class MessagingController implements Runnable {
                  * incomplete so the entire thing can be downloaded later if the user
                  * wishes to download it.
                  */
-                fp.clear();
-                fp.add(FetchProfile.Item.BODY);
+                fp = new FetchProfile();
+                fp.add(FetchProfile.Item.BODY_SANE);
                 /*
                  *  TODO a good optimization here would be to make sure that all Stores set
                  *  the proper size after this fetch and compare the before and after size. If
@@ -1736,7 +1631,7 @@ public class MessagingController implements Runnable {
             // Send a notification of this message
             if (shouldNotifyForMessage(account, localFolder, message)) {
                 // Notify with the localMessage so that we don't have to recalculate the content preview.
-                notifyAccount(context, account, localMessage, unreadBeforeStart);
+                notificationController.addNewMailNotification(account, localMessage, unreadBeforeStart);
             }
 
         }//for large messages
@@ -1789,15 +1684,8 @@ public class MessagingController implements Runnable {
 
                     // we're only interested in messages that need removing
                     if (!shouldBeNotifiedOf) {
-                        NotificationData data = getNotificationData(account, null);
-                        if (data != null) {
-                            synchronized (data) {
-                                MessageReference ref = localMessage.makeMessageReference();
-                                if (data.removeMatchingMessage(context, ref)) {
-                                    notifyAccountWithDataLocked(context, account, null, data);
-                                }
-                            }
-                        }
+                        MessageReference messageReference = localMessage.makeMessageReference();
+                        notificationController.removeNewMailNotification(account, messageReference);
                     }
                 }
                 progress.incrementAndGet();
@@ -1954,7 +1842,7 @@ public class MessagingController implements Runnable {
                 }
             }
         } catch (MessagingException me) {
-            notifyUserIfCertificateProblem(context, me, account, true);
+            notifyUserIfCertificateProblem(account, me, true);
             addErrorMessage(account, null, me);
             Log.e(VisualVoicemail.LOG_TAG, "Could not process command '" + processingCommand + "'", me);
             throw me;
@@ -2075,7 +1963,6 @@ public class MessagingController implements Runnable {
                     /*
                      * Otherwise we'll upload our message and then delete the remote message.
                      */
-                    fp.clear();
                     fp = new FetchProfile();
                     fp.add(FetchProfile.Item.BODY);
                     localFolder.fetch(Collections.singletonList(localMessage), fp, null);
@@ -2279,7 +2166,7 @@ public class MessagingController implements Runnable {
              * upto speed with the remote UIDs of remote destination folder.
              */
             if (!localUidMap.isEmpty() && remoteUidMap != null && !remoteUidMap.isEmpty()) {
-                for (Entry<String, String> entry : remoteUidMap.entrySet()) {
+                for (Map.Entry<String, String> entry : remoteUidMap.entrySet()) {
                     String remoteSrcUid = entry.getKey();
                     String localDestUid = localUidMap.get(remoteSrcUid);
                     String newUid = entry.getValue();
@@ -2559,56 +2446,6 @@ public class MessagingController implements Runnable {
         }
     }
 
-    void notifyUserIfCertificateProblem(Context context, Exception e,
-            Account account, boolean incoming) {
-        if (!(e instanceof CertificateValidationException)) {
-            return;
-        }
-
-        CertificateValidationException cve = (CertificateValidationException) e;
-        if (!cve.needsUserAttention()) {
-            return;
-        }
-
-        final int id = VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_INCOMING + account.getAccountNumber();
-        final Intent i = AccountSetupIncoming.intentActionEditIncomingSettings(context, account);
-        final PendingIntent pi = PendingIntent.getActivity(context,
-                account.getAccountNumber(), i, PendingIntent.FLAG_UPDATE_CURRENT);
-        final String title = context.getString(
-                R.string.notification_certificate_error_title, account.getDescription());
-
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.notify_new_voicemail);
-        builder.setWhen(System.currentTimeMillis());
-        builder.setAutoCancel(true);
-        builder.setTicker(title);
-        builder.setContentTitle(title);
-        builder.setContentText(context.getString(R.string.notification_certificate_error_text));
-        builder.setContentIntent(pi);
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-        configureNotification(builder, null, null,
-                VisualVoicemail.NOTIFICATION_LED_FAILURE_COLOR,
-                VisualVoicemail.NOTIFICATION_LED_BLINK_FAST, true);
-
-        final NotificationManager nm = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(null, id, builder.build());
-    }
-
-    public void clearCertificateErrorNotifications(Context context,
-            final Account account, CheckDirection direction) {
-        final NotificationManager nm = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (direction == CheckDirection.INCOMING) {
-            nm.cancel(null, VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_INCOMING + account.getAccountNumber());
-        } else {
-            nm.cancel(null, VisualVoicemail.CERTIFICATE_EXCEPTION_NOTIFICATION_OUTGOING + account.getAccountNumber());
-        }
-    }
-
-
     static long uidfill = 0;
     static AtomicBoolean loopCatch = new AtomicBoolean();
     public void addErrorMessage(Account account, String subject, Throwable t) {
@@ -2622,7 +2459,7 @@ public class MessagingController implements Runnable {
             try {
                 PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
                         context.getPackageName(), 0);
-                ps.format("VisualVoicemail-Mail version: %s\r\n", packageInfo.versionName);
+                ps.format("VisualVoicemail.Mail version: %s\r\n", packageInfo.versionName);
             } catch (Exception e) {
                 // ignore
             }
@@ -2666,7 +2503,7 @@ public class MessagingController implements Runnable {
             Date nowDate = new Date(nowTime);
             message.setInternalDate(nowDate);
             message.addSentDate(nowDate, VisualVoicemail.hideTimeZone());
-            message.setFrom(new Address(account.getPhoneNumber(), "K9mail internal"));
+            message.setFrom(new Address(account.getNetworkOperatorName(), "VisualVoicemail.ail internal"));
 
             localFolder.appendMessages(Collections.singletonList(message));
 
@@ -3003,7 +2840,7 @@ public class MessagingController implements Runnable {
             for (MessagingListener l : getListeners(listener)) {
                 l.loadMessageForViewFailed(account, folder, uid, e);
             }
-            notifyUserIfCertificateProblem(context, e, account, true);
+            notifyUserIfCertificateProblem(account, e, true);
             addErrorMessage(account, null, e);
             return false;
         } finally {
@@ -3028,7 +2865,7 @@ public class MessagingController implements Runnable {
 
                     LocalMessage message = localFolder.getMessage(uid);
                     if (message == null
-                            || message.getId() == 0) {
+                    || message.getId() == 0) {
                         throw new IllegalArgumentException("Message not found: folder=" + folder + ", uid=" + uid);
                     }
                     // IMAP search results will usually need to be downloaded before viewing.
@@ -3089,6 +2926,7 @@ public class MessagingController implements Runnable {
         localFolder.fetch(Collections.singletonList(message), fp, null);
         localFolder.close();
 
+        notificationController.removeNewMailNotification(account, message.makeMessageReference());
         markMessageAsReadOnView(account, message);
 
         return message;
@@ -3138,7 +2976,7 @@ public class MessagingController implements Runnable {
                     for (MessagingListener l : getListeners(listener)) {
                         l.loadAttachmentFailed(account, message, part, me.getMessage());
                     }
-                    notifyUserIfCertificateProblem(context, me, account, true);
+                    notifyUserIfCertificateProblem(account, me, true);
                     addErrorMessage(account, null, me);
 
                 } finally {
@@ -3147,75 +2985,6 @@ public class MessagingController implements Runnable {
                 }
             }
         });
-    }
-
-    private void cancelNotification(int id) {
-        NotificationManager notifMgr =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notifMgr.cancel(id);
-    }
-
-    /**
-     * Display an ongoing notification while checking for new messages on the server.
-     *
-     * @param account
-     *         The account that is checked for new messages. Never {@code null}.
-     * @param folder
-     *         The folder that is being checked for new messages. Never {@code null}.
-     */
-    private void notifyFetchingMail(final Account account, final Folder folder) {
-        if (!account.isShowOngoing()) {
-            return;
-        }
-
-        final NotificationManager notifMgr =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.ic_notify_check_mail);
-        builder.setWhen(System.currentTimeMillis());
-        builder.setOngoing(true);
-        builder.setTicker(context.getString(
-                R.string.notification_bg_sync_ticker, account.getDescription()));
-        builder.setContentTitle(context.getString(R.string.notification_bg_sync_title));
-        builder.setContentText(account.getDescription() +
-                context.getString(R.string.notification_bg_title_separator) +
-                folder.getName());
-
-        TaskStackBuilder stack = buildMessageListBackStack(context, account,
-                account.getInboxFolderName());
-        builder.setContentIntent(stack.getPendingIntent(0, 0));
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-        if (VisualVoicemail.NOTIFICATION_LED_WHILE_SYNCING) {
-            configureNotification(builder,  null, null,
-                    account.getNotificationSetting().getLedColor(),
-                    VisualVoicemail.NOTIFICATION_LED_BLINK_FAST, true);
-        }
-
-        notifMgr.notify(VisualVoicemail.FETCHING_EMAIL_NOTIFICATION - account.getAccountNumber(),
-                builder.build());
-    }
-
-    private void notifyFetchingMailCancel(final Account account) {
-        if (account.isShowOngoing()) {
-            cancelNotification(VisualVoicemail.FETCHING_EMAIL_NOTIFICATION - account.getAccountNumber());
-        }
-    }
-
-    private void moveMessageToDraftsFolder(Account account, Folder localFolder, Store localStore, Message message)
-            throws MessagingException {
-        LocalFolder draftsFolder = (LocalFolder) localStore.getFolder(account.getDraftsFolderName());
-        localFolder.moveMessages(Collections.singletonList(message), draftsFolder);
-    }
-
-    private void notifySynchronizeMailboxFailed(Account account, Folder localFolder, Exception exception) {
-        String folderName = localFolder.getName();
-        String errorMessage = getRootCauseMessage(exception);
-        for (MessagingListener listener : getListeners()) {
-            listener.synchronizeMailboxFailed(account, folderName, errorMessage);
-        }
     }
 
     public void getAccountStats(final Context context, final Account account,
@@ -3446,7 +3215,7 @@ public class MessagingController implements Runnable {
 
         try {
             Map<String, String> uidMap = new HashMap<String, String>();
-            Store localStore = account.getLocalStore();
+            LocalStore localStore = account.getLocalStore();
             Store remoteStore = account.getRemoteStore();
             if (!isCopy && (!remoteStore.isMoveCapable() || !localStore.isMoveCapable())) {
                 return;
@@ -3455,7 +3224,7 @@ public class MessagingController implements Runnable {
                 return;
             }
 
-            Folder localSrcFolder = localStore.getFolder(srcFolder);
+            LocalFolder localSrcFolder = localStore.getFolder(srcFolder);
             Folder localDestFolder = localStore.getFolder(destFolder);
 
             boolean unreadCountAffected = false;
@@ -3471,7 +3240,7 @@ public class MessagingController implements Runnable {
                 }
             }
 
-            List<? extends Message> messages = localSrcFolder.getMessages(uids.toArray(EMPTY_STRING_ARRAY), null);
+            List<LocalMessage> messages = localSrcFolder.getMessages(uids.toArray(EMPTY_STRING_ARRAY), null);
             if (messages.size() > 0) {
                 Map<String, Message> origUidMap = new HashMap<String, Message>();
 
@@ -3500,7 +3269,7 @@ public class MessagingController implements Runnable {
                     }
                 } else {
                     uidMap = localSrcFolder.moveMessages(messages, localDestFolder);
-                    for (Entry<String, Message> entry : origUidMap.entrySet()) {
+                    for (Map.Entry<String, Message> entry : origUidMap.entrySet()) {
                         String origUid = entry.getKey();
                         Message message = entry.getValue();
                         for (MessagingListener l : getListeners()) {
@@ -3660,7 +3429,7 @@ public class MessagingController implements Runnable {
             } else {
                 localTrashFolder = localStore.getFolder(account.getTrashFolderName());
                 if (!localTrashFolder.exists()) {
-                    localTrashFolder.create(FolderType.HOLDS_MESSAGES);
+                    localTrashFolder.create(Folder.FolderType.HOLDS_MESSAGES);
                 }
                 if (localTrashFolder.exists()) {
                     if (VisualVoicemail.DEBUG)
@@ -3814,8 +3583,67 @@ public class MessagingController implements Runnable {
      */
     private boolean isTrashLocalOnly(Account account) throws MessagingException {
         // TODO: Get rid of the tight coupling once we properly support local folders
-        //return (account.getRemoteStore() instanceof Pop3Store);
-        return true;
+        return (account.getRemoteStore() instanceof Pop3Store);
+    }
+
+    public void sendAlternate(final Context context, Account account, Message message) {
+        if (VisualVoicemail.DEBUG)
+            Log.d(VisualVoicemail.LOG_TAG, "About to load message " + account.getDescription() + ":" + message.getFolder().getName()
+                  + ":" + message.getUid() + " for sendAlternate");
+
+        loadMessageForView(account, message.getFolder().getName(),
+        message.getUid(), new MessagingListener() {
+            @Override
+            public void loadMessageForViewBodyAvailable(Account account, String folder, String uid,
+            Message message) {
+                if (VisualVoicemail.DEBUG)
+                    Log.d(VisualVoicemail.LOG_TAG, "Got message " + account.getDescription() + ":" + folder
+                          + ":" + message.getUid() + " for sendAlternate");
+
+                try {
+                    Intent msg = new Intent(Intent.ACTION_SEND);
+                    String quotedText = null;
+                    Part part = MimeUtility.findFirstPartByMimeType(message, "text/plain");
+                    if (part == null) {
+                        part = MimeUtility.findFirstPartByMimeType(message, "text/html");
+                    }
+                    if (part != null) {
+                        quotedText = MessageExtractor.getTextFromPart(part);
+                    }
+                    if (quotedText != null) {
+                        msg.putExtra(Intent.EXTRA_TEXT, quotedText);
+                    }
+                    msg.putExtra(Intent.EXTRA_SUBJECT, message.getSubject());
+
+                    Address[] from = message.getFrom();
+                    String[] senders = new String[from.length];
+                    for (int i = 0; i < from.length; i++) {
+                        senders[i] = from[i].toString();
+                    }
+                    msg.putExtra(Intents.Share.EXTRA_FROM, senders);
+
+                    Address[] to = message.getRecipients(RecipientType.TO);
+                    String[] recipientsTo = new String[to.length];
+                    for (int i = 0; i < to.length; i++) {
+                        recipientsTo[i] = to[i].toString();
+                    }
+                    msg.putExtra(Intent.EXTRA_EMAIL, recipientsTo);
+
+                    Address[] cc = message.getRecipients(RecipientType.CC);
+                    String[] recipientsCc = new String[cc.length];
+                    for (int i = 0; i < cc.length; i++) {
+                        recipientsCc[i] = cc[i].toString();
+                    }
+                    msg.putExtra(Intent.EXTRA_CC, recipientsCc);
+
+                    msg.setType("text/plain");
+                    context.startActivity(Intent.createChooser(msg, context.getString(R.string.send_alternate_chooser_title)));
+                } catch (MessagingException me) {
+                    Log.e(VisualVoicemail.LOG_TAG, "Unable to send email through alternate program", me);
+                }
+            }
+        });
+
     }
 
     /**
@@ -3835,7 +3663,7 @@ public class MessagingController implements Runnable {
         if (useManualWakeLock) {
             TracingPowerManager pm = TracingPowerManager.getPowerManager(context);
 
-            twakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VisualVoicemail MessagingController.checkMail");
+            twakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "VisualVoicemail.MessagingController.checkMail");
             twakeLock.setReferenceCounted(false);
             twakeLock.acquire(VisualVoicemail.MANUAL_WAKE_LOCK_TIMEOUT);
         }
@@ -3870,22 +3698,22 @@ public class MessagingController implements Runnable {
                     addErrorMessage(account, null, e);
                 }
                 putBackground("finalize sync", null, new Runnable() {
-                            @Override
-                            public void run() {
+                    @Override
+                    public void run() {
 
-                                if (VisualVoicemail.DEBUG)
-                                    Log.i(VisualVoicemail.LOG_TAG, "Finished mail sync");
+                        if (VisualVoicemail.DEBUG)
+                            Log.i(VisualVoicemail.LOG_TAG, "Finished mail sync");
 
-                                if (wakeLock != null) {
-                                    wakeLock.release();
-                                }
-                                for (MessagingListener l : getListeners()) {
-                                    l.checkMailFinished(context, account);
-                                }
-
-                            }
+                        if (wakeLock != null) {
+                            wakeLock.release();
                         }
-                );
+                        for (MessagingListener l : getListeners()) {
+                            l.checkMailFinished(context, account);
+                        }
+
+                    }
+                }
+                             );
             }
         });
     }
@@ -3913,6 +3741,8 @@ public class MessagingController implements Runnable {
             Log.i(VisualVoicemail.LOG_TAG, "Synchronizing account " + account.getDescription());
 
         account.setRingNotified(false);
+
+
 
         try {
             Account.FolderMode aDisplayMode = account.getFolderDisplayMode();
@@ -3949,7 +3779,7 @@ public class MessagingController implements Runnable {
                 synchronizeFolder(account, folder, ignoreLastCheckedTime, accountInterval, listener);
             }
         } catch (MessagingException e) {
-            Log.e(VisualVoicemail.LOG_TAG, "Unable to synchronize account " + account.getPhoneNumber(), e);
+            Log.e(VisualVoicemail.LOG_TAG, "Unable to synchronize account " + account.getDescription(), e);
             addErrorMessage(account, null, e);
         } finally {
             putBackground("clear notification flag for " + account.getDescription(), null, new Runnable() {
@@ -3961,7 +3791,7 @@ public class MessagingController implements Runnable {
                     try {
                         AccountStats stats = account.getStats(context);
                         if (stats == null || stats.unreadMessageCount == 0) {
-                            notifyAccountCancel(context, account);
+                            notificationController.clearNewMailNotifications(account);
                         }
                     } catch (MessagingException e) {
                         Log.e(VisualVoicemail.LOG_TAG, "Unable to getUnreadMessageCount for account: " + account, e);
@@ -4015,11 +3845,11 @@ public class MessagingController implements Runnable {
                                   + " which would be too recent for the account period");
                         return;
                     }
-                    notifyFetchingMail(account, folder);
+                    showFetchingMailNotificationIfNecessary(account, folder);
                     try {
                         synchronizeMailboxSynchronous(account, folder.getName(), listener, null);
                     } finally {
-                        notifyFetchingMailCancel(account);
+                        clearFetchingMailNotificationIfNecessary(account);
                     }
                 } catch (Exception e) {
 
@@ -4036,6 +3866,17 @@ public class MessagingController implements Runnable {
 
     }
 
+    private void showFetchingMailNotificationIfNecessary(Account account, Folder folder) {
+        if (account.isShowOngoing()) {
+            notificationController.showFetchingMailNotification(account, folder);
+        }
+    }
+
+    private void clearFetchingMailNotificationIfNecessary(Account account) {
+        if (account.isShowOngoing()) {
+            notificationController.clearFetchingMailNotification(account);
+        }
+    }
 
 
     public void compact(final Account account, final MessagingListener ml) {
@@ -4180,536 +4021,54 @@ public class MessagingController implements Runnable {
             }
         }
 
-        // Don't notify if the sender address matches one of our identities and the user chose not
-        // to be notified for such messages.
-        /*if (account.isAnIdentity(message.getFrom()) && !account.isNotifySelfNewMail()) {
-            return false;
-        }*/
-
         return true;
     }
 
-    /**
-     * Get the pending notification data for an account.
-     * See {@link NotificationData}.
-     *
-     * @param account The account to retrieve the pending data for
-     * @param previousUnreadMessageCount The number of currently pending messages, which will be used
-     *                                    if there's no pending data yet. If passed as null, a new instance
-     *                                    won't be created if currently not existent.
-     * @return A pending data instance, or null if one doesn't exist and
-     *          previousUnreadMessageCount was passed as null.
-     */
-    private NotificationData getNotificationData(Account account, Integer previousUnreadMessageCount) {
-        NotificationData data;
-
-        synchronized (notificationData) {
-            data = notificationData.get(account.getAccountNumber());
-            if (data == null && previousUnreadMessageCount != null) {
-                data = new NotificationData(previousUnreadMessageCount);
-                notificationData.put(account.getAccountNumber(), data);
-            }
-        }
-
-        return data;
-    }
-
-    private CharSequence getMessageSender(Context context, Account account, Message message) {
-        final Contacts contacts = VisualVoicemail.showContactName() ? Contacts.getInstance(context) : null;
-        final Address[] fromAddrs = message.getFrom();
-        String sender = "Unknown";
-        if (fromAddrs != null) {
-            if (fromAddrs.length > 0) {
-                VvmContacts vvmContacts = new VvmContacts(context);
-                sender = vvmContacts.extractPhoneFromVoicemailAddress(fromAddrs[0]);
-                if (vvmContacts.isPhoneNumberValid(sender)){
-                    sender = vvmContacts.getDisplayName(sender);
-                }
-            }
-        }
-
-        /*if (isSelf) {
-            // show To: if the message was sent from me
-            Address[] rcpts = message.getRecipients(RecipientType.TO);
-
-            if (rcpts != null && rcpts.length > 0) {
-                return context.getString(R.string.message_to_fmt,
-                        MessageHelper.toFriendly(rcpts[0], contacts).toString());
-            }
-
-            return context.getString(R.string.general_no_sender);
-        }*/
-
-        return sender;
-    }
-
-    private CharSequence getMessageSubject(Context context, Message message) {
-        String subject = message.getSubject();
-        if (!TextUtils.isEmpty(subject)) {
-            return subject;
-        }
-
-        return context.getString(R.string.general_no_subject);
-    }
-
-    private static TextAppearanceSpan sEmphasizedSpan;
-    private TextAppearanceSpan getEmphasizedSpan(Context context) {
-        if (sEmphasizedSpan == null) {
-            sEmphasizedSpan = new TextAppearanceSpan(context,
-                    R.style.TextAppearance_StatusBar_EventContent_Emphasized);
-        }
-        return sEmphasizedSpan;
-    }
-
-    public static final boolean platformSupportsExtendedNotifications() {
-        // supported in Jellybean
-        // TODO: use constant once target SDK is set to >= 16
-        return Build.VERSION.SDK_INT >= 16;
-    }
-
-    public static boolean platformSupportsLockScreenNotifications() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    private LocalMessage findNewestMessageForNotificationLocked(Context context, NotificationData data) {
-        if (!data.messages.isEmpty()) {
-            return data.messages.getFirst();
-        }
-
-        if (!data.droppedMessages.isEmpty()) {
-            return data.droppedMessages.getFirst().restoreToLocalMessage(context);
-        }
-
-        return null;
-    }
-
-    /**
-     * Creates a notification of a newly received message.
-     */
-    private void notifyAccount(Context context, Account account, LocalMessage message, int previousUnreadMessageCount) {
-        if (VisualVoicemail.isQuietTime() && !VisualVoicemail.isNotificationDuringQuietTimeEnabled()) {
-            return;
-        }
-
-        final NotificationData data = getNotificationData(account, previousUnreadMessageCount);
-        synchronized (data) {
-            notifyAccountWithDataLocked(context, account, message, data);
-        }
-    }
-
-    // Maximum number of senders to display in a lock screen notification.
-    private static final int NUM_SENDERS_IN_LOCK_SCREEN_NOTIFICATION = 5;
-
-    private void notifyAccountWithDataLocked(Context context, Account account,
-            LocalMessage message, NotificationData data) {
-        boolean updateSilently = false;
-
-        if (message == null) {
-            /* this can happen if a message we previously notified for is read or deleted remotely */
-            message = findNewestMessageForNotificationLocked(context, data);
-            updateSilently = true;
-            if (message == null) {
-                // seemingly both the message list as well as the overflow list is empty;
-                // it probably is a good idea to cancel the notification in that case
-                notifyAccountCancel(context, account);
-                return;
-            }
-        } else {
-            data.addMessage(message);
-        }
-
-        final KeyguardManager keyguardService = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        final CharSequence sender = getMessageSender(context, account, message);
-        //final CharSequence subject = getMessageSubject(context, message);
-        //CharSequence summary = buildMessageSummary(context, sender);
-        CharSequence summary = sender;
-
-        boolean privacyModeEnabled =
-                (VisualVoicemail.getNotificationHideSubject() == NotificationHideSubject.ALWAYS) ||
-                (VisualVoicemail.getNotificationHideSubject() == NotificationHideSubject.WHEN_LOCKED &&
-                keyguardService.inKeyguardRestrictedInputMode());
-
-        if (privacyModeEnabled || summary.length() == 0) {
-            summary = context.getString(R.string.notification_new_title);
-        }
-
-        NotificationManager notifMgr =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.notify_new_voicemail);
-        builder.setWhen(System.currentTimeMillis());
-        if (!updateSilently) {
-            builder.setTicker(summary);
-        }
-
-        final int newMessages = data.getNewMessageCount();
-        final int unreadCount = data.unreadBeforeNotification + newMessages;
-
-        builder.setNumber(unreadCount);
-
-        //String accountDescr = (account.getDescription() != null) ? account.getDescription() : account.getPhoneNumber();
-        final ArrayList<MessageReference> allRefs = new ArrayList<MessageReference>();
-        data.supplyAllMessageRefs(allRefs);
-
-        /*if (platformSupportsExtendedNotifications() && !privacyModeEnabled) {
-            if (newMessages > 1) {
-                // multiple messages pending, show inbox style
-                NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(builder);
-                for (Message m : data.messages) {
-                    style.addLine(buildMessageSummary(context,
-                            getMessageSender(context, account, m),
-                            getMessageSubject(context, m)));
-                }
-                if (!data.droppedMessages.isEmpty()) {
-                    style.setSummaryText(context.getString(R.string.notification_additional_messages,
-                            data.droppedMessages.size(), accountDescr));
-                }
-                final String title = context.getResources().getQuantityString(
-                    R.plurals.notification_new_messages_title, newMessages, newMessages);
-                style.setBigContentTitle(title);
-                builder.setContentTitle(title);
-                builder.setSubText(accountDescr);
-                builder.setStyle(style);
-            } else {
-                // single message pending, show big text
-                NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(builder);
-                CharSequence preview = getMessagePreview(context, message);
-                if (preview != null) {
-                    style.bigText(preview);
-                }
-                builder.setContentText(subject);
-                builder.setSubText(accountDescr);
-                builder.setContentTitle(sender);
-                builder.setStyle(style);
-
-                builder.addAction(
-                    platformSupportsLockScreenNotifications()
-                        ? R.drawable.ic_action_single_message_options_dark_vector
-                        : R.drawable.ic_action_single_message_options_dark,
-                    context.getString(R.string.notification_action_reply),
-                    NotificationActionService.getReplyIntent(context, account, message.makeMessageReference()));
-            }
-
-            builder.setContentText(subject);
-            builder.setSubText(accountDescr);
-            builder.setContentTitle(sender);
-            builder.setStyle(style);
-
-            // Mark Read on phone
-            builder.addAction(
-                platformSupportsLockScreenNotifications()
-                    ? R.drawable.ic_action_mark_as_read_dark_vector
-                    : R.drawable.ic_action_mark_as_read_dark,
-                context.getString(R.string.notification_action_mark_as_read),
-                NotificationActionService.getReadAllMessagesIntent(context, account, allRefs));
-
-            NotificationQuickDelete deleteOption = VisualVoicemail.getNotificationQuickDeleteBehaviour();
-            boolean showDeleteAction = deleteOption == NotificationQuickDelete.ALWAYS ||
-                    (deleteOption == NotificationQuickDelete.FOR_SINGLE_MSG && newMessages == 1);
-
-            NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
-            if (showDeleteAction) {
-                // we need to pass the action directly to the activity, otherwise the
-                // status bar won't be pulled up and we won't see the confirmation (if used)
-
-                // Delete on phone
-                builder.addAction(
-                    platformSupportsLockScreenNotifications()
-                        ? R.drawable.ic_action_delete_dark_vector
-                        : R.drawable.ic_action_delete_dark,
-                    context.getString(R.string.notification_action_delete),
-                    NotificationDeleteConfirmation.getIntent(context, account, allRefs));
-
-                // Delete on wear only if no confirmation is required
-                if (!VisualVoicemail.confirmDeleteFromNotification()) {
-                    NotificationCompat.Action wearActionDelete =
-                            new NotificationCompat.Action.Builder(
-                                    R.drawable.ic_action_delete_dark,
-                                    context.getString(R.string.notification_action_delete),
-                                    NotificationDeleteConfirmation.getIntent(context, account, allRefs))
-                                    .build();
-                    builder.extend(wearableExtender.addAction(wearActionDelete));
-                }
-            }
-            if (NotificationActionService.isArchiveAllMessagesWearAvaliable(context, account, data.messages)) {
-
-                // Archive on wear
-                NotificationCompat.Action wearActionArchive =
-                        new NotificationCompat.Action.Builder(
-                                R.drawable.ic_action_delete_dark,
-                                context.getString(R.string.notification_action_archive),
-                                NotificationActionService.getArchiveAllMessagesIntent(context, account, allRefs))
-                                .build();
-                builder.extend(wearableExtender.addAction(wearActionArchive));
-            }
-            if (NotificationActionService.isSpamAllMessagesWearAvaliable(context, account, data.messages)) {
-
-                // Archive on wear
-                NotificationCompat.Action wearActionSpam =
-                        new NotificationCompat.Action.Builder(
-                                R.drawable.ic_action_delete_dark,
-                                context.getString(R.string.notification_action_spam),
-                                NotificationActionService.getSpamAllMessagesIntent(context, account, allRefs))
-                                .build();
-                builder.extend(wearableExtender.addAction(wearActionSpam));
-            }
-        } else {*/
-            String accountNotice = context.getString(R.string.notification_new_one_account_fmt, unreadCount,
-                    context.getResources().getQuantityString(R.plurals.voicemail_plurals, unreadCount));
-            builder.setContentTitle(accountNotice);
-        if (newMessages == 1)
-            builder.setContentText(summary);
-        //}
-
-        for (Message m : data.messages) {
-            if (m.isSet(Flag.FLAGGED)) {
-                builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-                break;
-            }
-        }
-
-        TaskStackBuilder stack;
-        boolean treatAsSingleMessageNotification;
-
-        /*if (platformSupportsExtendedNotifications()) {
-            // in the new-style notifications, we focus on the new messages, not the unread ones
-            treatAsSingleMessageNotification = newMessages == 1;
-        } else {*/
-            // in the old-style notifications, we focus on unread messages, as we don't have a
-            // good way to express the new message count
-            treatAsSingleMessageNotification = unreadCount == 1;
-        //}
-
-        if (treatAsSingleMessageNotification) {
-            stack = buildMessageViewBackStack(context, message.makeMessageReference());
-        } else if (account.goToUnreadMessageSearch()) {
-            stack = buildUnreadBackStack(context, account);
-        } else {
-            String initialFolder = message.getFolder().getName();
-            /* only go to folder if all messages are in the same folder, else go to folder list */
-            for (MessageReference ref : allRefs) {
-                if (!TextUtils.equals(initialFolder, ref.getFolderName())) {
-                    initialFolder = null;
-                    break;
-                }
-            }
-
-            stack = buildMessageListBackStack(context, account, initialFolder);
-        }
-
-        builder.setContentIntent(stack.getPendingIntent(
-                account.getAccountNumber(),
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT));
-        builder.setDeleteIntent(NotificationActionService.getAcknowledgeIntent(context, account));
-
-        // Only ring or vibrate if we have not done so already on this account and fetch
-        boolean ringAndVibrate = false;
-        if (!updateSilently && !account.isRingNotified()) {
-            account.setRingNotified(true);
-            ringAndVibrate = true;
-        }
-
-        NotificationSetting n = account.getNotificationSetting();
-
-        configureLockScreenNotification(builder, context, account, newMessages, unreadCount, "", sender, data.messages);
-
-        configureNotification(
-                builder,
-                (n.shouldRing()) ?  n.getRingtone() : null,
-                (n.shouldVibrate()) ? n.getVibration() : null,
-                (n.isLed()) ? Integer.valueOf(n.getLedColor()) : null,
-                VisualVoicemail.NOTIFICATION_LED_BLINK_SLOW,
-                ringAndVibrate);
-
-        notifMgr.notify(account.getAccountNumber(), builder.build());
-    }
-
-    private TaskStackBuilder buildAccountsBackStack(Context context) {
-        TaskStackBuilder stack = TaskStackBuilder.create(context);
-        if (!skipAccountsInBackStack(context)) {
-            stack.addNextIntent(new Intent(context, Accounts.class).putExtra(Accounts.EXTRA_STARTUP, false));
-        }
-        return stack;
-    }
-
-    private TaskStackBuilder buildFolderListBackStack(Context context, Account account) {
-        TaskStackBuilder stack = buildAccountsBackStack(context);
-        stack.addNextIntent(FolderList.actionHandleAccountIntent(context, account, false));
-        return stack;
-    }
-
-    private TaskStackBuilder buildUnreadBackStack(Context context, final Account account) {
-        TaskStackBuilder stack = buildAccountsBackStack(context);
-        LocalSearch search = Accounts.createUnreadSearch(context, account);
-        stack.addNextIntent(MessageList.intentDisplaySearch(context, search, true, false, false));
-        return stack;
-    }
-
-    private TaskStackBuilder buildMessageListBackStack(Context context, Account account, String folder) {
-        TaskStackBuilder stack = skipFolderListInBackStack(context, account, folder)
-                ? buildAccountsBackStack(context)
-                : buildFolderListBackStack(context, account);
-
-        if (folder != null) {
-            LocalSearch search = new LocalSearch(folder);
-            search.addAllowedFolder(folder);
-            search.addAccountUuid(account.getUuid());
-            stack.addNextIntent(MessageList.intentDisplaySearch(context, search, false, true, true));
-        }
-        return stack;
-    }
-
-    private TaskStackBuilder buildMessageViewBackStack(Context context, MessageReference message) {
-        Account account = Preferences.getPreferences(context).getAccount(message.getAccountUuid());
-        TaskStackBuilder stack = buildMessageListBackStack(context, account, message.getFolderName());
-        stack.addNextIntent(MessageList.actionDisplayMessageIntent(context, message));
-        return stack;
-    }
-
-    private boolean skipFolderListInBackStack(Context context, Account account, String folder) {
-        return folder != null && folder.equals(account.getAutoExpandFolderName());
-    }
-
-    private boolean skipAccountsInBackStack(Context context) {
-        return Preferences.getPreferences(context).getAccounts().size() == 1;
-    }
-
-    /**
-     * Configure the notification sound and LED
-     *
-     * @param builder
-     *         {@link NotificationCompat.Builder} instance used to configure the notification.
-     *         Never {@code null}.
-     * @param ringtone
-     *          String name of ringtone. {@code null}, if no ringtone should be played.
-     * @param vibrationPattern
-     *         {@code long[]} vibration pattern. {@code null}, if no vibration should be played.
-     * @param ledColor
-     *         Color to flash LED. {@code null}, if no LED flash should happen.
-     * @param ledSpeed
-     *         Either {@link VisualVoicemail#NOTIFICATION_LED_BLINK_SLOW} or
-     *         {@link VisualVoicemail#NOTIFICATION_LED_BLINK_FAST}.
-     * @param ringAndVibrate
-     *          {@code true}, if ringtone/vibration are allowed. {@code false}, otherwise.
-     */
-    private void configureNotification(NotificationCompat.Builder builder, String ringtone,
-            long[] vibrationPattern, Integer ledColor, int ledSpeed, boolean ringAndVibrate) {
-
-        // if it's quiet time, then we shouldn't be ringing, buzzing or flashing
-        if (VisualVoicemail.isQuietTime()) {
-            return;
-        }
-
-        if (ringAndVibrate) {
-            if (ringtone != null && !TextUtils.isEmpty(ringtone)) {
-                builder.setSound(Uri.parse(ringtone));
-            }
-
-            if (vibrationPattern != null) {
-                builder.setVibrate(vibrationPattern);
-            }
-        }
-
-        if (ledColor != null) {
-            int ledOnMS;
-            int ledOffMS;
-            if (ledSpeed == VisualVoicemail.NOTIFICATION_LED_BLINK_SLOW) {
-                ledOnMS = VisualVoicemail.NOTIFICATION_LED_ON_TIME;
-                ledOffMS = VisualVoicemail.NOTIFICATION_LED_OFF_TIME;
-            } else {
-                ledOnMS = VisualVoicemail.NOTIFICATION_LED_FAST_ON_TIME;
-                ledOffMS = VisualVoicemail.NOTIFICATION_LED_FAST_OFF_TIME;
-            }
-
-            builder.setLights(ledColor, ledOnMS, ledOffMS);
-        }
-    }
-
-    /**
-     * Configure lock screen notifications on platforms that support it
-     *
-     * @param builder Unlocked notification
-     * @param context Context
-     * @param account Account being notified
-     * @param newMessages Number of new messages being notified for
-     * @param unreadCount Total number of unread messages in this account
-     * @param accountDescription Formatted account name for display
-     * @param formattedSender Formatted sender name for display
-     * @param messages List of messages if notifying for multiple messages. Null otherwise.
-     */
-    private void configureLockScreenNotification(NotificationCompat.Builder builder,
-                                                 Context context,
-                                                 Account account,
-                                                 int newMessages,
-                                                 int unreadCount,
-                                                 CharSequence accountDescription,
-                                                 CharSequence formattedSender,
-                                                 List<? extends Message> messages) {
-        if (!platformSupportsLockScreenNotifications()) {
-            return;
-        }
-
-        builder.setSmallIcon(R.drawable.notify_new_voicemail);
-        builder.setColor(account.getChipColor());
-
-        NotificationCompat.Builder publicNotification = new NotificationCompat.Builder(context);
-        publicNotification.setSmallIcon(R.drawable.notify_new_voicemail);
-        publicNotification.setColor(account.getChipColor());
-        publicNotification.setNumber(unreadCount);
-        final String title = context.getResources().getQuantityString(
-            R.plurals.notification_new_messages_title, newMessages, newMessages);
-        publicNotification.setContentTitle(title);
-
-        switch (VisualVoicemail.getLockScreenNotificationVisibility()) {
-            case NOTHING:
-                builder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
-                break;
-            case APP_NAME:
-                // This is the Android default, but we should be explicit in case that changes in the future.
-                builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
-                break;
-            /*case SENDERS:
-                if (newMessages == 1) {
-                    publicNotification.setContentText(formattedSender);
-                } else {
-                    // Use a LinkedHashSet so that we preserve ordering (newest to oldest), but still remove duplicates
-                    Set<CharSequence> senders = new LinkedHashSet<CharSequence>(NUM_SENDERS_IN_LOCK_SCREEN_NOTIFICATION);
-                    for (Message message : messages) {
-                        senders.add(getMessageSender(context, account, message));
-                        if (senders.size() == NUM_SENDERS_IN_LOCK_SCREEN_NOTIFICATION) {
-                            break;
-                        }
-                    }
-                    publicNotification.setContentText(TextUtils.join(", ", senders));
-                }
-
-                builder.setPublicVersion(publicNotification.build());
-                break;
-            case EVERYTHING:
-                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-                break;*/
-            case MESSAGE_COUNT:
-            default:
-                publicNotification.setContentText(accountDescription);
-
-                builder.setPublicVersion(publicNotification.build());
-                break;
-        }
-    }
-
-    /** Cancel a notification of new email messages */
-    public void notifyAccountCancel(Context context, Account account) {
-        NotificationManager notifMgr =
-            (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notifMgr.cancel(account.getAccountNumber());
-        notifMgr.cancel(-1000 - account.getAccountNumber());
-        notificationData.remove(account.getAccountNumber());
-    }
-
     public void deleteAccount(Context context, Account account) {
-        notifyAccountCancel(context, account);
+        notificationController.clearNewMailNotifications(account);
         memorizingListener.removeAccount(account);
+    }
+
+    /**
+     * Save a draft message.
+     * @param account Account we are saving for.
+     * @param message Message to save.
+     * @return Message representing the entry in the local store.
+     */
+    public Message saveDraft(final Account account, final Message message, long existingDraftId, boolean saveRemotely) {
+        Message localMessage = null;
+        try {
+            LocalStore localStore = account.getLocalStore();
+            LocalFolder localFolder = localStore.getFolder(account.getDraftsFolderName());
+            localFolder.open(Folder.OPEN_MODE_RW);
+
+            if (existingDraftId != INVALID_MESSAGE_ID) {
+                String uid = localFolder.getMessageUidById(existingDraftId);
+                message.setUid(uid);
+            }
+
+            // Save the message to the store.
+            localFolder.appendMessages(Collections.singletonList(message));
+            // Fetch the message back from the store.  This is the Message that's returned to the caller.
+            localMessage = localFolder.getMessage(message.getUid());
+            localMessage.setFlag(Flag.X_DOWNLOADED_FULL, true);
+
+            if (saveRemotely) {
+                PendingCommand command = new PendingCommand();
+                command.command = PENDING_COMMAND_APPEND;
+                command.arguments = new String[] {
+                        localFolder.getName(),
+                        localMessage.getUid()
+                };
+                queuePendingCommand(account, command);
+                processPendingCommands(account);
+            }
+
+        } catch (MessagingException e) {
+            Log.e(VisualVoicemail.LOG_TAG, "Unable to save message as draft.", e);
+            addErrorMessage(account, null, e);
+        }
+        return localMessage;
     }
 
     public long getId(Message message) {
@@ -4922,7 +4281,7 @@ public class MessagingController implements Runnable {
                         Log.i(VisualVoicemail.LOG_TAG, "messagesArrived newCount = " + newCount + ", unread count = " + unreadMessageCount);
 
                     if (unreadMessageCount == 0) {
-                        notifyAccountCancel(context, account);
+                        notificationController.clearNewMailNotifications(account);
                     }
 
                     for (MessagingListener l : getListeners()) {
@@ -4964,6 +4323,32 @@ public class MessagingController implements Runnable {
         for (MessagingListener l : getListeners()) {
             l.systemStatusChanged();
         }
+    }
+
+    public void cancelNotificationsForAccount(Account account) {
+        notificationController.clearNewMailNotifications(account);
+    }
+
+    public void cancelNotificationForMessage(Account account, MessageReference messageReference) {
+        notificationController.removeNewMailNotification(account, messageReference);
+    }
+
+    public void clearCertificateErrorNotifications(Account account, CheckDirection direction) {
+        boolean incoming = (direction == CheckDirection.INCOMING);
+        notificationController.clearCertificateErrorNotifications(account, incoming);
+    }
+
+    public void notifyUserIfCertificateProblem(Account account, Exception exception, boolean incoming) {
+        if (!(exception instanceof CertificateValidationException)) {
+            return;
+        }
+
+        CertificateValidationException cve = (CertificateValidationException) exception;
+        if (!cve.needsUserAttention()) {
+            return;
+        }
+
+        notificationController.showCertificateErrorNotification(account, incoming);
     }
 
     enum MemorizingState { STARTED, FINISHED, FAILED }
@@ -5220,12 +4605,12 @@ public class MessagingController implements Runnable {
 
             messageList.add(message);
         }
-        for (Entry<Account, Map<Folder, List<Message>>> entry : accountMap.entrySet()) {
+        for (Map.Entry<Account, Map<Folder, List<Message>>> entry : accountMap.entrySet()) {
             Account account = entry.getKey();
 
             //account.refresh(Preferences.getPreferences(VisualVoicemail.app));
             Map<Folder, List<Message>> folderMap = entry.getValue();
-            for (Entry<Folder, List<Message>> folderEntry : folderMap.entrySet()) {
+            for (Map.Entry<Folder, List<Message>> folderEntry : folderMap.entrySet()) {
                 Folder folder = folderEntry.getKey();
                 List<Message> messageList = folderEntry.getValue();
                 actor.act(account, folder, messageList);

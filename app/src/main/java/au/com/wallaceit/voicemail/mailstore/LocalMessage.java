@@ -18,13 +18,14 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.MimeMessage;
-
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.DbCallback;
 import au.com.wallaceit.voicemail.mailstore.LockableDatabase.WrappedException;
+import au.com.wallaceit.voicemail.message.preview.PreviewResult.PreviewType;
+
 
 public class LocalMessage extends MimeMessage {
     protected MessageReference mReference;
-    private final au.com.wallaceit.voicemail.mailstore.LocalStore localStore;
+    private final LocalStore localStore;
 
     private long mId;
     private int mAttachmentCount;
@@ -38,6 +39,7 @@ public class LocalMessage extends MimeMessage {
     private long mRootId;
     private long messagePartId;
     private String mimeType;
+    private PreviewType previewType;
 
     private LocalMessage(LocalStore localStore) {
         this.localStore = localStore;
@@ -85,8 +87,14 @@ public class LocalMessage extends MimeMessage {
         this.setInternalDate(new Date(cursor.getLong(11)));
         this.setMessageId(cursor.getString(12));
 
-        final String preview = cursor.getString(14);
-        mPreview = (preview == null ? "" : preview);
+        String previewTypeString = cursor.getString(24);
+        DatabasePreviewType databasePreviewType = DatabasePreviewType.fromDatabaseValue(previewTypeString);
+        previewType = databasePreviewType.getPreviewType();
+        if (previewType == PreviewType.TEXT) {
+            mPreview = cursor.getString(14);
+        } else {
+            mPreview = "";
+        }
 
         if (this.mFolder == null) {
             LocalFolder f = new LocalFolder(this.localStore, cursor.getInt(13));
@@ -133,6 +141,14 @@ public class LocalMessage extends MimeMessage {
         }
 
         super.writeTo(out);
+    }
+
+    public PreviewType getPreviewType() {
+        return previewType;
+    }
+
+    public String getPreview() {
+        return mPreview;
     }
 
     @Override
@@ -446,6 +462,12 @@ public class LocalMessage extends MimeMessage {
         getFolder().populateHeaders(this);
     }
 
+    void loadHeadersIfNecessary() throws MessagingException {
+        if (!mHeadersLoaded) {
+            loadHeaders();
+        }
+    }
+
     @Override
     public void setHeader(String name, String value) throws MessagingException {
         if (!mHeadersLoaded)
@@ -475,8 +497,8 @@ public class LocalMessage extends MimeMessage {
     }
 
     @Override
-    public au.com.wallaceit.voicemail.mailstore.LocalMessage clone() {
-        au.com.wallaceit.voicemail.mailstore.LocalMessage message = new au.com.wallaceit.voicemail.mailstore.LocalMessage(this.localStore);
+    public LocalMessage clone() {
+        LocalMessage message = new LocalMessage(this.localStore);
         super.copy(message);
 
         message.mId = mId;
@@ -510,7 +532,7 @@ public class LocalMessage extends MimeMessage {
     @Override
     protected void copy(MimeMessage destination) {
         super.copy(destination);
-        if (destination instanceof au.com.wallaceit.voicemail.mailstore.LocalMessage) {
+        if (destination instanceof LocalMessage) {
             ((LocalMessage)destination).mReference = mReference;
         }
     }
@@ -530,7 +552,7 @@ public class LocalMessage extends MimeMessage {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        final au.com.wallaceit.voicemail.mailstore.LocalMessage that = (LocalMessage) o;
+        final LocalMessage that = (LocalMessage) o;
         return !(getAccountUuid() != null ? !getAccountUuid().equals(that.getAccountUuid()) : that.getAccountUuid() != null);
     }
 

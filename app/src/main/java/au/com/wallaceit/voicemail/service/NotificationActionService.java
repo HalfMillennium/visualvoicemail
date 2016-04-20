@@ -227,8 +227,6 @@ public class NotificationActionService extends CoreService {
                 // of unseen messages is reset
             }
 
-            /* there's no point in keeping the notification after the user clicked on it */
-            controller.notifyAccountCancel(this, account);
         } else {
             Log.w(VisualVoicemail.LOG_TAG, "Could not find account for notification action.");
         }
