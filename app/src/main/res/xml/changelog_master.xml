@@ -8,6 +8,12 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
+    <release version="1.06" versioncode="8">
+        <change>Added auto archiving functionality.</change>
+        <change>Updated K9-mail library and core files.</change>
+        <change>Added the ability to view K9Mail error messages</change>
+        <change>Improved fix for issue downloading some messages caused by IMAP parsing error.</change>
+    </release>
     <release version="0.91b" versioncode="2">
         <change>Added greeting recording feature, various bug fixes &amp; improvements</change>
     </release>
