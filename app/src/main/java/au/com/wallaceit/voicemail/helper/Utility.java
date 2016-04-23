@@ -5,21 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.QuickContactBadge;
 import android.widget.TextView;
-
-import com.fsck.k9.mail.Address;
-
-import au.com.wallaceit.voicemail.VisualVoicemail;
 
 import org.apache.james.mime4j.util.MimeUtil;
 
@@ -29,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 public class Utility {
 

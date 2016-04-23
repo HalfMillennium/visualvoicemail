@@ -21,8 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fsck.k9.mail.Folder;
-import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 
 import org.apache.commons.io.IOUtils;
@@ -54,7 +52,6 @@ import au.com.wallaceit.voicemail.fragment.MessageListFragment.MessageListFragme
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.helper.VoicemailAttachmentHelper;
 import au.com.wallaceit.voicemail.helper.VvmContacts;
-import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.search.LocalSearch;

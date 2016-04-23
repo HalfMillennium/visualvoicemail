@@ -27,8 +27,6 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;

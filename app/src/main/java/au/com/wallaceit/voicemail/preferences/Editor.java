@@ -2,8 +2,6 @@ package au.com.wallaceit.voicemail.preferences;
 
 import android.util.Log;
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.preferences.*;
-import au.com.wallaceit.voicemail.preferences.Storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

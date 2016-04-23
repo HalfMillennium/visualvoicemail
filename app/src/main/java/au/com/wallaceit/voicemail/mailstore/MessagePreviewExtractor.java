@@ -1,13 +1,8 @@
 package au.com.wallaceit.voicemail.mailstore;
 
 
-import java.util.List;
-
 import android.content.Context;
-import android.text.TextUtils;
 
-import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.helper.HtmlConverter;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.Viewable;
@@ -15,6 +10,10 @@ import com.fsck.k9.mail.internet.Viewable.Alternative;
 import com.fsck.k9.mail.internet.Viewable.Html;
 import com.fsck.k9.mail.internet.Viewable.MessageHeader;
 import com.fsck.k9.mail.internet.Viewable.Textual;
+
+import java.util.List;
+
+import au.com.wallaceit.voicemail.helper.HtmlConverter;
 
 
 class MessagePreviewExtractor {

@@ -13,9 +13,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.BaseAccount;
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.K9ListActivity;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 
 

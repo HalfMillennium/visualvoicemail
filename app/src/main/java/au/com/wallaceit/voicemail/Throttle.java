@@ -19,9 +19,6 @@ package au.com.wallaceit.voicemail;
 import android.os.Handler;
 import android.util.Log;
 
-import au.com.wallaceit.voicemail.*;
-import au.com.wallaceit.voicemail.Clock;
-
 import java.util.Timer;
 import java.util.TimerTask;
 

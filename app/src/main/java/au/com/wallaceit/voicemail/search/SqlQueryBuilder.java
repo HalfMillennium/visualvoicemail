@@ -1,15 +1,13 @@
 package au.com.wallaceit.voicemail.search;
 
+import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.MessagingException;
+
 import java.util.List;
 
 import au.com.wallaceit.voicemail.Account;
-import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.Folder;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
-import au.com.wallaceit.voicemail.search.*;
-import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
-import au.com.wallaceit.voicemail.search.LocalSearch;
 import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchCondition;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;

@@ -1,5 +1,15 @@
 package au.com.wallaceit.voicemail.preferences;
 
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+import android.util.Xml;
+
+import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.store.RemoteStore;
+
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,24 +17,14 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.helper.FileHelper;
-import org.xmlpull.v1.XmlSerializer;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Environment;
-import android.util.Log;
-import android.util.Xml;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;
-import com.fsck.k9.mail.ServerSettings;
-import com.fsck.k9.mail.store.RemoteStore;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.helper.FileHelper;
 import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
 import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
 

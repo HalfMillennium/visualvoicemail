@@ -137,6 +137,12 @@
 
         <CheckBoxPreference
             android:persistent="false"
+            android:key="auto_archive"
+            android:title="@string/auto_archive_title"
+            android:summary="@string/auto_archive_desc"/>
+
+        <CheckBoxPreference
+            android:persistent="false"
             android:key="server_requires_cellular"
             android:title="@string/server_requires_cellular"
             android:summary="@string/server_requires_cellular_desc"/>

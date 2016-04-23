@@ -3,16 +3,15 @@ package au.com.wallaceit.voicemail.service;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import au.com.wallaceit.voicemail.VisualVoicemail;
+
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.BootReceiver;
-import au.com.wallaceit.voicemail.service.CoreService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import au.com.wallaceit.voicemail.VisualVoicemail;
 
 public class SleepService extends CoreService {
 

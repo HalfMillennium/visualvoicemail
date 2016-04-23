@@ -12,7 +12,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -52,11 +51,12 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
+import com.fsck.k9.mail.internet.MimeBodyPart;
+import com.fsck.k9.mail.internet.MimeMessage;
+import com.fsck.k9.mail.internet.MimeMultipart;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +66,6 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -732,9 +731,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }*/
             int adaptorPosition = listViewToAdapterPosition(position);
             MessageReference reference = getReferenceForPosition(adaptorPosition);
-            LocalMessage message = null;
-            if (reference.getFolderName().equals("K9mail-errors")) {
-                message = reference.restoreToLocalMessage(getActivity());
+            LocalMessage message = reference.restoreToLocalMessage(getActivity());
+            if (message.getFrom().length>0 && message.getFrom()[0].getAddress().equals(message.getAccount().getProvider().networkOperatorName)) {
+                //message = reference.restoreToLocalMessage(getActivity());
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Error Info");
                 builder.setMessage(message.getSubject());
@@ -744,8 +743,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             }
 
             if (mPreferences.getAccount(mAccount.getUuid()).isMarkMessageAsReadOnView()) {
-                if (message==null)
-                    message = reference.restoreToLocalMessage(getActivity());
+                //if (message==null)
+                    //message = reference.restoreToLocalMessage(getActivity());
                 // add the read flag if it's not present, stops redundant network call
                 if (!message.getFlags().contains(Flag.SEEN)) {
                     setFlag(adaptorPosition, Flag.SEEN, true);
@@ -1981,8 +1980,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             //boolean ccMe = mMessageHelper.toMe(account, ccAddrs);
             Address contactLookupAddress = null;
             CharSequence displayNumber, displayName;
-
-            if (cursor.getString(FOLDER_NAME_COLUMN).equals("K9mail-errors")) {
+            Address[] senders = Address.unpack(cursor.getString(SENDER_LIST_COLUMN));
+            if (senders.length>0 && senders[0].getAddress().equals(account.getProvider().networkOperatorName)) {
                 String subject = cursor.getString(SUBJECT_COLUMN);
                 displayNumber = subject;
                 int colindex = subject.indexOf(":");

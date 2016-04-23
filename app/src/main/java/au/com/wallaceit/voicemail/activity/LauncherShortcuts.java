@@ -7,10 +7,6 @@ import android.os.Parcelable;
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.BaseAccount;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.AccountList;
-import au.com.wallaceit.voicemail.activity.FolderList;
-import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.search.SearchAccount;
 
 public class LauncherShortcuts extends AccountList {

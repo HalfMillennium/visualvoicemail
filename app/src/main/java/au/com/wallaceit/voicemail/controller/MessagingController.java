@@ -1,6 +1,41 @@
 package au.com.wallaceit.voicemail.controller;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.os.Process;
 import android.os.SystemClock;
+import android.util.Log;
+
+import com.fsck.k9.mail.Address;
+import com.fsck.k9.mail.AuthenticationFailedException;
+import com.fsck.k9.mail.CertificateValidationException;
+import com.fsck.k9.mail.FetchProfile;
+import com.fsck.k9.mail.Flag;
+import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.Folder.FolderType;
+import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.Message.RecipientType;
+import com.fsck.k9.mail.MessageRetrievalListener;
+import com.fsck.k9.mail.MessagingException;
+import com.fsck.k9.mail.Part;
+import com.fsck.k9.mail.PushReceiver;
+import com.fsck.k9.mail.Pusher;
+import com.fsck.k9.mail.Store;
+import com.fsck.k9.mail.internet.MessageExtractor;
+import com.fsck.k9.mail.internet.MimeMessage;
+import com.fsck.k9.mail.internet.MimeMessageHelper;
+import com.fsck.k9.mail.internet.MimeUtility;
+import com.fsck.k9.mail.internet.TextBody;
+import com.fsck.k9.mail.power.TracingPowerManager;
+import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
+import com.fsck.k9.mail.store.pop3.Pop3Store;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,63 +53,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.os.PowerManager;
-import android.os.Process;
-import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.Account.Expunge;
 import au.com.wallaceit.voicemail.AccountStats;
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail.Intents;
+import au.com.wallaceit.voicemail.account.AccountCreator;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
-import com.fsck.k9.mail.AuthenticationFailedException;
-import com.fsck.k9.mail.CertificateValidationException;
-import com.fsck.k9.mail.power.TracingPowerManager;
-import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.mail.Address;
-import com.fsck.k9.mail.FetchProfile;
-import com.fsck.k9.mail.Flag;
-import com.fsck.k9.mail.Folder;
-import com.fsck.k9.mail.Folder.FolderType;
-
-import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.Message.RecipientType;
-import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.Part;
-import com.fsck.k9.mail.PushReceiver;
-import com.fsck.k9.mail.Pusher;
-import com.fsck.k9.mail.Store;
-import com.fsck.k9.mail.Transport;
-import com.fsck.k9.mail.internet.MessageExtractor;
-import com.fsck.k9.mail.internet.MimeMessage;
-import com.fsck.k9.mail.internet.MimeMessageHelper;
-import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.mail.internet.TextBody;
-import au.com.wallaceit.voicemail.mailstore.LocalFolder.MoreMessages;
-import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
-import com.fsck.k9.mail.MessageRetrievalListener;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
+import au.com.wallaceit.voicemail.mailstore.LocalFolder.MoreMessages;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 import au.com.wallaceit.voicemail.mailstore.LocalStore.PendingCommand;
-import com.fsck.k9.mail.store.pop3.Pop3Store;
+import au.com.wallaceit.voicemail.mailstore.MessageRemovalListener;
 import au.com.wallaceit.voicemail.mailstore.UnavailableStorageException;
 import au.com.wallaceit.voicemail.notification.NotificationController;
 import au.com.wallaceit.voicemail.provider.EmailProvider;
@@ -823,9 +830,9 @@ public class MessagingController implements Runnable {
             l.synchronizeMailboxStarted(account, folder);
         }
         /*
-         * We don't ever sync the Outbox or errors folder
+         * We don't ever sync the archive or errors folder
          */
-        if (folder.equals(account.getOutboxFolderName()) || folder.equals(account.getErrorFolderName())) {
+        if (folder.equals(Account.ARCHIVE) || folder.equals(account.getErrorFolderName())) {
             for (MessagingListener l : getListeners(listener)) {
                 l.synchronizeMailboxFinished(account, folder, 0, 0);
             }
@@ -984,24 +991,26 @@ public class MessagingController implements Runnable {
              * Remove any messages that are in the local store but no longer on the remote store or are too old
              */
             MoreMessages moreMessages = localFolder.getMoreMessages();
-            if (account.syncRemoteDeletions()) {
-                List<Message> destroyMessages = new ArrayList<Message>();
+            if (account.getAutoArchive()) {
+                List<Message> archiveMessages = new ArrayList<Message>();
                 for (Message localMessage : localMessages) {
-                    if (remoteUidMap.get(localMessage.getUid()) == null) {
-                        destroyMessages.add(localMessage);
+                    if (localMessage.getFolder().getName().equals(account.getInboxFolderName()) && remoteUidMap.get(localMessage.getUid()) == null) {
+                        archiveMessages.add(localMessage);
                     }
                 }
 
-                if (!destroyMessages.isEmpty()) {
+                if (!archiveMessages.isEmpty()) {
                     moreMessages = MoreMessages.UNKNOWN;
 
-                    localFolder.destroyMessages(destroyMessages);
+                    //localFolder.destroyMessages(archiveMessages);
+                    AccountCreator.createArchiveFolderIfNeeded(account, localStore);
 
-                    for (Message destroyMessage : destroyMessages) {
+                    localFolder.moveMessages(archiveMessages, localStore.getFolder(Account.ARCHIVE));
+                    /*for (Message destroyMessage : archiveMessages) {
                         for (MessagingListener l : getListeners(listener)) {
                             l.synchronizeMailboxRemovedMessage(account, folder, destroyMessage);
                         }
-                    }
+                    }*/
                 }
             }
             localMessages = null;
@@ -2009,7 +2018,7 @@ public class MessagingController implements Runnable {
         if (uidMap == null || uidMap.isEmpty()) {
             queueMoveOrCopy(account, srcFolder, destFolder, isCopy, uids);
         } else {
-            if (account.getErrorFolderName().equals(srcFolder)) {
+            if (Account.ARCHIVE.equals(destFolder) || account.getErrorFolderName().equals(srcFolder)) {
                 return;
             }
             PendingCommand command = new PendingCommand();
@@ -2608,7 +2617,7 @@ public class MessagingController implements Runnable {
 
             // The error folder is always a local folder
             // TODO: Skip the remote part for all local-only folders
-            if (account.getErrorFolderName().equals(folderName)) {
+            if (Account.ARCHIVE.equals(folderName) || account.getErrorFolderName().equals(folderName)) {
                 continue;
             }
 
@@ -2673,7 +2682,7 @@ public class MessagingController implements Runnable {
 
             // The error folder is always a local folder
             // TODO: Skip the remote part for all local-only folders
-            if (account.getErrorFolderName().equals(folderName)) {
+            if (Account.ARCHIVE.equals(folderName) || account.getErrorFolderName().equals(folderName)) {
                 return;
             }
 

@@ -30,18 +30,19 @@ abstract class BaseNotifications {
 
     protected NotificationCompat.Builder createBigTextStyleNotification(Account account, NotificationHolder holder,
             int notificationId) {
-        String accountName = controller.getAccountName(account);
+        //String accountName = controller.getAccountName(account);
         NotificationContent content = holder.content;
 
+        String description = context.getString(R.string.notification_new_description, content.sender);
         NotificationCompat.Builder builder = createAndInitializeNotificationBuilder(account)
-                .setTicker(content.summary)
+                //.setTicker(content.summary)
                 .setGroup(NOTIFICATION_GROUP_KEY)
-                .setContentTitle(content.sender)
-                .setContentText(content.subject)
-                .setSubText(accountName);
+                .setContentTitle(context.getString(R.string.notification_new_title))
+                .setContentText(description);
+                //.setSubText(accountName);
 
         NotificationCompat.BigTextStyle style = createBigTextStyle(builder);
-        style.bigText(content.preview);
+        style.bigText(description);
 
         builder.setStyle(style);
 

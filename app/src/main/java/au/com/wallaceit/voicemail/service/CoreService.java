@@ -16,9 +16,6 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.BootReceiver;
-import au.com.wallaceit.voicemail.service.MailService;
 
 /**
  * {@code CoreService} is the base class for all K-9 Services.

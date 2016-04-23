@@ -1,16 +1,7 @@
 package au.com.wallaceit.voicemail.activity.setup;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -21,17 +12,19 @@ import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
-import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
-import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import au.com.wallaceit.voicemail.activity.ColorPickerDialog;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
-import au.com.wallaceit.voicemail.activity.setup.*;
-import au.com.wallaceit.voicemail.activity.setup.FontSizeSettings;
-import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.FileBrowserHelper;
 import au.com.wallaceit.voicemail.helper.FileBrowserHelper.FileBrowserFailOverCallback;
 import au.com.wallaceit.voicemail.notification.NotificationController;
@@ -39,7 +32,6 @@ import au.com.wallaceit.voicemail.preferences.CheckBoxListPreference;
 import au.com.wallaceit.voicemail.preferences.Storage;
 import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.preferences.TimePickerPreference;
-
 import au.com.wallaceit.voicemail.service.MailService;
 
 

@@ -2,13 +2,14 @@ package au.com.wallaceit.voicemail.activity.setup;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.preference.*;
-import au.com.wallaceit.voicemail.*;
+import android.preference.ListPreference;
+
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.K9PreferenceActivity;
-import au.com.wallaceit.voicemail.activity.setup.SliderPreference;
 import au.com.wallaceit.voicemail.preferences.Storage;
 import au.com.wallaceit.voicemail.preferences.StorageEditor;
 

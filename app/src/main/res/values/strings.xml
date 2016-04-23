@@ -158,6 +158,7 @@
     <string name="recreating_account">Recreating account \"<xliff:g id="account">%s</xliff:g>\"</string>
 
     <string name="notification_new_title">New Voicemail</string>
+    <string name="notification_new_description">New Voicemail from %s</string>
     <plurals name="notification_new_messages_title">
         <item quantity="one"><xliff:g id="new_message_count">%d</xliff:g> new voicemail</item>
         <item quantity="other"><xliff:g id="new_message_count">%d</xliff:g> new voicemails</item>
@@ -888,5 +889,7 @@
 
     <string name="notification_authentication_error_title">Authentication failed</string>
     <string name="notification_authentication_error_text">Authentication failed for <xliff:g id="account">%s</xliff:g>. Update your server settings.</string>
+    <string name="auto_archive_title">Auto Archive</string>
+    <string name="auto_archive_desc">Archive messages when they are removed from the server</string>
 
 </resources>

@@ -31,11 +31,16 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
+import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.Store;
+import com.fsck.k9.mail.internet.MimeBodyPart;
 import com.fsck.k9.mail.internet.MimeHeader;
+import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
+
+import org.apache.james.mime4j.util.MimeUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -145,16 +150,19 @@ public class VoicemailAttachmentHelper {
             fp.add(FetchProfile.Item.ENVELOPE);
             fp.add(FetchProfile.Item.BODY);
 
-            Log.w(VisualVoicemail.LOG_TAG, "Message load started");
+            if (VisualVoicemail.DEBUG)
+                Log.w(VisualVoicemail.LOG_TAG, "Message load started");
 
             try {
                 localFolder.fetch(Collections.singletonList(localMessage), fp, null);
             } catch (IllegalArgumentException ex){
-                Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, trying to download the message again");
-                Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", localMessage.getHeaderNames().toArray()));
-                Log.w(VisualVoicemail.LOG_TAG, localMessage.getMimeType());
-                Log.w(VisualVoicemail.LOG_TAG, "Body missing: " + String.valueOf(localMessage.isBodyMissing()));
-                Log.w(VisualVoicemail.LOG_TAG, "Attachments: " + String.valueOf(localMessage.getAttachmentCount()));
+                if (VisualVoicemail.DEBUG) {
+                    Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, trying to download the message again");
+                    Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", localMessage.getHeaderNames().toArray()));
+                    Log.w(VisualVoicemail.LOG_TAG, localMessage.getMimeType());
+                    Log.w(VisualVoicemail.LOG_TAG, "Body missing: " + String.valueOf(localMessage.isBodyMissing()));
+                    Log.w(VisualVoicemail.LOG_TAG, "Attachments: " + String.valueOf(localMessage.getAttachmentCount()));
+                }
                 // force download the body of the message, for some reason using read only mode on the server prevents an imap response parsing error.
                 localMessage.setFlag(Flag.X_DOWNLOADED_FULL, false);
                 //controller.loadMessageForViewRemoteSynchronous(account, messageReference.getFolderName(), uid, null, true, false);
@@ -185,7 +193,8 @@ public class VoicemailAttachmentHelper {
                     }
 
                     protected void onPostExecute(Boolean result) {
-                        Log.w(VisualVoicemail.LOG_TAG, "Download complete, body still missing: " + String.valueOf(localMessage.isBodyMissing()));
+                        if (VisualVoicemail.DEBUG)
+                            Log.w(VisualVoicemail.LOG_TAG, "Download complete, body still missing: " + String.valueOf(localMessage.isBodyMissing()));
                         if (result && !localMessage.isBodyMissing()) {
                             getVoicemailAttachment(messageReference, callback);
                         } else {
@@ -202,15 +211,17 @@ public class VoicemailAttachmentHelper {
 
             attachment = walkMessagePartsForRecording(localMessage);
             if (attachment!=null) {
-                try {
-                    Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));
-                    Log.i(VisualVoicemail.LOG_TAG, "Attachment Disposition: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_DISPOSITION)));
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
+                if (VisualVoicemail.DEBUG)
+                    try {
+                        Log.i(VisualVoicemail.LOG_TAG, "Attachment Content Type: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_TYPE)));
+                        Log.i(VisualVoicemail.LOG_TAG, "Attachment Disposition: " + TextUtils.join(";", attachment.getHeader(MimeHeader.HEADER_CONTENT_DISPOSITION)));
+                    } catch (MessagingException e) {
+                        e.printStackTrace();
+                    }
 
                 if (needsDownloading()) {
-                    Log.w(VisualVoicemail.LOG_TAG, "Attachment part not loaded, starting download");
+                    if (VisualVoicemail.DEBUG)
+                        Log.w(VisualVoicemail.LOG_TAG, "Attachment part not loaded, starting download");
                     downloadAttachmentPart((LocalPart) attachment, new Runnable() {
                         @Override
                         public void run() {
@@ -223,7 +234,8 @@ public class VoicemailAttachmentHelper {
                 return;
             }
 
-            Log.w(VisualVoicemail.LOG_TAG, "Attachment was null");
+            if (VisualVoicemail.DEBUG)
+                Log.w(VisualVoicemail.LOG_TAG, "Attachment was null");
 
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -232,20 +244,24 @@ public class VoicemailAttachmentHelper {
 
     private Part walkMessagePartsForRecording(Part part) {
         if (part.getBody() instanceof MimeMultipart) {
-            Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
+            if (VisualVoicemail.DEBUG)
+                Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
             MimeMultipart mp = (MimeMultipart) part.getBody();
             for (int i = 0; i < mp.getCount(); i++) {
-                Log.i(VisualVoicemail.LOG_TAG, "multiPartCount = " + mp.getCount());
+                if (VisualVoicemail.DEBUG)
+                    Log.i(VisualVoicemail.LOG_TAG, "multiPartCount = " + mp.getCount());
                 Part rtn = walkMessagePartsForRecording(mp.getBodyPart(i));
                 if (rtn!=null)
                     return rtn;
             }
         } else {
-            Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
+            if (VisualVoicemail.DEBUG)
+                Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
             if (part.getBody() instanceof FileBackedBody || part.getBody() instanceof BinaryMemoryBody)
                 return part;
         }
-        Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " null: " + part.getMimeType());
+        if (VisualVoicemail.DEBUG)
+            Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " null: " + part.getMimeType());
         return null;
     }
 
@@ -265,7 +281,8 @@ public class VoicemailAttachmentHelper {
         String accountUuid = localPart.getAccountUuid();
         Account account = Preferences.getPreferences(context).getAccount(accountUuid);
         LocalMessage message = localPart.getMessage();
-        Log.w(VisualVoicemail.LOG_TAG, "Downloading attachment part");
+        if (VisualVoicemail.DEBUG)
+            Log.w(VisualVoicemail.LOG_TAG, "Downloading attachment part");
         //messageViewFragment.showAttachmentLoadingDialog();
         controller.loadAttachment(account, message, attachment, new MessagingListener() {
             @Override

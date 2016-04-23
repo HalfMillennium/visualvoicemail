@@ -1,5 +1,7 @@
 package au.com.wallaceit.voicemail.preferences;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,22 +12,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import android.content.SharedPreferences;
-import android.os.Environment;
-
 import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Account.SortType;
 import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.R;
 import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationHideSubject;
 import au.com.wallaceit.voicemail.VisualVoicemail.NotificationQuickDelete;
 import au.com.wallaceit.voicemail.VisualVoicemail.SplitViewMode;
 import au.com.wallaceit.voicemail.VisualVoicemail.Theme;
-import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.Account.SortType;
-import au.com.wallaceit.voicemail.preferences.*;
-import au.com.wallaceit.voicemail.preferences.Settings;
-import au.com.wallaceit.voicemail.preferences.Settings.*;
-import au.com.wallaceit.voicemail.preferences.TimePickerPreference;
+import au.com.wallaceit.voicemail.preferences.Settings.BooleanSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.ColorSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.EnumSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.FontSizeSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.IntegerRangeSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.InvalidSettingValueException;
+import au.com.wallaceit.voicemail.preferences.Settings.PseudoEnumSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
+import au.com.wallaceit.voicemail.preferences.Settings.SettingsUpgrader;
+import au.com.wallaceit.voicemail.preferences.Settings.V;
+import au.com.wallaceit.voicemail.preferences.Settings.WebFontSizeSetting;
 
 import static au.com.wallaceit.voicemail.VisualVoicemail.LockScreenNotificationVisibility;
 

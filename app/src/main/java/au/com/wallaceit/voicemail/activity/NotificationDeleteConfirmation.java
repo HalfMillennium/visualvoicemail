@@ -1,8 +1,5 @@
 package au.com.wallaceit.voicemail.activity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -11,13 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.ConfirmationDialog;
-import au.com.wallaceit.voicemail.activity.MessageReference;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.service.NotificationActionService;
 
 public class NotificationDeleteConfirmation extends Activity {

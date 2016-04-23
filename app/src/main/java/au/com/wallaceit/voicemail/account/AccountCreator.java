@@ -2,10 +2,12 @@ package au.com.wallaceit.voicemail.account;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.DeletePolicy;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 
@@ -13,6 +15,8 @@ import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.ServerSettings.Type;
+
+import java.util.Collections;
 
 
 /**
@@ -35,13 +39,30 @@ public class AccountCreator {
             greetings.setSyncClass(Folder.FolderClass.FIRST_CLASS);
             greetings.setPushClass(Folder.FolderClass.FIRST_CLASS);
             greetings.save();
-            // remove outbox & drafts
-            localStore.getFolder("Outbox").delete();
+            account.setArchiveFolderName(Account.ARCHIVE);
+            // hide error messages folder
+            LocalFolder errors = localStore.getFolder(VisualVoicemail.ERROR_FOLDER_NAME);
+            errors.setDisplayClass(Folder.FolderClass.NO_CLASS);
+            errors.save();
+            // remove outbox
+            localStore.getFolder(Account.OUTBOX).delete();
         } catch (MessagingException e) {
             e.printStackTrace();
         }
 
         return account;
+    }
+
+    public static void createArchiveFolderIfNeeded(Account account, LocalStore localStore) throws MessagingException {
+        // create offline archive folder
+        if (!localStore.getFolder(Account.ARCHIVE).exists()) {
+            LocalFolder archive = new LocalFolder(localStore, Account.ARCHIVE);
+            localStore.createFolders(Collections.singletonList(archive), account.getDisplayCount());
+            archive.setDisplayClass(Folder.FolderClass.FIRST_CLASS);
+            archive.save();
+        } else {
+            Log.w(VisualVoicemail.LOG_TAG, "Archive folder already created");
+        }
     }
 
     public static DeletePolicy getDefaultDeletePolicy(Type type) {

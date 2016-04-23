@@ -47,7 +47,7 @@ class ImapFolder extends Folder<ImapMessage> {
         }
     };
     private static final int MORE_MESSAGES_WINDOW_SIZE = 500;
-    private static final int FETCH_WINDOW_SIZE = 100;
+    private static final int FETCH_WINDOW_SIZE = 1;
 
 
     protected volatile int messageCount = -1;
@@ -862,6 +862,7 @@ class ImapFolder extends Folder<ImapMessage> {
 
     // Returns value of body field
     private Object handleFetchResponse(ImapMessage message, ImapList fetchList) throws MessagingException {
+        boolean greetingFlagAdded = false;
         Object result = null;
         if (fetchList.containsKey("FLAGS")) {
             ImapList flags = fetchList.getKeyedList("FLAGS");
@@ -876,8 +877,11 @@ class ImapFolder extends Folder<ImapMessage> {
                         message.setFlagInternal(Flag.SEEN, true);
                     } else if (flag.equalsIgnoreCase("\\Flagged")) {
                         message.setFlagInternal(Flag.FLAGGED, true);
-                    } else if (flag.equalsIgnoreCase("\\$CNS-Greeting-On")) {
-                        message.setFlagInternal(Flag.GREETING_ON, true);
+                    } else if (flag.equalsIgnoreCase("$CNS-Greeting-On") || flag.equalsIgnoreCase("$AppleVM-ActiveGreeting")) {
+                        if (!greetingFlagAdded) {
+                            message.setFlagInternal(Flag.GREETING_ON, true);
+                            greetingFlagAdded = true;
+                        }
                     }
                 }
             }
@@ -1283,7 +1287,8 @@ class ImapFolder extends Folder<ImapMessage> {
             } else if (flag == Flag.FLAGGED) {
                 flagNames.add("\\Flagged");
             } else if (flag == Flag.GREETING_ON) {
-                flagNames.add("\\$CNS-Greeting-On");
+                flagNames.add("$CNS-Greeting-On");
+                flagNames.add("$AppleVM-ActiveGreeting");
             }
         }
 

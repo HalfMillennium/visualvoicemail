@@ -1,5 +1,7 @@
 package au.com.wallaceit.voicemail.preferences;
 
+import com.fsck.k9.mail.Folder.FolderClass;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,11 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import android.content.SharedPreferences;
-
-import com.fsck.k9.mail.Folder.FolderClass;
-import au.com.wallaceit.voicemail.preferences.Settings;
-import au.com.wallaceit.voicemail.preferences.Settings.*;
+import au.com.wallaceit.voicemail.preferences.Settings.BooleanSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.EnumSetting;
+import au.com.wallaceit.voicemail.preferences.Settings.SettingsDescription;
+import au.com.wallaceit.voicemail.preferences.Settings.SettingsUpgrader;
+import au.com.wallaceit.voicemail.preferences.Settings.V;
 
 public class FolderSettings {
     public static final Map<String, TreeMap<Integer, SettingsDescription>> SETTINGS;

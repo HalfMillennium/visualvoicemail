@@ -5,17 +5,17 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import au.com.wallaceit.voicemail.*;
-import au.com.wallaceit.voicemail.controller.MessagingController;
-import au.com.wallaceit.voicemail.controller.MessagingListener;
+
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.CoreService;
-import au.com.wallaceit.voicemail.service.MailService;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
 
 public class PollService extends CoreService {
     private static String START_SERVICE = "au.com.wallaceit.voicemail.service.PollService.startService";

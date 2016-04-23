@@ -1,23 +1,20 @@
 package au.com.wallaceit.voicemail.notification;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 
+import java.util.List;
+
 import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.MessageReference;
-import au.com.wallaceit.voicemail.activity.NotificationDeleteConfirmation;
 import au.com.wallaceit.voicemail.search.LocalSearch;
 
 
@@ -84,55 +81,6 @@ class NotificationActionCreator {
             int notificationId) {
 
         Intent intent = NotificationActionService.createDismissMessageIntent(context, messageReference);
-
-        return PendingIntent.getService(context, notificationId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    public PendingIntent createMarkMessageAsReadPendingIntent(MessageReference messageReference, int notificationId) {
-        Intent intent = NotificationActionService.createMarkMessageAsReadIntent(context, messageReference);
-
-        return PendingIntent.getService(context, notificationId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    public PendingIntent createMarkAllAsReadPendingIntent(Account account,
-            ArrayList<MessageReference> messageReferences, int notificationId) {
-        return getMarkAsReadPendingIntent(account, messageReferences, notificationId, context,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    public PendingIntent getMarkAllAsReadPendingIntent(Account account, ArrayList<MessageReference> messageReferences,
-            int notificationId) {
-        return getMarkAsReadPendingIntent(account, messageReferences, notificationId, context,
-                PendingIntent.FLAG_NO_CREATE);
-    }
-
-    private PendingIntent getMarkAsReadPendingIntent(Account account, ArrayList<MessageReference> messageReferences,
-            int notificationId, Context context, int flags) {
-        String accountUuid = account.getUuid();
-        Intent intent = NotificationActionService.createMarkAllAsReadIntent(context, accountUuid, messageReferences);
-
-        return PendingIntent.getService(context, notificationId, intent, flags);
-    }
-
-    public PendingIntent createArchiveMessagePendingIntent(MessageReference messageReference, int notificationId) {
-        Intent intent = NotificationActionService.createArchiveMessageIntent(context, messageReference);
-
-        return PendingIntent.getService(context, notificationId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    public PendingIntent createArchiveAllPendingIntent(Account account, ArrayList<MessageReference> messageReferences,
-            int notificationId) {
-        Intent intent = NotificationActionService.createArchiveAllIntent(context, account, messageReferences);
-
-        return PendingIntent.getService(context, notificationId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);
-    }
-
-    public PendingIntent createMarkMessageAsSpamPendingIntent(MessageReference messageReference, int notificationId) {
-        Intent intent = NotificationActionService.createMarkMessageAsSpamIntent(context, messageReference);
 
         return PendingIntent.getService(context, notificationId, intent,
                 PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_ONE_SHOT);

@@ -1,19 +1,18 @@
 package au.com.wallaceit.voicemail.mailstore.migrations;
 
 
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.R;
-import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
+
+import java.util.List;
+
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 

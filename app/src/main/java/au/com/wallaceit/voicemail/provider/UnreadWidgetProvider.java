@@ -1,7 +1,11 @@
 package au.com.wallaceit.voicemail.provider;
 
-import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.AccountStats;
+import au.com.wallaceit.voicemail.BaseAccount;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.UnreadWidgetConfiguration;
 import au.com.wallaceit.voicemail.activity.FolderList;
 import au.com.wallaceit.voicemail.activity.MessageList;

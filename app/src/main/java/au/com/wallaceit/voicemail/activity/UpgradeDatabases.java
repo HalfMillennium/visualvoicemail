@@ -1,14 +1,5 @@
 package au.com.wallaceit.voicemail.activity;
 
-import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.Preferences;
-import au.com.wallaceit.voicemail.R;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.K9Activity;
-import com.fsck.k9.mail.Store;
-import au.com.wallaceit.voicemail.service.DatabaseUpgradeService;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +9,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.TextView;
+
+import com.fsck.k9.mail.Store;
+
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
+import au.com.wallaceit.voicemail.service.DatabaseUpgradeService;
 
 
 /**

@@ -3,8 +3,6 @@ package au.com.wallaceit.voicemail.cache;
 import java.util.ArrayList;
 import java.util.List;
 
-import au.com.wallaceit.voicemail.cache.*;
-import au.com.wallaceit.voicemail.cache.EmailProviderCache;
 import au.com.wallaceit.voicemail.provider.EmailProvider.MessageColumns;
 import au.com.wallaceit.voicemail.provider.EmailProvider.ThreadColumns;
 

@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.CoreReceiver;
 
 public class BootReceiver extends CoreReceiver {
 

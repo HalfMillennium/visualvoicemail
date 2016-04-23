@@ -1,18 +1,6 @@
 
 package au.com.wallaceit.voicemail.activity;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,8 +35,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -58,8 +44,29 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import au.com.wallaceit.voicemail.*;
+import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.internet.MimeUtility;
+import com.fsck.k9.mail.store.RemoteStore;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.AccountStats;
+import au.com.wallaceit.voicemail.BaseAccount;
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.misc.ExtendedAsyncTask;
 import au.com.wallaceit.voicemail.activity.misc.NonConfigurationInstance;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
@@ -68,11 +75,6 @@ import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.activity.setup.WelcomeMessage;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.SizeFormatter;
-import com.fsck.k9.mail.AuthType;
-import com.fsck.k9.mail.ServerSettings;
-import com.fsck.k9.mail.Transport;
-import com.fsck.k9.mail.internet.MimeUtility;
-import com.fsck.k9.mail.store.RemoteStore;
 import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.preferences.SettingsExporter;
 import au.com.wallaceit.voicemail.preferences.SettingsImportExportException;

@@ -10,8 +10,6 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.helper.*;
-import au.com.wallaceit.voicemail.helper.Utility;
 import com.fsck.k9.mail.Address;
 
 import java.util.ArrayList;

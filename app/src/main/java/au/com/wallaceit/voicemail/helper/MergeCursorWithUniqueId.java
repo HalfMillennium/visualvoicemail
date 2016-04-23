@@ -1,11 +1,8 @@
 package au.com.wallaceit.voicemail.helper;
 
-import java.util.Comparator;
-
 import android.database.Cursor;
 
-import au.com.wallaceit.voicemail.helper.*;
-import au.com.wallaceit.voicemail.helper.MergeCursor;
+import java.util.Comparator;
 
 
 public class MergeCursorWithUniqueId extends MergeCursor {

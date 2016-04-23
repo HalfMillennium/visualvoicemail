@@ -1,11 +1,5 @@
 package au.com.wallaceit.voicemail.activity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
@@ -37,24 +31,34 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import au.com.wallaceit.voicemail.*;
+import com.fsck.k9.mail.Folder;
+import com.fsck.k9.mail.Message;
+import com.fsck.k9.mail.power.TracingPowerManager;
+import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.AccountStats;
+import au.com.wallaceit.voicemail.BaseAccount;
+import au.com.wallaceit.voicemail.FontSizes;
+import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.activity.setup.Prefs;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
 import au.com.wallaceit.voicemail.helper.SizeFormatter;
-import com.fsck.k9.mail.power.TracingPowerManager;
-import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
-import com.fsck.k9.mail.Folder;
-import com.fsck.k9.mail.Message;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.search.LocalSearch;
 import au.com.wallaceit.voicemail.search.SearchSpecification.Attribute;
 import au.com.wallaceit.voicemail.search.SearchSpecification.SearchField;
-import au.com.wallaceit.voicemail.service.MailService;
-
 import de.cketti.library.changelog.ChangeLog;
 
 /**

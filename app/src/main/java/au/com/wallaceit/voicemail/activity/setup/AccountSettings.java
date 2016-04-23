@@ -104,6 +104,7 @@ public class AccountSettings extends K9PreferenceActivity {
     public static final int PREFERENCE_AUTO_CHECK_SMS = 2;
     public static final int PREFERENCE_AUTO_CHECK_PUSH = 3;
     public static final String PREFERENCE_REQUIRES_CELLULAR = "server_requires_cellular";
+    public static final String PREFERENCE_AUTO_ARCHIVE = "auto_archive";
 
     private Account mAccount;
     private boolean mIsMoveCapable = false;
@@ -175,6 +176,7 @@ public class AccountSettings extends K9PreferenceActivity {
     private ListPreference mTrashFolder;*/
     //private CheckBoxPreference mAlwaysShowCcBcc;
     private CheckBoxPreference mRequiresCellular;
+    private CheckBoxPreference mAutoArchive;
 
 
     public static void actionSettings(Context context, Account account) {
@@ -350,6 +352,9 @@ public class AccountSettings extends K9PreferenceActivity {
 
         mRequiresCellular = (CheckBoxPreference) findPreference(PREFERENCE_REQUIRES_CELLULAR);
         mRequiresCellular.setChecked(mAccount.getRequiresCellular());
+
+        mAutoArchive = (CheckBoxPreference) findPreference(PREFERENCE_AUTO_ARCHIVE);
+        mAutoArchive.setChecked(mAccount.getAutoArchive());
 
         /*mDisplayMode = (ListPreference) findPreference(PREFERENCE_DISPLAY_MODE);
         mDisplayMode.setValue(mAccount.getFolderDisplayMode().name());
@@ -849,6 +854,8 @@ public class AccountSettings extends K9PreferenceActivity {
         }
         //mAccount.setShowPictures(ShowPictures.valueOf(mAccountShowPictures.getValue()));
         mAccount.setRequiresCellular(mRequiresCellular.isChecked());
+
+        mAccount.setAutoArchive(mAutoArchive.isChecked());
 
         boolean needsRefresh = mAccount.setAutomaticCheckIntervalMinutes(Integer.parseInt(mCheckFrequency.getValue()));
         int autoCheck = Integer.parseInt(mAutoCheckMethod.getValue());

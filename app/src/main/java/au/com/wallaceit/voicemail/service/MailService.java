@@ -1,29 +1,26 @@
 
 package au.com.wallaceit.voicemail.service;
 
-import java.util.Collection;
-import java.util.Date;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.fsck.k9.mail.Pusher;
+
+import java.util.Collection;
+import java.util.Date;
+
 import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.Preferences;
 import au.com.wallaceit.voicemail.Account.FolderMode;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.helper.Utility;
-import com.fsck.k9.mail.Pusher;
-
 import au.com.wallaceit.voicemail.preferences.Storage;
 import au.com.wallaceit.voicemail.preferences.StorageEditor;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.BootReceiver;
 
 public class MailService extends CoreService {
     public static final String ACTION_CHECK_MAIL = "com.fsck.k9.intent.action.MAIL_SERVICE_WAKEUP";

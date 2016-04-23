@@ -1,7 +1,6 @@
 package au.com.wallaceit.voicemail.notification;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.KeyguardManager;
@@ -127,7 +126,7 @@ class DeviceNotifications extends BaseNotifications {
 
         NotificationCompat.Builder builder = createAndInitializeNotificationBuilder(account)
                 .setNumber(unreadMessageCount)
-                .setTicker(latestNotification.content.summary)
+                .setTicker(latestNotification.content.sender)
                 .setGroup(NOTIFICATION_GROUP_KEY)
                 .setGroupSummary(true)
                 .setContentTitle(title)
@@ -138,7 +137,7 @@ class DeviceNotifications extends BaseNotifications {
                 .setSummaryText(summary);
 
         for (NotificationContent content : notificationData.getContentForSummaryNotification()) {
-            style.addLine(content.summary);
+            style.addLine(content.sender);
         }
 
         builder.setStyle(style);

@@ -64,6 +64,7 @@ public class Account implements BaseAccount, StoreConfig {
      * This local folder is used to store messages to be sent.
      */
     public static final String OUTBOX = "K9MAIL_INTERNAL_OUTBOX";
+    public static final String ARCHIVE = "Archive";
 
     public enum Expunge {
         EXPUNGE_IMMEDIATELY,
@@ -239,6 +240,7 @@ public class Account implements BaseAccount, StoreConfig {
     private String    mNetworkOperatorName;
     private String    mPhoneNumber;
     private boolean    mRequiresCellular;
+    private boolean    mAutoArchive;
     private int mAutomaticCheckMethod;
     public boolean validated = false;
 
@@ -499,6 +501,7 @@ public class Account implements BaseAccount, StoreConfig {
         mNetworkOperatorName = prefs.getString(mUuid + ".networkOperatorName", "");
         mPhoneNumber = prefs.getString( mUuid + ".phoneNumber", "");
         mRequiresCellular = prefs.getBoolean(mUuid + ".requiresCellular", false);
+        mAutoArchive = prefs.getBoolean(mUuid + ".autoArchive", true);
         mAccountProviderId = prefs.getString(mUuid + ".accountProviderId", "-1");
 
         cacheChips();
@@ -604,6 +607,7 @@ public class Account implements BaseAccount, StoreConfig {
         editor.remove(mUuid + ".accountProviderId");
         editor.remove(mUuid + ".phoneNumber");
         editor.remove(mUuid + ".requiresCellular");
+        editor.remove(mUuid + ".autoArchive");
         editor.remove(mUuid + ".automaticCheckMethod");
         //deleteIdentities(preferences.getPreferences(), editor);
         // TODO: Remove preference settings that may exist for individual
@@ -789,6 +793,7 @@ public class Account implements BaseAccount, StoreConfig {
         editor.putString(mUuid + ".networkOperatorName", mNetworkOperatorName);
         editor.putString(mUuid + ".phoneNumber", mPhoneNumber);
         editor.putBoolean(mUuid + ".requiresCellular", mRequiresCellular);
+        editor.putBoolean(mUuid + ".autoArchive", mAutoArchive);
         editor.putString(mUuid + ".accountProviderId", mAccountProviderId);
 
         editor.commit();
@@ -1139,6 +1144,7 @@ public class Account implements BaseAccount, StoreConfig {
     public boolean isSpecialFolder(String folderName) {
         return (folderName != null && (folderName.equalsIgnoreCase(getInboxFolderName()) ||
                 folderName.equals(getTrashFolderName()) ||
+                folderName.equals(Account.ARCHIVE) ||
                 /*folderName.equals(getDraftsFolderName()) ||
                 folderName.equals(getArchiveFolderName()) ||
                 folderName.equals(getSpamFolderName()) ||
@@ -1201,11 +1207,19 @@ public class Account implements BaseAccount, StoreConfig {
     }
 
     public synchronized String getArchiveFolderName() {
-        return null;
+        return ARCHIVE;
     }
 
     public synchronized void setArchiveFolderName(String archiveFolderName) {
         //mArchiveFolderName = archiveFolderName;
+    }
+
+    public synchronized boolean getAutoArchive() {
+        return mAutoArchive;
+    }
+
+    public synchronized void setAutoArchive(boolean enabled) {
+        mAutoArchive = enabled;
     }
 
     /**

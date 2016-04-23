@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.CoreService;
 
 public class PushService extends CoreService {
     private static String START_SERVICE = "au.com.wallaceit.voicemail.service.PushService.startService";

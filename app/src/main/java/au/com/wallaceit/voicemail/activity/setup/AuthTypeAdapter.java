@@ -3,8 +3,6 @@ package au.com.wallaceit.voicemail.activity.setup;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
-import au.com.wallaceit.voicemail.activity.setup.*;
-import au.com.wallaceit.voicemail.activity.setup.AuthTypeHolder;
 import com.fsck.k9.mail.AuthType;
 
 

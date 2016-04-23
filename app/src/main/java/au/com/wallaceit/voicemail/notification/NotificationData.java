@@ -90,17 +90,6 @@ class NotificationData {
     }
 
     public boolean containsStarredMessages() {
-        for (NotificationHolder holder : activeNotifications) {
-            if (holder.content.starred) {
-                return true;
-            }
-        }
-
-        for (NotificationContent content : additionalNotifications) {
-            if (content.starred) {
-                return true;
-            }
-        }
 
         return false;
     }

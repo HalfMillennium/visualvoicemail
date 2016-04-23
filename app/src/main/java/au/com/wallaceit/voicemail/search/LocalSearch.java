@@ -1,15 +1,11 @@
 package au.com.wallaceit.voicemail.search;
 
+import android.os.Parcel;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import au.com.wallaceit.voicemail.search.ConditionsTreeNode;
-import au.com.wallaceit.voicemail.search.SearchSpecification;
 
 /**
  * This class represents a local search.

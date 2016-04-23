@@ -1,24 +1,23 @@
 package au.com.wallaceit.voicemail.service;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import com.fsck.k9.mail.Flag;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import au.com.wallaceit.voicemail.Account;
-import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
-import com.fsck.k9.mail.Flag;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.CoreService;
-
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 /**
  * Service called by actions in notifications.

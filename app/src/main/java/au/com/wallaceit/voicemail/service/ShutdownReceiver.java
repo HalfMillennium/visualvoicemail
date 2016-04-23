@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.service.*;
-import au.com.wallaceit.voicemail.service.BootReceiver;
 
 /**
  * Capture the system shutdown event in order to properly free resources.

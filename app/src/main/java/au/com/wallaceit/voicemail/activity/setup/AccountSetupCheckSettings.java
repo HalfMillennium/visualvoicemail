@@ -17,13 +17,14 @@ import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import au.com.wallaceit.voicemail.*;
+import au.com.wallaceit.voicemail.Account;
+import au.com.wallaceit.voicemail.Preferences;
+import au.com.wallaceit.voicemail.R;
+import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment;
 import au.com.wallaceit.voicemail.fragment.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
-
-import au.com.wallaceit.voicemail.R;
 
 import com.fsck.k9.mail.AuthenticationFailedException;
 import com.fsck.k9.mail.CertificateValidationException;

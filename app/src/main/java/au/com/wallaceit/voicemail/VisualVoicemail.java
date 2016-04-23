@@ -1,15 +1,6 @@
 
 package au.com.wallaceit.voicemail;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ComponentName;
@@ -36,23 +27,29 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import au.com.wallaceit.voicemail.Account.SortType;
-import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
-import au.com.wallaceit.voicemail.controller.MessagingController;
-import au.com.wallaceit.voicemail.controller.MessagingListener;
-
-import au.com.wallaceit.voicemail.BuildConfig;
-import au.com.wallaceit.voicemail.R;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.K9MailLib;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
+import com.fsck.k9.mail.ssl.LocalKeyStore;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+
+import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
+import au.com.wallaceit.voicemail.controller.MessagingController;
+import au.com.wallaceit.voicemail.controller.MessagingListener;
 import au.com.wallaceit.voicemail.mailstore.LocalStore;
 import au.com.wallaceit.voicemail.preferences.Storage;
 import au.com.wallaceit.voicemail.preferences.StorageEditor;
 import au.com.wallaceit.voicemail.provider.UnreadWidgetProvider;
-import com.fsck.k9.mail.ssl.LocalKeyStore;
 import au.com.wallaceit.voicemail.service.BootReceiver;
 import au.com.wallaceit.voicemail.service.MailService;
 import au.com.wallaceit.voicemail.service.ShutdownReceiver;

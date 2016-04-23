@@ -1,9 +1,6 @@
 package au.com.wallaceit.voicemail.mailstore;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 
 import com.fsck.k9.mail.Message;
@@ -11,8 +8,9 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.internet.MessageExtractor;
 import com.fsck.k9.mail.internet.Viewable;
-import au.com.wallaceit.voicemail.mailstore.*;
-import au.com.wallaceit.voicemail.mailstore.MessagePreviewExtractor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 class MessageInfoExtractor {

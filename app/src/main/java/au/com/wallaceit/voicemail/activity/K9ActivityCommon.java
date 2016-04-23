@@ -1,7 +1,5 @@
 package au.com.wallaceit.voicemail.activity;
 
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -11,10 +9,9 @@ import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import java.util.Locale;
+
 import au.com.wallaceit.voicemail.VisualVoicemail;
-import au.com.wallaceit.voicemail.activity.*;
-import au.com.wallaceit.voicemail.activity.K9Activity;
-import au.com.wallaceit.voicemail.activity.K9ListActivity;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector;
 import au.com.wallaceit.voicemail.activity.misc.SwipeGestureDetector.OnSwipeGestureListener;
 
