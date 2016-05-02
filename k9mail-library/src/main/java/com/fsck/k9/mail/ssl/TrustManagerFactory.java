@@ -1,9 +1,11 @@
 
 package com.fsck.k9.mail.ssl;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.fsck.k9.mail.CertificateChainException;
+import com.fsck.k9.mail.K9MailLib;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManager;
@@ -11,10 +13,12 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.StrictHostnameVerifier;
 
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +59,19 @@ public final class TrustManagerFactory {
         public void checkClientTrusted(X509Certificate[] chain, String authType)
         throws CertificateException {
             defaultTrustManager.checkClientTrusted(chain, authType);
+        }
+
+        public void initializeStoredCertificates(Context context){
+            if (!keyStore.containsAlias("vvm.vodafone.com.au:993")) {
+                try {
+                    CertificateFactory fact  = CertificateFactory.getInstance("X.509");
+                    X509Certificate cer = (X509Certificate) fact.generateCertificate(context.getAssets().open("vodafone-au.pem"));
+                    keyStore.addCertificate("vvm.vodafone.com.au", 993, cer);
+                    Log.w(K9MailLib.LOG_TAG, "Added stored certificates");
+                } catch (CertificateException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         public void checkServerTrusted(X509Certificate[] chain, String authType)
@@ -119,5 +136,11 @@ public final class TrustManagerFactory {
 
     public static X509TrustManager get(String host, int port) {
         return SecureX509TrustManager.getInstance(host, port);
+    }
+
+    public static X509TrustManager get(Context context, String host, int port) {
+        SecureX509TrustManager trustManager = (SecureX509TrustManager) SecureX509TrustManager.getInstance(host, port);
+        trustManager.initializeStoredCertificates(context);
+        return trustManager;
     }
 }

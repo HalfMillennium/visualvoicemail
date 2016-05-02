@@ -103,6 +103,15 @@ public class LocalKeyStore {
         }
     }
 
+    public synchronized boolean containsAlias(String alias){
+        try {
+            return mKeyStore!=null && mKeyStore.containsAlias(alias);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public synchronized void addCertificate(String host, int port,
             X509Certificate certificate) throws CertificateException {
         if (mKeyStore == null) {

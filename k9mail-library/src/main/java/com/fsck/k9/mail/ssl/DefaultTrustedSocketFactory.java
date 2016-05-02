@@ -149,7 +149,7 @@ public class DefaultTrustedSocketFactory implements TrustedSocketFactory {
     public Socket createSocket(Socket socket, String host, int port, String clientCertificateAlias)
             throws NoSuchAlgorithmException, KeyManagementException, MessagingException, IOException {
 
-        TrustManager[] trustManagers = new TrustManager[] { TrustManagerFactory.get(host, port) };
+        TrustManager[] trustManagers = new TrustManager[] { TrustManagerFactory.get(context, host, port) };
         KeyManager[] keyManagers = null;
         if (!TextUtils.isEmpty(clientCertificateAlias)) {
             keyManagers = new KeyManager[] { new KeyChainKeyManager(context, clientCertificateAlias) };
