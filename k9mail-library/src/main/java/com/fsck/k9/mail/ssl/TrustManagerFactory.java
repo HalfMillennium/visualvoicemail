@@ -62,11 +62,11 @@ public final class TrustManagerFactory {
         }
 
         public void initializeStoredCertificates(Context context){
-            if (!keyStore.containsAlias("vvm.vodafone.com.au:993")) {
+            if (!keyStore.containsAlias("prodvvm.vodafone.com.au:993")) {
                 try {
                     CertificateFactory fact  = CertificateFactory.getInstance("X.509");
                     X509Certificate cer = (X509Certificate) fact.generateCertificate(context.getAssets().open("vodafone-au.pem"));
-                    keyStore.addCertificate("vvm.vodafone.com.au", 993, cer);
+                    keyStore.addCertificate("prodvvm.vodafone.com.au", 993, cer);
                     Log.w(K9MailLib.LOG_TAG, "Added stored certificates");
                 } catch (CertificateException | IOException e) {
                     e.printStackTrace();
@@ -80,6 +80,8 @@ public final class TrustManagerFactory {
             X509Certificate certificate = chain[0];
 
             Throwable cause = null;
+
+            // keyStore.deleteCertificate("prodvvm.vodafone.com.au", 993); // for testing
 
             try {
                 defaultTrustManager.checkServerTrusted(chain, authType);

@@ -306,7 +306,7 @@ public class ImapStore extends RemoteStore {
             autoconfigureFolders(connection);
             connection.close();
         } catch (IOException ioe) {
-            throw new MessagingException("Unable to connect", ioe);
+            throw new MessagingException("Unable to connect" + ioe.getMessage(), ioe);
         }
     }
 

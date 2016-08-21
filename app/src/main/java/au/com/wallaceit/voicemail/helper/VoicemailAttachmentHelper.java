@@ -31,16 +31,11 @@ import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.Multipart;
 import com.fsck.k9.mail.Part;
 import com.fsck.k9.mail.Store;
-import com.fsck.k9.mail.internet.MimeBodyPart;
 import com.fsck.k9.mail.internet.MimeHeader;
-import com.fsck.k9.mail.internet.MimeMessageHelper;
 import com.fsck.k9.mail.internet.MimeMultipart;
 import com.fsck.k9.mail.internet.MimeUtility;
-
-import org.apache.james.mime4j.util.MimeUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,8 +54,6 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
-import au.com.wallaceit.voicemail.mailstore.BinaryMemoryBody;
-import au.com.wallaceit.voicemail.mailstore.FileBackedBody;
 import au.com.wallaceit.voicemail.mailstore.LocalFolder;
 import au.com.wallaceit.voicemail.mailstore.LocalMessage;
 import au.com.wallaceit.voicemail.mailstore.LocalPart;
@@ -156,6 +149,7 @@ public class VoicemailAttachmentHelper {
             try {
                 localFolder.fetch(Collections.singletonList(localMessage), fp, null);
             } catch (IllegalArgumentException ex){
+                // TODO: Remove - This was added as a workaround for Vodafone's old server returning bad data and is probably not needed anymore
                 if (VisualVoicemail.DEBUG) {
                     Log.w(VisualVoicemail.LOG_TAG, "Message has null MIME boundry, trying to download the message again");
                     Log.w(VisualVoicemail.LOG_TAG, TextUtils.join(", ", localMessage.getHeaderNames().toArray()));
@@ -257,8 +251,25 @@ public class VoicemailAttachmentHelper {
         } else {
             if (VisualVoicemail.DEBUG)
                 Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
-            if (part.getBody() instanceof FileBackedBody || part.getBody() instanceof BinaryMemoryBody)
+            if (part.getMimeType().indexOf("audio")==0)
                 return part;
+            /* A message transcript is usually placed in a text/plain attachment, but not many providers use it.
+            if (part.getMimeType().equals("text/plain")){
+                ByteArrayOutputStream bos = new ByteArrayOutputStream(256);
+                try {
+                    part.getBody().writeTo(bos);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String result = new String(bos.toByteArray(), "utf-8");
+                    System.out.println("RESULT: "+result);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }*/
         }
         if (VisualVoicemail.DEBUG)
             Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " null: " + part.getMimeType());

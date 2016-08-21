@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -105,9 +106,10 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         mActivateButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
+                /*Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + mCurrentProvider.helperNumbers.get("activate")));
-                startActivity(intent);
+                startActivity(intent);*/
+                sendSms();
             }
         });
 
@@ -148,6 +150,30 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         providerAdaptor.setDropDownViewResource(R.layout.spinner_layout);
         mProvider.setAdapter(providerAdaptor);
 
+    }
+
+    protected void sendSms() {
+        SmsManager smsManager = SmsManager.getDefault();
+        int mApplicationPort = 5;
+        String mDestinationNumber = "121";
+        String text = "Activate:pv=12;ct=null;pt="+String.valueOf(mApplicationPort)+";";
+        // If application port is set to 0 then send simple text message, else send data message.
+        if (mApplicationPort == 0) {
+            Log.v(TAG, String.format("Sending TEXT sms '%s' to %s", text, mDestinationNumber));
+            smsManager.sendTextMessage(mDestinationNumber, null, text,
+                    null, null);
+        } else {
+            byte[] data;
+            try {
+                data = text.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalStateException("Failed to encode: " + text);
+            }
+            Log.v(TAG, String.format("Sending BINARY sms '%s' to %s:%d", text, mDestinationNumber,
+                    mApplicationPort));
+            smsManager.sendDataMessage(mDestinationNumber, null,
+                    (short) mApplicationPort, data, null, null);
+        }
     }
 
     @Override

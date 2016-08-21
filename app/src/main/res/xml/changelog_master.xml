@@ -8,6 +8,14 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
+    <release version="1.08" versioncode="11">
+        <change>Updated Vodafone server address, login username format and certificate.</change>
+        <change>Added regex for phone number extraction.</change>
+        <change>Added check for audio attachment MIME.</change>
+    </release>
+    <release version="1.08" versioncode="10">
+        <change>Added possible compatibility fixes for cellular routing on Android SDK >= 21.</change>
+    </release>
     <release version="1.07" versioncode="9">
         <change>Added Vodafone certificate to prevent certificate chain error.</change>
     </release>

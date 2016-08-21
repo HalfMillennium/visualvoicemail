@@ -18,6 +18,9 @@ import android.text.style.StyleSpan;
 
 import com.fsck.k9.mail.Address;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import au.com.wallaceit.voicemail.VisualVoicemail;
 
 /**
@@ -61,6 +64,8 @@ public class VvmContacts {
 
     protected ContentResolver mContentResolver;
 
+    private static final Pattern PHONE_REGEX = Pattern.compile(".*?VOICE=(\\+?[0-9]*).*$");
+
     /**
      * Constructor
      *
@@ -71,36 +76,15 @@ public class VvmContacts {
     }
 
     public String extractPhoneFromVoicemailAddress(Address address) {
-        String email = address.getAddress();
-        String phone = email; // fallback to full email address
 
-        // Now extract the phone number, if we have one from the address
-        // TODO: This Needs improving.  It is only OK for Vodafone
-        // get the string before the "@" in the address.  This is the phone number
-        // e.g. VOICE=+61292014596@vm.vodafone.net.au
-        // TODO: Also should check if the extracted phone number is Chars.
-        // Some systems set the CID to a name or other string
-        // we may be better off using a regex like "^VOICE=([\\+0-9\\(\\)\\.\\-]*)@"
-        // or perhaps use a regex match like "^VOICE=(.+)$"  as there could be text as well
-        int idx = -1;
-        if (email != null) {
-            idx = email.indexOf('@');
-        }
-        if (email!=null && idx >= 0) {
-            if (email.startsWith("VOICE="))
-                phone = email.substring(6, idx);
-            else
-                phone = email.substring(0, idx);
+        String phone = address.getPersonal()!=null?address.getPersonal():address.getAddress(); // fallback to full email address
+        Matcher matcher = PHONE_REGEX.matcher(address.toString());
+        if (matcher.matches()){
+            phone = matcher.group(1);
+            if (phone.indexOf("+")!=0)
+                phone = "+" + phone;
         }
 
-        // Hacky fix for the bug caused by a workaround for a bug causing voicemails not to download completely
-        if (phone.indexOf("61")==0)
-            phone = "+" + phone;
-        // Note the phone number may not be numeric
-        //if (!isPhoneNumberValid(phone))
-            //return email;
-
-        //System.out.println(phone);
         return phone;
     }
 

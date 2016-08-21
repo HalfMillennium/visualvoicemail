@@ -214,6 +214,11 @@ public class MergeCursor implements Cursor {
     }
 
     @Override
+    public void setExtras(Bundle extras) {
+
+    }
+
+    @Override
     public boolean isAfterLast() {
         int count = getCount();
         if (count == 0) {
