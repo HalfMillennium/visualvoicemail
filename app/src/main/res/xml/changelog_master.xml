@@ -8,7 +8,7 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
-    <release version="1.08" versioncode="11">
+    <release version="1.09" versioncode="11">
         <change>Updated Vodafone server address, login username format and certificate.</change>
         <change>Added regex for phone number extraction.</change>
         <change>Added check for audio attachment MIME.</change>
