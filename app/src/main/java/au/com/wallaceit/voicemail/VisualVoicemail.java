@@ -1,6 +1,7 @@
-
 package au.com.wallaceit.voicemail;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.ComponentName;
@@ -19,6 +20,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
@@ -26,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.K9MailLib;
@@ -43,6 +47,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 import au.com.wallaceit.voicemail.Account.SortType;
+import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.UpgradeDatabases;
 import au.com.wallaceit.voicemail.controller.MessagingController;
 import au.com.wallaceit.voicemail.controller.MessagingListener;
@@ -207,7 +212,7 @@ public class VisualVoicemail extends Application {
     }
 
     private static LockScreenNotificationVisibility sLockScreenNotificationVisibility =
-        LockScreenNotificationVisibility.MESSAGE_COUNT;
+            LockScreenNotificationVisibility.MESSAGE_COUNT;
 
     public enum LockScreenNotificationVisibility {
         EVERYTHING,
@@ -338,12 +343,11 @@ public class VisualVoicemail extends Application {
     public static final int NOTIFICATION_LED_BLINK_FAST = 1;
 
 
-
     public static final int NOTIFICATION_LED_FAILURE_COLOR = 0xffff0000;
 
     // Must not conflict with an account number
-    public static final int FETCHING_EMAIL_NOTIFICATION      = -5000;
-    public static final int SEND_FAILED_NOTIFICATION      = -1500;
+    public static final int FETCHING_EMAIL_NOTIFICATION = -5000;
+    public static final int SEND_FAILED_NOTIFICATION = -1500;
     public static final int CERTIFICATE_EXCEPTION_NOTIFICATION_INCOMING = -2000;
     public static final int CERTIFICATE_EXCEPTION_NOTIFICATION_OUTGOING = -2500;
     public static final int CONNECTIVITY_ID = -3;
@@ -400,19 +404,19 @@ public class VisualVoicemail extends Application {
              */
             MailService.actionReset(context, wakeLockId);
         }
-        Class<?>[] classes = { BootReceiver.class, MailService.class };
+        Class<?>[] classes = {BootReceiver.class, MailService.class};
 
         for (Class<?> clazz : classes) {
 
             boolean alreadyEnabled = pm.getComponentEnabledSetting(new ComponentName(context, clazz)) ==
-                                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 
             if (enabled != alreadyEnabled) {
                 pm.setComponentEnabledSetting(
-                    new ComponentName(context, clazz),
-                    enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
+                        new ComponentName(context, clazz),
+                        enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
             }
         }
 
@@ -558,11 +562,13 @@ public class VisualVoicemail extends Application {
 
         sIsDebuggable = ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
-            @Override public boolean enabled() {
+            @Override
+            public boolean enabled() {
                 return DEBUG;
             }
 
-            @Override public boolean debugSensitive() {
+            @Override
+            public boolean debugSensitive() {
                 return DEBUG_SENSITIVE;
             }
         });
@@ -604,17 +610,17 @@ public class VisualVoicemail extends Application {
                     VisualVoicemail.this.sendBroadcast(intent);
                     if (VisualVoicemail.DEBUG)
                         Log.d(VisualVoicemail.LOG_TAG, "Broadcasted: action=" + action
-                              + " account=" + account.getDescription()
-                              + " folder=" + folder
-                              + " message uid=" + message.getUid()
-                             );
+                                + " account=" + account.getDescription()
+                                + " folder=" + folder
+                                + " message uid=" + message.getUid()
+                        );
 
                 } catch (MessagingException e) {
                     Log.w(VisualVoicemail.LOG_TAG, "Error: action=" + action
-                          + " account=" + account.getDescription()
-                          + " folder=" + folder
-                          + " message uid=" + message.getUid()
-                         );
+                            + " account=" + account.getDescription()
+                            + " folder=" + folder
+                            + " message uid=" + message.getUid()
+                    );
                 }
             }
 
@@ -648,7 +654,7 @@ public class VisualVoicemail extends Application {
 
             @Override
             public void folderStatusChanged(Account account, String folderName,
-                    int unreadMessageCount) {
+                                            int unreadMessageCount) {
 
                 updateUnreadWidget();
 
@@ -771,7 +777,7 @@ public class VisualVoicemail extends Application {
         }
 
         String lockScreenNotificationVisibility = sprefs.getString("lockScreenNotificationVisibility", null);
-        if(lockScreenNotificationVisibility != null) {
+        if (lockScreenNotificationVisibility != null) {
             sLockScreenNotificationVisibility = LockScreenNotificationVisibility.valueOf(lockScreenNotificationVisibility);
         }
 
@@ -780,7 +786,7 @@ public class VisualVoicemail extends Application {
             sSplitViewMode = SplitViewMode.valueOf(splitViewMode);
         }
 
-        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath",  Environment.getExternalStorageDirectory().toString()+"/Voicemail");
+        mAttachmentDefaultPath = sprefs.getString("attachmentdefaultpath", Environment.getExternalStorageDirectory().toString() + "/Voicemail");
         sUseBackgroundAsUnreadIndicator = sprefs.getBoolean("useBackgroundAsUnreadIndicator", true);
         sThreadedViewEnabled = sprefs.getBoolean("threadedView", true);
         fontSizes.load(sprefs);
@@ -1026,7 +1032,7 @@ public class VisualVoicemail extends Application {
 
         Integer now = (time.hour * 60) + time.minute;
         Integer quietStarts = startHour * 60 + startMinute;
-        Integer quietEnds =  endHour * 60 + endMinute;
+        Integer quietEnds = endHour * 60 + endMinute;
 
         // If start and end times are the same, we're never quiet
         if (quietStarts.equals(quietEnds)) {
@@ -1053,7 +1059,6 @@ public class VisualVoicemail extends Application {
 
         return false;
     }
-
 
 
     public static boolean startIntegratedInbox() {
@@ -1100,13 +1105,14 @@ public class VisualVoicemail extends Application {
         return mShowCorrespondentNames;
     }
 
-     public static boolean messageListSenderAboveSubject() {
-         return mMessageListSenderAboveSubject;
-     }
+    public static boolean messageListSenderAboveSubject() {
+        return mMessageListSenderAboveSubject;
+    }
 
     public static void setMessageListSenderAboveSubject(boolean sender) {
-         mMessageListSenderAboveSubject = sender;
+        mMessageListSenderAboveSubject = sender;
     }
+
     public static void setShowCorrespondentNames(boolean showCorrespondentNames) {
         mShowCorrespondentNames = showCorrespondentNames;
     }
@@ -1254,6 +1260,7 @@ public class VisualVoicemail extends Application {
     public static boolean wrapFolderNames() {
         return mWrapFolderNames;
     }
+
     public static void setWrapFolderNames(final boolean state) {
         mWrapFolderNames = state;
     }
@@ -1261,6 +1268,7 @@ public class VisualVoicemail extends Application {
     public static boolean hideUserAgent() {
         return mHideUserAgent;
     }
+
     public static void setHideUserAgent(final boolean state) {
         mHideUserAgent = state;
     }
@@ -1268,6 +1276,7 @@ public class VisualVoicemail extends Application {
     public static boolean hideTimeZone() {
         return mHideTimeZone;
     }
+
     public static void setHideTimeZone(final boolean state) {
         mHideTimeZone = state;
     }
@@ -1412,6 +1421,7 @@ public class VisualVoicemail extends Application {
             editor.commit();
         }
     }
+
     /**
      * Get current version number.
      *
@@ -1428,7 +1438,7 @@ public class VisualVoicemail extends Application {
         return version;
     }
 
-    public static void showAboutDialog(Context context){
+    public static void showAboutDialog(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         LinearLayout about = (LinearLayout) inflater.inflate(R.layout.about, null);
         ((TextView) about.findViewById(R.id.about_version)).setText(String.format(context.getString(R.string.debug_version_fmt), VisualVoicemail.getVersionNumber(context)));
@@ -1445,5 +1455,43 @@ public class VisualVoicemail extends Application {
                     }
                 })
                 .show();
+    }
+
+    // This is the bulk of the runtime permission handling
+    public final static int REQUEST_CONTACT_PERMISSION = 1;
+    public final static int REQUEST_PHONE_PERMISSION = 2;
+    public final static int REQUEST_RECORD_PERMISSION = 3;
+    public final static int REQUEST_STORAGE_PERMISSION = 4;
+    public final static int REQUEST_SMS_PERMISSION = 5;
+    public final static int REQUEST_SMSFULL_PERMISSION = 6;
+
+    public static boolean requestExternalStoragePermissions(Activity activity, String reason) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
+            Toast.makeText(activity, reason, Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
+    }
+
+    private String callNumber = null;
+
+    public void callPhoneNumber(Activity activity, String number) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            callNumber = number;
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_PERMISSION);
+            Toast.makeText(activity, "Phone permission needed to call.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:" + number));
+        activity.startActivity(intent);
+    }
+
+    public void onPhonePermissionSuccess(Activity activity) {
+        if (callNumber != null) {
+            callPhoneNumber(activity, callNumber);
+            callNumber = null;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package au.com.wallaceit.voicemail.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -12,6 +13,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -21,6 +23,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -77,6 +81,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.ActivityListener;
 import au.com.wallaceit.voicemail.activity.ChooseFolder;
 import au.com.wallaceit.voicemail.activity.FolderInfoHolder;
+import au.com.wallaceit.voicemail.activity.MessageList;
 import au.com.wallaceit.voicemail.activity.MessageReference;
 import au.com.wallaceit.voicemail.activity.misc.ContactPictureLoader;
 import au.com.wallaceit.voicemail.cache.EmailProviderCache;
@@ -971,6 +976,10 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
         mListView.setAdapter(mAdapter);
     }
 
+    public void refreshMessageList(){
+        if (mListView!=null) mAdapter.notifyDataSetChanged();
+    }
+
     private void createCacheBroadcastReceiver(Context appContext) {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(appContext);
 
@@ -1525,9 +1534,9 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                 VvmContacts vvmContacts = new VvmContacts(getActivity());
                 String number = vvmContacts.extractPhoneFromVoicemailAddress(addresses[0]);
                 if (vvmContacts.isPhoneNumberValid(number)) {
-                    Intent intent = new Intent(Intent.ACTION_CALL);
-                    intent.setData(Uri.parse("tel:" + number));
-                    startActivity(intent);
+                    ((VisualVoicemail) getActivity().getApplication()).callPhoneNumber(getActivity(), number);
+                } else {
+                    Toast.makeText(getActivity(), "That phone number does not seem to be valid.", Toast.LENGTH_LONG).show();
                 }
             }
         }

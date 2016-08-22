@@ -162,7 +162,7 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
 
     private void saveGreetingToMessage(String type, String label){
         MimeMessage message = new MimeMessage();
-        String contentType = "Audio/AMR";
+        String contentType = "audio/amr";
         try {
             // add attachment
             Body body = new TempFileBody(outputPath);
@@ -212,10 +212,11 @@ public class GreetingRecorderDialog extends Dialog implements View.OnClickListen
     private void startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setAudioChannels(1);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setAudioSamplingRate(8000);
-        mRecorder.setAudioEncodingBitRate(12200);
+        mRecorder.setAudioSamplingRate(44100);
+        mRecorder.setAudioEncodingBitRate(23850);
         mRecorder.setOutputFile(outputPath);
 
         try {

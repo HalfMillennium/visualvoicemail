@@ -16,7 +16,7 @@ import au.com.wallaceit.voicemail.VisualVoicemail;
 import au.com.wallaceit.voicemail.activity.setup.AccountSettings;
 
 public class SmsReceiver extends BroadcastReceiver {
-    /*@Override
+    @Override
     public void onReceive(Context context, Intent intent) {
         if (VisualVoicemail.DEBUG)
             Log.i(VisualVoicemail.LOG_TAG, "SMS broadcast received...");
@@ -48,48 +48,6 @@ public class SmsReceiver extends BroadcastReceiver {
                             Log.i(VisualVoicemail.LOG_TAG, "No SMS provider match: " + phoneNumber);
                     }
                 }
-            }
-        }
-    }*/
-
-    @Override
-    public void onReceive(Context context, Intent intent)
-    {
-        Bundle bundle = intent.getExtras();
-
-        String recMsgString = "";
-        String fromAddress = "";
-
-        SmsMessage recMsg = null;
-        byte[] data = null;
-
-        if (bundle != null)
-        {
-            //---retrieve the SMS message received---
-            Object[] pdus = (Object[]) bundle.get("pdus");
-            for (int i = 0; i < pdus.length; i++)
-            {
-                recMsg = SmsMessage.createFromPdu((byte[]) pdus[i]);
-
-                try
-                {
-                    data = recMsg.getUserData();
-                }
-                catch (Exception e)
-                {
-
-                }
-                if (data != null)
-                {
-                    for (int index = 0; index < data.length; ++index)
-                    {
-                        recMsgString += Character.toString((char) data[index]);
-                    }
-                }
-
-                fromAddress = recMsg.getOriginatingAddress();
-
-                System.out.println("SMS ("+recMsg.getMessageClass().toString()+") RECEIVED FROM "+fromAddress+": "+recMsgString);
             }
         }
     }

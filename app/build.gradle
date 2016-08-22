@@ -26,8 +26,8 @@ dependencies {
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
     compile 'commons-io:commons-io:2.4'
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.android.support:support-v13:23.4.0'
+    compile 'com.android.support:support-v4:24.2.0'
+    compile 'com.android.support:support-v13:24.2.0'
     compile 'net.sourceforge.htmlcleaner:htmlcleaner:2.10'
     compile 'de.cketti.library.changelog:ckchangelog:1.2.1'
     compile 'com.github.bumptech.glide:glide:3.4.0'
@@ -35,12 +35,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 24
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

@@ -1,8 +1,10 @@
 package au.com.wallaceit.voicemail.helper;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -10,6 +12,7 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents.Insert;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -64,6 +67,8 @@ public class VvmContacts {
 
     protected ContentResolver mContentResolver;
 
+    protected Context mContext;
+
     private static final Pattern PHONE_REGEX = Pattern.compile(".*?VOICE=(\\+?[0-9]*).*$");
 
     /**
@@ -72,6 +77,7 @@ public class VvmContacts {
      */
     public VvmContacts(Context context)
     {
+        mContext = context;
         mContentResolver = context.getContentResolver();
     }
 
@@ -274,6 +280,9 @@ public class VvmContacts {
 
     private Cursor getContactByPhoneNumber(final String phoneNumber)
     {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
+            return null;
+
         final Uri uri = Uri.withAppendedPath(Phone.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         final Cursor c = mContentResolver.query(
                              uri,

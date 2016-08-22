@@ -1,6 +1,7 @@
 
 package au.com.wallaceit.voicemail.activity.setup;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -19,6 +20,9 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -332,6 +336,7 @@ public class AccountSettings extends K9PreferenceActivity {
                     if (mAccount.getProvider().helperNumbers.containsKey("notify_sms")) {
                         String number = mAccount.getProvider().helperNumbers.get("notify_sms");
                         showCallDialog("Would you like to enable SMS notifications by dialing " + number + " now?", number);
+                        requestSmsPermissions();
                     }
                 } else {
                     if (Integer.parseInt(lastValue) == PREFERENCE_AUTO_CHECK_SMS) {
@@ -346,7 +351,7 @@ public class AccountSettings extends K9PreferenceActivity {
                         Toast.makeText(AccountSettings.this, "Manual fetch frequency reduced to save data", Toast.LENGTH_LONG).show();
                     }
                 }
-                return false;
+                return true;
             }
         });
 
@@ -531,6 +536,8 @@ public class AccountSettings extends K9PreferenceActivity {
 
             mLocalStorageProvider.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if (VisualVoicemail.requestExternalStoragePermissions(AccountSettings.this, "External storage permission needed to save data externally."))
+                        return false;
                     mLocalStorageProvider.setSummary(providers.get(newValue));
                     return true;
                 }
@@ -735,14 +742,25 @@ public class AccountSettings extends K9PreferenceActivity {
         }*/
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case VisualVoicemail.REQUEST_PHONE_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ((VisualVoicemail) getApplication()).onPhonePermissionSuccess(this);
+                }
+                return;
+            }
+        }
+    }
+
     private void showCallDialog(String msg, final String number) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update Carrier Alerts").setMessage(msg);
         builder.setPositiveButton(R.string.okay_action, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + number));
-                startActivity(intent);
+                ((VisualVoicemail) getApplication()).callPhoneNumber(AccountSettings.this, number);
                 dialog.dismiss();
             }
         });
@@ -752,6 +770,15 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         });
         builder.create().show();
+    }
+
+    private boolean requestSmsPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, VisualVoicemail.REQUEST_SMS_PERMISSION);
+            Toast.makeText(this, "SMS permissions needed to detect voicemail alerts.", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
     }
 
     private void removeListEntry(ListPreference listPreference, String remove) {

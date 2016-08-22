@@ -68,7 +68,7 @@ public class MissedCallReceiver extends BroadcastReceiver {
                 PendingIntent pintent = PendingIntent.getService(context, 0, mintent, 0);
 
                 AlarmManager alarmManager = (AlarmManager)(context.getSystemService(Context.ALARM_SERVICE));
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+240000, pintent); // takes a while for voicemail to come through.
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+120000, pintent); // takes a while for voicemail to come through.
             }
         }
         lastState = state;

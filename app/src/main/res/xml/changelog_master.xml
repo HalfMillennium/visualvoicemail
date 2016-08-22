@@ -8,6 +8,11 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
+    <release version="1.11" versioncode="13">
+        <change>Added Android M runtime permissions.</change>
+        <change>Fixed greetings MIME handling.</change>
+        <change>Updated SDK and support libraries.</change>
+    </release>
     <release version="1.10" versioncode="12">
         <change>Updated Vodafone server address, login username format and certificate.</change>
         <change>Added regex for phone number extraction.</change>

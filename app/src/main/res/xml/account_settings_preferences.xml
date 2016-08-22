@@ -211,14 +211,6 @@
             android:entryValues="@array/account_settings_folder_notify_new_mail_mode_values"
             android:dialogTitle="@string/account_settings_folder_notify_new_mail_mode_label" />
 
-        <CheckBoxPreference
-            android:persistent="false"
-            android:key="account_notify_self"
-            android:dependency="account_notify"
-            android:title="@string/account_settings_notify_self_label"
-            android:defaultValue="true"
-            android:summary="@string/account_settings_notify_self_summary" />
-
         <!--
           We can't disable persisting the ringtone value to SharedPreferences
           because it's needed to actually access the value.

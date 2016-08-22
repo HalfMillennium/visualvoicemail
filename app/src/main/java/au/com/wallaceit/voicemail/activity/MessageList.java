@@ -1,5 +1,6 @@
 package au.com.wallaceit.voicemail.activity;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
@@ -7,8 +8,12 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -226,6 +231,56 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         ChangeLog cl = new ChangeLog(this);
         if (cl.isFirstRun()) {
             cl.getLogDialog().show();
+        }
+        requestContactPermissions();
+    }
+
+    private void requestContactPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, VisualVoicemail.REQUEST_CONTACT_PERMISSION);
+            Toast.makeText(this, "Contact permission is needed to display names for known contacts.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean requestRecordPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, VisualVoicemail.REQUEST_RECORD_PERMISSION);
+            Toast.makeText(this, "Record permission is needed to record greetings.", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case VisualVoicemail.REQUEST_CONTACT_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mMessageListFragment.refreshMessageList();
+                }
+                return;
+            }
+            case VisualVoicemail.REQUEST_PHONE_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ((VisualVoicemail) getApplication()).onPhonePermissionSuccess(this);
+                }
+                return;
+            }
+            case VisualVoicemail.REQUEST_RECORD_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openRecordGreetingDialog();
+                }
+                return;
+            }
+            case VisualVoicemail.REQUEST_STORAGE_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    externalStorageSuccessCallback();
+                }
+            }
         }
     }
 
@@ -673,9 +728,9 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 return true;
 
             case R.id.create_greeting:
-                GreetingRecorderDialog recorderDialog = new GreetingRecorderDialog(MessageList.this, mAccount);
-                recorderDialog.setCanceledOnTouchOutside(false);
-                recorderDialog.show();
+                if (requestRecordPermission())
+                    return true;
+                openRecordGreetingDialog();
                 return true;
         }
 
@@ -686,6 +741,12 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openRecordGreetingDialog(){
+        GreetingRecorderDialog recorderDialog = new GreetingRecorderDialog(MessageList.this, mAccount);
+        recorderDialog.setCanceledOnTouchOutside(false);
+        recorderDialog.show();
     }
 
     @Override
@@ -980,6 +1041,10 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
 
     @Override
     public void saveMessage(MessageReference messageReference) {
+        if (VisualVoicemail.requestExternalStoragePermissions(this, "Storage permission needed to save messages")){
+            callbackReference = messageReference;
+            return;
+        }
         final VoicemailAttachmentHelper attachmentHelper = new VoicemailAttachmentHelper(MessageList.this, MessagingController.getInstance(MessageList.this), messageReference);
         attachmentHelper.loadVoicemailAttachment(new Runnable() {
             @Override
@@ -1014,6 +1079,14 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
                 }
             }
         });
+    }
+
+    private MessageReference callbackReference = null;
+    public void externalStorageSuccessCallback(){
+        if (callbackReference!=null){
+            saveMessage(callbackReference);
+            callbackReference = null;
+        }
     }
 
     @Override

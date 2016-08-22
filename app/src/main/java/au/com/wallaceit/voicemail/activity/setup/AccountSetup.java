@@ -1,16 +1,24 @@
 package au.com.wallaceit.voicemail.activity.setup;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -19,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
@@ -41,6 +50,8 @@ import au.com.wallaceit.voicemail.account.AccountCreator;
 import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.helper.Utility;
+import au.com.wallaceit.voicemail.service.MissedCallReceiver;
+import au.com.wallaceit.voicemail.service.SmsReceiver;
 
 
 /**
@@ -57,9 +68,6 @@ import au.com.wallaceit.voicemail.helper.Utility;
 
 public class AccountSetup extends K9Activity implements OnClickListener, TextWatcher {
     private static final String TAG = AccountSetup.class.getSimpleName();
-    
-// CSM    private final static String EXTRA_ACCOUNT		= "cc.martin.vv.AccountSetupBasics.account";
-// CSM     private final static String STATE_KEY_PROVIDER	= "cc.martin.vv.AccountSetupBasics.provider";
     
     private EditText mPhoneNumberView;
     private EditText mPasswordView;
@@ -106,9 +114,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         mActivateButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + mCurrentProvider.helperNumbers.get("activate")));
-                startActivity(intent);
+                ((VisualVoicemail) getApplication()).callPhoneNumber(AccountSetup.this, mCurrentProvider.helperNumbers.get("activate"));
             }
         });
 
@@ -148,7 +154,77 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<Provider>(this, R.layout.spinner_layout, Provider.getProviderList(AccountSetup.this) );
         providerAdaptor.setDropDownViewResource(R.layout.spinner_layout);
         mProvider.setAdapter(providerAdaptor);
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case VisualVoicemail.REQUEST_PHONE_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ((VisualVoicemail) getApplication()).onPhonePermissionSuccess(this);
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+            (new AlertDialog.Builder(this))
+                    .setTitle("Autosetup")
+                    .setMessage("Try auto setup?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendSms();
+                        }
+                    })
+                    .setNegativeButton("No", null).show();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    protected void sendSms() {
+        if (requestSmsPermissions()) return;
+
+        // make sure the receiver is active
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        packageManager.setComponentEnabledSetting(
+                new ComponentName(this, SmsReceiver.class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+        );
+
+        SmsManager smsManager = SmsManager.getDefault();
+        int mApplicationPort = 8901;
+        String mDestinationNumber = "121";
+        String text = "Activate:pv=12;ct=android;pt="+String.valueOf(mApplicationPort)+";//VVM";
+        // If application port is set to 0 then send simple text message, else send data message.
+        /*byte[] data;
+        try {
+            data = text.getBytes("US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Failed to encode: " + text);
+        }
+        Log.v(TAG, String.format("Sending BINARY sms '%s' to %s:%d", text, mDestinationNumber,
+                mApplicationPort));
+        smsManager.sendDataMessage(mDestinationNumber, null,
+                (short) mApplicationPort, data, null, null);*/
+        smsManager.sendTextMessage(mDestinationNumber, null, text, null, null);
+    }
+
+
+    private boolean requestSmsPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,Manifest.permission.RECEIVE_SMS}, VisualVoicemail.REQUEST_SMSFULL_PERMISSION);
+            Toast.makeText(this, "SMS permissions needed for autosetup.", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -157,19 +233,6 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         super.onResume();
         validateFields();
     }
-
-// CSM    
-//    @Override
-//    public void onSaveInstanceState(Bundle outState)
-//    {
-//        super.onSaveInstanceState(outState);
-//        if (mAccount != null) {
-//            outState.putString(EXTRA_ACCOUNT, mAccount.getUuid());
-//        }
-//        if (mProvider != null) {
-//            outState.putSerializable(STATE_KEY_PROVIDER, mProvider);
-//        }
-//    }
 
     public void afterTextChanged(Editable s)
     {

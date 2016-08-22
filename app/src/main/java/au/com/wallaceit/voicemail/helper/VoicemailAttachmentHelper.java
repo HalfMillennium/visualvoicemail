@@ -251,7 +251,7 @@ public class VoicemailAttachmentHelper {
         } else {
             if (VisualVoicemail.DEBUG)
                 Log.w(VisualVoicemail.LOG_TAG, part.getBody().getClass().toString() + " " + part.getMimeType());
-            if (part.getMimeType().indexOf("audio")==0)
+            if (part.getMimeType().toLowerCase().indexOf("audio")==0)
                 return part;
             /* A message transcript is usually placed in a text/plain attachment, but not many providers use it.
             if (part.getMimeType().equals("text/plain")){

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.wallaceit.voicemail"
-    android:versionCode="12"
-    android:versionName="1.10" >
+    android:versionCode="13"
+    android:versionName="1.11" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 
     <!-- Needed to mark a contact as contacted -->
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!--<uses-permission android:name="android.permission.WRITE_CONTACTS" />-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -30,12 +30,11 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.BROADCAST_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
+    <!--<uses-permission android:name="android.permission.READ_SMS" />-->
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CALL_PHONE" android:required="false" />
 
@@ -250,9 +249,14 @@
         </receiver>
         <receiver
             android:name=".service.SmsReceiver"
-            android:enabled="false">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                <action android:name="android.intent.action.DATA_SMS_RECEIVED" />
+                <data
+                    android:scheme="sms"
+                    android:host="localhost"
+                    android:port="90" />
             </intent-filter>
         </receiver>
 
