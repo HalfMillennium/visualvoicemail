@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.wallaceit.voicemail"
-    android:versionCode="13"
-    android:versionName="1.11" >
+    android:versionCode="14"
+    android:versionName="1.12" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -193,9 +193,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
             </intent-filter>
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-            </intent-filter>
+            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED"/>
             </intent-filter>
@@ -249,14 +249,10 @@
         </receiver>
         <receiver
             android:name=".service.SmsReceiver"
-            android:enabled="true"
+            android:enabled="false"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.DATA_SMS_RECEIVED" />
-                <data
-                    android:scheme="sms"
-                    android:host="localhost"
-                    android:port="90" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 

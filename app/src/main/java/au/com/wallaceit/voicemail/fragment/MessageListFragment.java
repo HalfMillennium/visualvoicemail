@@ -1987,7 +1987,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
             Address contactLookupAddress = null;
             CharSequence displayNumber, displayName;
             Address[] senders = Address.unpack(cursor.getString(SENDER_LIST_COLUMN));
-            if (senders.length>0 && senders[0].getAddress().equals(account.getProvider().networkOperatorName)) {
+            if (senders.length>0 && senders[0].getAddress()!=null && senders[0].getAddress().equals(account.getProvider().networkOperatorName)) {
                 String subject = cursor.getString(SUBJECT_COLUMN);
                 displayNumber = subject;
                 int colindex = subject.indexOf(":");
@@ -3598,7 +3598,8 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
 
     private void startAndPrepareActionMode() {
         mActionMode = getActivity().startActionMode(mActionModeCallback);
-        mActionMode.invalidate();
+        if (mActionMode!=null)
+            mActionMode.invalidate();
     }
 
     /**

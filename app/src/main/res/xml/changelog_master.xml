@@ -8,6 +8,11 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
+    <release version="1.12" versioncode="14">
+        <change>Fixed issue with CHANGE_NETWORK_STATE permission issue caused by Android 6.0 bug.</change>
+        <change>Fixed npe during aborted account setup.</change>
+        <change>Fixed npe in message fragment list, when message sender is null.</change>
+    </release>
     <release version="1.11" versioncode="13">
         <change>Added Android M runtime permissions.</change>
         <change>Fixed greetings MIME handling.</change>

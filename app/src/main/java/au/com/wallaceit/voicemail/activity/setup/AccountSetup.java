@@ -359,7 +359,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     	
     	Log.i(TAG, "OnActivityResult: recieved " + strResCode);
    	
-    	if ( (resCode == RESULT_OK) && mAccount.validated ){
+    	if ((resCode == RESULT_OK) && (mAccount!=null && mAccount.validated)){
             mAccount.save(Preferences.getPreferences(this));
             try {
                 AccountCreator.createArchiveFolderIfNeeded(mAccount, mAccount.getLocalStore());

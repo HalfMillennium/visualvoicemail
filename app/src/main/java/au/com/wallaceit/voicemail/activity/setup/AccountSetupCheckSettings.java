@@ -9,13 +9,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.Preferences;
@@ -97,7 +100,31 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
         mAccount = Preferences.getPreferences(this).getAccount(accountUuid);
         mDirection = (CheckDirection) getIntent().getSerializableExtra(EXTRA_CHECK_DIRECTION);
 
+        // Fix for Android bug when permission is denied for CHANGE_NETWORK_STATE; only present in Android 6.0
+        // http://stackoverflow.com/questions/32185628/connectivitymanager-requestnetwork-in-android-6-0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mAccount.getRequiresCellular() && ("6.0".equals(Build.VERSION.RELEASE) && !Settings.System.canWrite(this))){
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 1);
+                Toast.makeText(this, "An android 6.0 bug may mean that system settings permission is needed to access voicemail through the cellular network.", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
         new CheckAccountTask(mAccount).execute(mDirection);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requestCode == 1) {
+                new CheckAccountTask(mAccount).execute(mDirection);
+                if (!Settings.System.canWrite(this))
+                    Toast.makeText(this, "Permission denied, attempting connection anyway...", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void handleCertificateValidationException(CertificateValidationException cve) {
@@ -289,12 +316,6 @@ public class AccountSetupCheckSettings extends K9Activity implements OnClickList
         }
         au.com.wallaceit.voicemail.activity.setup.AccountSetupCheckSettings.actionCheckSettings(AccountSetupCheckSettings.this, mAccount,
                 mDirection);
-    }
-
-    @Override
-    public void onActivityResult(int reqCode, int resCode, Intent data) {
-        setResult(resCode);
-        finish();
     }
 
     private void onCancel() {

@@ -86,9 +86,13 @@ public class VvmContacts {
         String phone = address.getPersonal()!=null?address.getPersonal():address.getAddress(); // fallback to full email address
         Matcher matcher = PHONE_REGEX.matcher(address.toString());
         if (matcher.matches()){
-            phone = matcher.group(1);
-            if (phone.indexOf("+")!=0)
-                phone = "+" + phone;
+            if (!matcher.group(1).equals("")) {
+                phone = matcher.group(1);
+                if (phone.indexOf("+") != 0)
+                    phone = "+" + phone;
+            } else {
+                return "Unknown";
+            }
         }
 
         return phone;
