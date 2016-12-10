@@ -77,11 +77,11 @@ public class Type0SmsReceiver extends BroadcastReceiver {
             }
         }
 
-        if (intent.hasExtra("pw")){
+        if (cmd.equals("STATE") && intent.hasExtra("pw")){
             Log.w(context.getPackageName(), "SMS contains Voicemail account settings");
 
             String server = intent.getStringExtra("server");
-            String user = intent.getStringExtra("user");
+            String user = intent.getStringExtra("name");
             // Check for existing accounts and try to update
             List<Account> accounts = Preferences.getPreferences(context).getAccounts();
             for (int i =0; i<accounts.size(); i++){
@@ -99,7 +99,9 @@ public class Type0SmsReceiver extends BroadcastReceiver {
                                 "",
                                 "");
                         account.setStoreUri(uri.toString());
+                        account.save(Preferences.getPreferences(context));
 
+                        return;
                     }}
                 catch (URISyntaxException e) {
                     e.printStackTrace();
@@ -116,11 +118,13 @@ public class Type0SmsReceiver extends BroadcastReceiver {
                 addNotification(context, body, i);
             }
 
-            return;
+        } else if (cmd.equals("MBOXUPDATE")){
+            Log.w(context.getPackageName(), "SMS contains new voicemail notification");
+            MailService.actionCheck(context, null, true);
+        } else {
+            // Display unknown SMS command
+            addNotification(context, body, null);
         }
-
-        // Display unknown SMS command
-        addNotification(context, body, null);
     }
 
     private void addNotification(Context context, String body, Intent intent){

@@ -8,6 +8,10 @@
      They are automatically updated with "ant bump-version".
 -->
 <changelog>
+    <release version="1.13" versioncode="15">
+        <change>Added Xposed framework module to provide auto account provisioning and settings update using VVM type0 SMS notifications.</change>
+        <change>Added new voicemail check using type0 SMS notification.</change>
+    </release>
     <release version="1.12" versioncode="14">
         <change>Fixed issue with CHANGE_NETWORK_STATE permission issue caused by Android 6.0 bug.</change>
         <change>Fixed npe during aborted account setup.</change>

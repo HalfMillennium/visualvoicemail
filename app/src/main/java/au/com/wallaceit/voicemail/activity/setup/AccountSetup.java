@@ -157,6 +157,8 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<>(this, R.layout.spinner_layout, Provider.getProviderList(AccountSetup.this) );
         providerAdaptor.setDropDownViewResource(R.layout.spinner_layout);
         mProvider.setAdapter(providerAdaptor);
+
+        onNewIntent(getIntent());
     }
 
     @Override
@@ -192,18 +194,10 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     protected void sendSms() {
         if (requestSmsPermissions()) return;
 
-        // make sure the receiver is active
-        PackageManager packageManager = getApplicationContext().getPackageManager();
-        packageManager.setComponentEnabledSetting(
-                new ComponentName(this, SmsReceiver.class),
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-        );
-
         SmsManager smsManager = SmsManager.getDefault();
         int mApplicationPort = 8901;
         String mDestinationNumber = "121";
-        String text = "Activate:pv=12;ct=android;pt="+String.valueOf(mApplicationPort)+";//VVM";
+        String text = "STATE";
         // If application port is set to 0 then send simple text message, else send data message.
         /*byte[] data;
         try {
@@ -235,10 +229,6 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         super.onResume();
         validateFields();
         ((VisualVoicemail) getApplicationContext()).setupActive = true;
-        if (autoProvisionIntent!=null){
-            showAutoProvisionDialog(autoProvisionIntent);
-            autoProvisionIntent = null;
-        }
     }
 
     @Override
@@ -252,28 +242,22 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if (ACTION_TYPE0_SMS_RECEIVED.equals(intent.getAction())){
-            autoProvisionIntent = intent;
+            // Initialise account setup with received settings
+            final String server = intent.getStringExtra("server");
+            final String port = intent.getStringExtra("port");
+            final String user = intent.getStringExtra("name");
+            final String pass = intent.getStringExtra("pw");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Setup Account")
+                    .setMessage("An account will be added with the following settings:\n\nHost:"+server+":"+port+"\nUsername:"+user+"\nPassword:"+pass)
+                    .setNegativeButton(R.string.cancel_action, null)
+                    .setPositiveButton(R.string.okay_action, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            autoProvisionAccount(server, port, user, pass);
+                        }
+                    }).show();
         }
-    }
-
-    private Intent autoProvisionIntent = null;
-
-    private void showAutoProvisionDialog(Intent intent){
-        // Initialise account setup with received settings
-        final String server = intent.getStringExtra("server");
-        final String port = intent.getStringExtra("port");
-        final String user = intent.getStringExtra("name");
-        final String pass = intent.getStringExtra("pw");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Setup Account")
-                .setMessage("An account will be added with the following settings:\n\nHost:"+server+":"+port+"\nUsername:"+user+"\nPassword:"+pass)
-                .setNegativeButton(R.string.cancel_action, null)
-                .setPositiveButton(R.string.okay_action, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        autoProvisionAccount(server, port, user, pass);
-                    }
-                }).show();
     }
 
     private void autoProvisionAccount(String server, String port, String user, String pass){
