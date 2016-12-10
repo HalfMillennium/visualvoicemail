@@ -51,8 +51,6 @@ public class HipriController {
             return false;
         }
 
-
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             return AsyncRunnable.wait(new AsyncRunnable<Boolean>() {

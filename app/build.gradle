@@ -26,12 +26,13 @@ dependencies {
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
     compile 'commons-io:commons-io:2.4'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:support-v13:24.2.1'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v13:25.0.0'
     compile 'net.sourceforge.htmlcleaner:htmlcleaner:2.10'
     compile 'de.cketti.library.changelog:ckchangelog:1.2.1'
     compile 'com.github.bumptech.glide:glide:3.4.0'
     compile 'org.sufficientlysecure:openpgp-api:8.0'
+    provided 'de.robv.android.xposed:api:82'
 }
 
 android {

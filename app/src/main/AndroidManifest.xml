@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.wallaceit.voicemail"
-    android:versionCode="14"
-    android:versionName="1.12" >
+    android:versionCode="15"
+    android:versionName="1.13" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -48,7 +48,15 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value="au.com.wallaceit.voicemail.activity.Search"/>
-
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Autoprovision VVM using type 0 SMS" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
         <activity
             android:name=".activity.Accounts"
             android:configChanges="locale"
@@ -253,6 +261,15 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".service.Type0SmsReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="au.com.wallaceit.voicemail.TYPE0_SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 

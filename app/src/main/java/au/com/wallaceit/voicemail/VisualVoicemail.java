@@ -1494,4 +1494,6 @@ public class VisualVoicemail extends Application {
             callNumber = null;
         }
     }
+
+    public boolean setupActive = false;
 }

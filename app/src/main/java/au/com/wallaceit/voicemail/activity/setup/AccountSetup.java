@@ -39,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import au.com.wallaceit.voicemail.Account;
 import au.com.wallaceit.voicemail.MobilePhoneNumberValidator;
@@ -52,6 +53,8 @@ import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.service.MissedCallReceiver;
 import au.com.wallaceit.voicemail.service.SmsReceiver;
+
+import static au.com.wallaceit.voicemail.service.Type0SmsReceiver.ACTION_TYPE0_SMS_RECEIVED;
 
 
 /**
@@ -151,7 +154,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
         });
 
         // Populate the provider list
-        ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<Provider>(this, R.layout.spinner_layout, Provider.getProviderList(AccountSetup.this) );
+        ArrayAdapter<Provider> providerAdaptor = new ArrayAdapter<>(this, R.layout.spinner_layout, Provider.getProviderList(AccountSetup.this) );
         providerAdaptor.setDropDownViewResource(R.layout.spinner_layout);
         mProvider.setAdapter(providerAdaptor);
     }
@@ -164,7 +167,6 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     ((VisualVoicemail) getApplication()).onPhonePermissionSuccess(this);
                 }
-                return;
             }
         }
     }
@@ -232,6 +234,95 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     {
         super.onResume();
         validateFields();
+        ((VisualVoicemail) getApplicationContext()).setupActive = true;
+        if (autoProvisionIntent!=null){
+            showAutoProvisionDialog(autoProvisionIntent);
+            autoProvisionIntent = null;
+        }
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onPause();
+        ((VisualVoicemail) getApplicationContext()).setupActive = false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (ACTION_TYPE0_SMS_RECEIVED.equals(intent.getAction())){
+            autoProvisionIntent = intent;
+        }
+    }
+
+    private Intent autoProvisionIntent = null;
+
+    private void showAutoProvisionDialog(Intent intent){
+        // Initialise account setup with received settings
+        final String server = intent.getStringExtra("server");
+        final String port = intent.getStringExtra("port");
+        final String user = intent.getStringExtra("name");
+        final String pass = intent.getStringExtra("pw");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Setup Account")
+                .setMessage("An account will be added with the following settings:\n\nHost:"+server+":"+port+"\nUsername:"+user+"\nPassword:"+pass)
+                .setNegativeButton(R.string.cancel_action, null)
+                .setPositiveButton(R.string.okay_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        autoProvisionAccount(server, port, user, pass);
+                    }
+                }).show();
+    }
+
+    private void autoProvisionAccount(String server, String port, String user, String pass){
+        // Build the URL adding the Login ID and password
+        ArrayList<Provider> providers = Provider.getProviderList(this);
+        Provider provider = null;
+        // Try to determine provider by server address
+        for (int i = 0; i<providers.size(); i++){
+            URI providerUri = providers.get(i).uri;
+            if (providerUri.getHost().equals(server)) {
+                provider = providers.get(i);
+                break;
+            }
+        }
+
+        try {
+            String scheme = provider!=null ? provider.uri.getScheme() : "imap";
+
+            URI uri = new URI(scheme,
+                    user + ":" + pass,
+                    server,
+                    Integer.parseInt(port),
+                    "",
+                    "",
+                    "");
+
+            // create a new account
+            // NOTE: if we fail the server check, we need to make sure that we delete the account
+            mAccount = Preferences.getPreferences(this).newAccount();
+            mAccount.setStoreUri(uri.toString());
+            if (provider!=null) {
+                Log.w(getApplicationInfo().packageName, "Provider detected: "+provider.displayName);
+                mAccount.setProvider(provider);
+                mAccount.setNetworkOperatorName(provider.networkOperatorName);
+                mAccount.setRequiresCellular(provider.requiresCellular);
+                mAccount.setDescription(provider.toString());
+            } else {
+                mAccount.setNetworkOperatorName("");
+                mAccount.setRequiresCellular(true);
+                mAccount.setDescription("");
+            }
+            Log.w(getApplicationInfo().packageName, uri.toString());
+
+            mAccount = AccountCreator.initialVisualVoicemailSetup(AccountSetup.this, mAccount);
+
+            AccountSetupCheckSettings.actionCheckSettings(AccountSetup.this, mAccount, AccountSetupCheckSettings.CheckDirection.INCOMING);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void afterTextChanged(Editable s)
@@ -280,8 +371,6 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
             if (localPhoneNum.startsWith(selectedProvider.std_prefix))
                 internationalPhoneNum = localPhoneNum.replaceFirst(selectedProvider.std_prefix, selectedProvider.int_prefix);
         }
-
-        URI uri = null;
         
         try
         {
@@ -296,7 +385,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
 
             // Build the URL adding the Login ID and password
             URI uriTemplate = selectedProvider.uri;
-            uri = new URI(	uriTemplate.getScheme(),
+            URI uri = new URI(	uriTemplate.getScheme(),
             				loginID + ":" + passwordEnc,
             				uriTemplate.getHost(),
             				uriTemplate.getPort(),
