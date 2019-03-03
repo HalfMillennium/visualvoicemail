@@ -1462,8 +1462,8 @@ public class VisualVoicemail extends Application {
     public final static int REQUEST_PHONE_PERMISSION = 2;
     public final static int REQUEST_RECORD_PERMISSION = 3;
     public final static int REQUEST_STORAGE_PERMISSION = 4;
-    public final static int REQUEST_SMS_PERMISSION = 5;
-    public final static int REQUEST_SMSFULL_PERMISSION = 6;
+    /*public final static int REQUEST_SMS_PERMISSION = 5;
+    public final static int REQUEST_SMSFULL_PERMISSION = 6;*/
 
     public static boolean requestExternalStoragePermissions(Activity activity, String reason) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

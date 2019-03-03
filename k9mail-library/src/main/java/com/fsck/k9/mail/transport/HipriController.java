@@ -51,7 +51,7 @@ public class HipriController {
             return false;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        //if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
             return AsyncRunnable.wait(new AsyncRunnable<Boolean>() {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -78,7 +78,7 @@ public class HipriController {
                     });
                 }
             });
-        } else {
+        /*} else {
             //check if mobile connection is available and connected
             NetworkInfo.State state = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE_HIPRI).getState();
             Log.d(TAG_LOG, "TYPE_MOBILE_HIPRI network state: " + state);
@@ -132,7 +132,7 @@ public class HipriController {
                 Log.e(TAG_LOG, "Wrong requestRouteToHost result: expected true, but was false");
 
             return resultBool;
-        }
+        }*/
     }
 
     /**

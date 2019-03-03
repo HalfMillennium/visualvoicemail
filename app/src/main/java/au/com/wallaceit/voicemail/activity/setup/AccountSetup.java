@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -52,7 +51,6 @@ import au.com.wallaceit.voicemail.activity.Accounts;
 import au.com.wallaceit.voicemail.activity.K9Activity;
 import au.com.wallaceit.voicemail.helper.Utility;
 import au.com.wallaceit.voicemail.service.MissedCallReceiver;
-import au.com.wallaceit.voicemail.service.SmsReceiver;
 
 import static au.com.wallaceit.voicemail.service.Type0SmsReceiver.ACTION_TYPE0_SMS_RECEIVED;
 
@@ -192,28 +190,19 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
     }
 
     protected void sendSms() {
-        if (requestSmsPermissions()) return;
 
-        SmsManager smsManager = SmsManager.getDefault();
-        int mApplicationPort = 8901;
-        String mDestinationNumber = "121";
-        String text = "STATE";
-        // If application port is set to 0 then send simple text message, else send data message.
-        /*byte[] data;
-        try {
-            data = text.getBytes("US-ASCII");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Failed to encode: " + text);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("smsto:121"));
+        intent.putExtra("sms_body", "STATE");
+
+        if (intent.resolveActivity(this.getPackageManager()) != null) {
+            startActivity(intent);
         }
-        Log.v(TAG, String.format("Sending BINARY sms '%s' to %s:%d", text, mDestinationNumber,
-                mApplicationPort));
-        smsManager.sendDataMessage(mDestinationNumber, null,
-                (short) mApplicationPort, data, null, null);*/
-        smsManager.sendTextMessage(mDestinationNumber, null, text, null, null);
     }
 
 
-    private boolean requestSmsPermissions() {
+    /*private boolean requestSmsPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,Manifest.permission.RECEIVE_SMS}, VisualVoicemail.REQUEST_SMSFULL_PERMISSION);
@@ -221,7 +210,7 @@ public class AccountSetup extends K9Activity implements OnClickListener, TextWat
             return true;
         }
         return false;
-    }
+    }*/
 
     @Override
     public void onResume()

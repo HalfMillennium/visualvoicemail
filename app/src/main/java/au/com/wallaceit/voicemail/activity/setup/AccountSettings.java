@@ -43,7 +43,6 @@ import au.com.wallaceit.voicemail.mailstore.StorageManager;
 import au.com.wallaceit.voicemail.service.MailService;
 import au.com.wallaceit.voicemail.service.MissedCallReceiver;
 import au.com.wallaceit.voicemail.service.PushService;
-import au.com.wallaceit.voicemail.service.SmsReceiver;
 
 
 public class AccountSettings extends K9PreferenceActivity {
@@ -105,7 +104,7 @@ public class AccountSettings extends K9PreferenceActivity {
     public static final String PREFERENCE_AUTO_CHECK = "account_auto_check";
     public static final int PREFERENCE_AUTO_CHECK_NONE = 0;
     public static final int PREFERENCE_AUTO_CHECK_MISSED_CALL = 1;
-    public static final int PREFERENCE_AUTO_CHECK_SMS = 2;
+    /*public static final int PREFERENCE_AUTO_CHECK_SMS = 2;*/
     public static final int PREFERENCE_AUTO_CHECK_PUSH = 3;
     public static final String PREFERENCE_REQUIRES_CELLULAR = "server_requires_cellular";
     public static final String PREFERENCE_AUTO_ARCHIVE = "auto_archive";
@@ -311,10 +310,10 @@ public class AccountSettings extends K9PreferenceActivity {
         values.add("0");
         entries.add(getString(R.string.account_setup_options_auto_check_missedcall));
         values.add("1");
-        if (mAccount.getProvider()!=null && !mAccount.getProvider().notifySmsNumber.equals("")){
+        /*if (mAccount.getProvider()!=null && !mAccount.getProvider().notifySmsNumber.equals("")){
             entries.add(getString(R.string.account_setup_options_auto_check_sms));
             values.add("2");
-        }
+        }*/
         if (mIsPushCapable){
             entries.add(getString(R.string.account_setup_options_auto_check_push));
             values.add("3");
@@ -327,30 +326,30 @@ public class AccountSettings extends K9PreferenceActivity {
         mAutoCheckMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 final String summary = newValue.toString();
-                final String lastValue = mAutoCheckMethod.getValue();
+                //final String lastValue = mAutoCheckMethod.getValue();
                 int index = mAutoCheckMethod.findIndexOfValue(summary);
                 mAutoCheckMethod.setSummary(mAutoCheckMethod.getEntries()[index]);
                 mAutoCheckMethod.setValue(summary);
                 // If helper number available, show dialog
-                if (Integer.parseInt(mAutoCheckMethod.getValue()) == PREFERENCE_AUTO_CHECK_SMS) {
+                /*if (Integer.parseInt(mAutoCheckMethod.getValue()) == PREFERENCE_AUTO_CHECK_SMS) {
                     if (mAccount.getProvider().helperNumbers.containsKey("notify_sms")) {
                         String number = mAccount.getProvider().helperNumbers.get("notify_sms");
                         showCallDialog("Would you like to enable SMS notifications by dialing " + number + " now?", number);
                         requestSmsPermissions();
                     }
-                } else {
-                    if (Integer.parseInt(lastValue) == PREFERENCE_AUTO_CHECK_SMS) {
+                } else {*/
+                    /*if (Integer.parseInt(lastValue) == PREFERENCE_AUTO_CHECK_SMS) {
                         if (mAccount.getProvider().helperNumbers.containsKey("activate")) {
                             String number = mAccount.getProvider().helperNumbers.get("activate");
                             showCallDialog("Would you like to disable SMS notifications by dialing " + number + " now?", number);
                         }
-                    }
+                    }*/
                     if (Integer.parseInt(mAutoCheckMethod.getValue()) == PREFERENCE_AUTO_CHECK_PUSH) {
                         mCheckFrequency.setValue("720");
                         mCheckFrequency.setSummary(R.string.account_setup_options_mail_check_frequency_12hour);
                         Toast.makeText(AccountSettings.this, "Manual fetch frequency reduced to save data", Toast.LENGTH_LONG).show();
                     }
-                }
+                //}
                 return true;
             }
         });
@@ -772,14 +771,14 @@ public class AccountSettings extends K9PreferenceActivity {
         builder.create().show();
     }
 
-    private boolean requestSmsPermissions() {
+    /*private boolean requestSmsPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, VisualVoicemail.REQUEST_SMS_PERMISSION);
             Toast.makeText(this, "SMS permissions needed to detect voicemail alerts.", Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
-    }
+    }*/
 
     private void removeListEntry(ListPreference listPreference, String remove) {
         CharSequence[] entryValues = listPreference.getEntryValues();
@@ -907,11 +906,11 @@ public class AccountSettings extends K9PreferenceActivity {
                     (autoCheck == PREFERENCE_AUTO_CHECK_MISSED_CALL?PackageManager.COMPONENT_ENABLED_STATE_ENABLED:PackageManager.COMPONENT_ENABLED_STATE_DISABLED),
                     PackageManager.DONT_KILL_APP
             );
-            packageManager.setComponentEnabledSetting(
+            /*packageManager.setComponentEnabledSetting(
                     new ComponentName(AccountSettings.this, SmsReceiver.class),
                     (autoCheck == PREFERENCE_AUTO_CHECK_SMS ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED),
                     PackageManager.DONT_KILL_APP
-            );
+            );*/
             Log.w(VisualVoicemail.LOG_TAG, "Setting auto check method:"+autoCheck);
         }
         //IMAP specific stuff

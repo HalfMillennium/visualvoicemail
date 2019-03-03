@@ -1,10 +1,10 @@
-package au.com.wallaceit.voicemail.service;
+//package au.com.wallaceit.voicemail.service;
 
 /**
  * Created by michael on 8/03/15.
  */
 
-import android.content.BroadcastReceiver;
+/*import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -51,4 +51,4 @@ public class SmsReceiver extends BroadcastReceiver {
             }
         }
     }
-}
+}*/

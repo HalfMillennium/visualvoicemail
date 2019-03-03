@@ -1,4 +1,4 @@
-apply plugin: 'findbugs'
+/*apply plugin: 'findbugs'
 
 afterEvaluate {
     def variants = plugins.hasPlugin('com.android.application') ?
@@ -26,4 +26,4 @@ afterEvaluate {
 
         tasks.getByName('check').dependsOn(task)
     }
-}
+}*/

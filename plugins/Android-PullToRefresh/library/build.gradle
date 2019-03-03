@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '21.1.2'
+    buildToolsVersion '28.0.3'
 
     sourceSets {
         main {
@@ -15,6 +15,9 @@ android {
     // Do not abort build if lint finds errors
     lintOptions {
         abortOnError false
+    }
+    defaultConfig {
+        minSdkVersion = 4
     }
 }
 

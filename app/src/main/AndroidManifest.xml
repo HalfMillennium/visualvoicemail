@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="au.com.wallaceit.voicemail"
-    android:versionCode="15"
-    android:versionName="1.13" >
+    android:versionCode="16"
+    android:versionName="1.14" >
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -27,11 +27,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- VisualVoicemail specific -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <!--<uses-permission android:name="android.permission.READ_SMS" />-->
-    <uses-permission android:name="android.permission.SEND_SMS" />
+
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />-->
@@ -255,14 +254,15 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        <receiver
+
+        <!--<receiver
             android:name=".service.SmsReceiver"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <receiver
             android:name=".service.Type0SmsReceiver"

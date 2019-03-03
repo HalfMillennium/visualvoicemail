@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.3.1'
     }
 }
 
@@ -17,5 +18,13 @@ subprojects {
                 "com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
             project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
         }
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        google() // and here
+        jcenter()
     }
 }
